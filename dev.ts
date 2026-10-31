@@ -11,6 +11,8 @@ Bun.serve({
 	routes: {
 		"/*": index,
 		"/health.check": proxyTo("/health.check"),
+		"/sources.add": proxyTo("/sources.add"),
+		"/sources.list": proxyTo("/sources.list"),
 	},
 	development: true,
 });

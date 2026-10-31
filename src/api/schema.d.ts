@@ -21,6 +21,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sources.add": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Adds a source to the user's list */
+        post: operations["sourcesAdd"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sources.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Lists the user's sources in order of addition */
+        post: operations["sourcesList"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -39,7 +73,7 @@ export interface components {
         };
         ErrorBody: {
             /** @enum {string} */
-            code: "INVALID_BODY" | "INTERNAL_ERROR";
+            code: "INVALID_BODY" | "SOURCE_ALREADY_REGISTERED" | "SOURCE_NAME_TAKEN" | "INTERNAL_ERROR";
             message: string;
         };
         HealthCheckReply: {
@@ -47,6 +81,32 @@ export interface components {
             body: {
                 /** @enum {string} */
                 status: "ok";
+            } | components["schemas"]["ErrorBody"];
+        };
+        SourceEntry: {
+            sourceId: string;
+            name: string;
+            address: string;
+        };
+        SourcesAddCall: {
+            header: components["schemas"]["CallHeader"];
+            body: {
+                address: string;
+                name: string;
+            };
+        };
+        SourcesAddReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: components["schemas"]["SourceEntry"] | components["schemas"]["ErrorBody"];
+        };
+        SourcesListCall: {
+            header: components["schemas"]["CallHeader"];
+            body?: Record<string, never>;
+        };
+        SourcesListReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: {
+                sources: components["schemas"]["SourceEntry"][];
             } | components["schemas"]["ErrorBody"];
         };
         TransportError: components["schemas"]["ErrorBody"];
@@ -79,6 +139,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthCheckReply"];
+                };
+            };
+            /** @description unreadable JSON or missing callId */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransportError"];
+                };
+            };
+        };
+    };
+    sourcesAdd: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourcesAddCall"];
+            };
+        };
+        responses: {
+            /** @description the created entry, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourcesAddReply"];
+                };
+            };
+            /** @description unreadable JSON or missing callId */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransportError"];
+                };
+            };
+        };
+    };
+    sourcesList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourcesListCall"];
+            };
+        };
+        responses: {
+            /** @description the entries, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourcesListReply"];
                 };
             };
             /** @description unreadable JSON or missing callId */
