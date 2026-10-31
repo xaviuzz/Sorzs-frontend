@@ -41,6 +41,16 @@ describe("SourceSideBar", () => {
 		);
 	});
 
+	test("shows the initial of each source for when the bar is collapsed", async () => {
+		sut.answerEntries([
+			{ sourceId: "s-1", name: "Alpha", address: "https://a.com" },
+		]);
+
+		sut.show();
+
+		expect(await sut.initialOnceListed("A")).toBeInTheDocument();
+	});
+
 	test("says the user has no sources yet when the list is empty", async () => {
 		sut.answerEntries([]);
 
@@ -160,7 +170,9 @@ class SUT {
 				expect(screen.getAllByRole("listitem")).toHaveLength(count),
 			);
 		}
-		return screen.getAllByRole("listitem").map((item) => item.textContent);
+		return screen
+			.getAllByRole("listitem")
+			.map((item) => item.querySelector("[title]")?.textContent);
 	}
 
 	async addSource(address: string, name: string) {
@@ -179,6 +191,10 @@ class SUT {
 
 	entryOnceListed(name: string) {
 		return screen.findByText(name);
+	}
+
+	initialOnceListed(initial: string) {
+		return screen.findByText(initial);
 	}
 
 	emptyNoticeOnceListed() {

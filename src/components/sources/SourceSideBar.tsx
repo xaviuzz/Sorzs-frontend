@@ -7,6 +7,14 @@ import {
 	LoadingSources,
 	type SourceReading,
 } from "@/components/sources/SourceReading";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarGroup,
+	SidebarHeader,
+	SidebarProvider,
+	SidebarTrigger,
+} from "@/components/ui/sidebar";
 import type { SourceEntry } from "@/domain/SourceEntry";
 
 export function SourceSideBar() {
@@ -34,12 +42,21 @@ export function SourceSideBar() {
 	}
 
 	return (
-		<aside
-			aria-label="Sources"
-			className="flex w-64 flex-col gap-4 border-r p-4"
-		>
-			<AddSourceDialog onAdded={appendToReading} />
-			{reading.view()}
-		</aside>
+		<SidebarProvider className="relative min-h-0 w-auto">
+			<Sidebar
+				role="complementary"
+				aria-label="Sources"
+				collapsible="icon"
+				className="absolute h-full"
+			>
+				<SidebarHeader>
+					<SidebarTrigger />
+					<AddSourceDialog onAdded={appendToReading} />
+				</SidebarHeader>
+				<SidebarContent>
+					<SidebarGroup>{reading.view()}</SidebarGroup>
+				</SidebarContent>
+			</Sidebar>
+		</SidebarProvider>
 	);
 }

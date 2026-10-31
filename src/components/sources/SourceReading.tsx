@@ -1,6 +1,10 @@
 import type { ReactNode } from "react";
 import { messageOf } from "@/components/sources/messageOf";
+import { SourceMenuItem } from "@/components/sources/SourceMenuItem";
+import { SidebarMenu } from "@/components/ui/sidebar";
 import type { SourceEntry } from "@/domain/SourceEntry";
+
+const HIDDEN_WHEN_COLLAPSED = "group-data-[collapsible=icon]:hidden";
 
 export interface SourceReading {
 	view(): ReactNode;
@@ -13,7 +17,11 @@ export class LoadingSources implements SourceReading {
 	}
 
 	view(): ReactNode {
-		return <p role="status">Loading sources</p>;
+		return (
+			<p role="status" className={HIDDEN_WHEN_COLLAPSED}>
+				Loading sources
+			</p>
+		);
 	}
 }
 
@@ -26,17 +34,17 @@ export class LoadedSources implements SourceReading {
 
 	view(): ReactNode {
 		let view: ReactNode = (
-			<p className="text-muted-foreground">You have no sources yet</p>
+			<p className={`text-muted-foreground ${HIDDEN_WHEN_COLLAPSED}`}>
+				You have no sources yet
+			</p>
 		);
 		if (this.entries.length > 0) {
 			view = (
-				<ul className="flex flex-col gap-1">
+				<SidebarMenu>
 					{this.entries.map((entry) => (
-						<li key={entry.sourceId} title={entry.address}>
-							{entry.name}
-						</li>
+						<SourceMenuItem key={entry.sourceId} entry={entry} />
 					))}
-				</ul>
+				</SidebarMenu>
 			);
 		}
 		return view;
@@ -57,7 +65,7 @@ export class FailedSources implements SourceReading {
 
 	view(): ReactNode {
 		return (
-			<p role="alert" className="text-error">
+			<p role="alert" className={`text-error ${HIDDEN_WHEN_COLLAPSED}`}>
 				{this.message}
 			</p>
 		);
