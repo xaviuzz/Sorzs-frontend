@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen } from "@testing-library/react";
 import { ApiProvider } from "@/api/ApiContext";
 import { Header } from "@/components/header/Header";
+import { SourcesProvider } from "@/components/sources/SourcesProvider";
 
 describe("Header", () => {
 	let sut: SUT;
@@ -16,6 +17,12 @@ describe("Header", () => {
 		expect(sut.banner()).toContainElement(sut.heading());
 		expect(sut.banner()).toContainElement(sut.mark());
 	});
+
+	test("offers the Add Sorz button", () => {
+		sut.show();
+
+		expect(sut.banner()).toContainElement(sut.addButton());
+	});
 });
 
 class SUT {
@@ -25,7 +32,9 @@ class SUT {
 				baseUrl="http://localhost"
 				fetch={() => new Promise(() => {})}
 			>
-				<Header />
+				<SourcesProvider>
+					<Header />
+				</SourcesProvider>
 			</ApiProvider>,
 		);
 	}
@@ -36,6 +45,10 @@ class SUT {
 
 	heading() {
 		return screen.getByRole("heading", { name: "Sorzs" });
+	}
+
+	addButton() {
+		return screen.getByRole("button", { name: "Add Sorz" });
 	}
 
 	mark() {

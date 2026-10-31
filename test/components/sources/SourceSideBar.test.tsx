@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { SourceSideBar } from "@/components/sources/SourceSideBar";
+import { SourcesProvider } from "@/components/sources/SourcesProvider";
 import type { SourceEntryData } from "@/domain/SourceEntry";
 
 describe("SourceSideBar", () => {
@@ -153,49 +153,6 @@ describe("SourceSideBar", () => {
 		expect(await sut.errorOnceFailed()).toHaveTextContent("network down");
 	});
 
-	test("appends an added source after the ones already listed", async () => {
-		sut.answerEntries([
-			{
-				sourceId: "s-1",
-				name: "Alpha",
-				address: "https://a.com",
-				title: null,
-				favicon: null,
-			},
-		]);
-		sut.answerCreated({
-			sourceId: "s-2",
-			name: "Beta",
-			address: "https://b.com",
-			title: null,
-			favicon: null,
-		});
-		sut.show();
-		await sut.namesOnceListed();
-
-		await sut.addSource("https://b.com", "Beta");
-
-		expect(await sut.namesOnceListed(2)).toEqual(["Alpha", "Beta"]);
-	});
-
-	test("replaces the empty notice when the first source is added", async () => {
-		sut.answerEntries([]);
-		sut.answerCreated({
-			sourceId: "s-1",
-			name: "Alpha",
-			address: "https://a.com",
-			title: null,
-			favicon: null,
-		});
-		sut.show();
-		await sut.emptyNoticeOnceListed();
-
-		await sut.addSource("https://a.com", "Alpha");
-
-		expect(await sut.namesOnceListed()).toEqual(["Alpha"]);
-		expect(sut.emptyNotice()).not.toBeInTheDocument();
-	});
-
 	test("loads once on mount", async () => {
 		sut.answerEntries([]);
 
@@ -210,15 +167,10 @@ type Entry = SourceEntryData;
 
 class SUT {
 	private answer: () => Promise<Response> = () => new Promise(() => {});
-	private creation: () => Promise<Response> = () => new Promise(() => {});
 	private lists = 0;
 
 	answerEntries(entries: Entry[]) {
 		this.answer = async () => reply("ok", { sources: entries });
-	}
-
-	answerCreated(entry: Entry) {
-		this.creation = async () => reply("ok", entry);
 	}
 
 	answerRefusal(code: string, message: string) {
@@ -232,17 +184,15 @@ class SUT {
 	}
 
 	show() {
-		const fetch = (request: Request) => {
-			const path = new URL(request.url).pathname;
-			if (path === "/sources.add") {
-				return this.creation();
-			}
+		const fetch = () => {
 			this.lists += 1;
 			return this.answer();
 		};
 		render(
 			<ApiProvider baseUrl="http://localhost" fetch={fetch}>
-				<SourceSideBar />
+				<SourcesProvider>
+					<SourceSideBar />
+				</SourcesProvider>
 			</ApiProvider>,
 		);
 	}
@@ -261,16 +211,6 @@ class SUT {
 		return screen
 			.getAllByRole("listitem")
 			.map((item) => item.querySelector("[title]")?.textContent);
-	}
-
-	async addSource(address: string, name: string) {
-		await userEvent.click(screen.getByRole("button", { name: "Add Sorz" }));
-		await userEvent.type(
-			screen.getByRole("textbox", { name: "Address" }),
-			address,
-		);
-		await userEvent.type(screen.getByRole("textbox", { name: "Name" }), name);
-		await userEvent.click(screen.getByRole("button", { name: "Add" }));
 	}
 
 	emptyNotice() {

@@ -1,12 +1,4 @@
-import { useEffect, useState } from "react";
-import { useListSources } from "@/api/ApiContext";
-import { AddSourceDialog } from "@/components/sources/AddSourceDialog";
-import {
-	FailedSources,
-	LoadedSources,
-	LoadingSources,
-	type SourceReading,
-} from "@/components/sources/SourceReading";
+import { useSourceReading } from "@/components/sources/SourcesProvider";
 import {
 	Sidebar,
 	SidebarContent,
@@ -15,31 +7,9 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
-import type { SourceEntry } from "@/domain/SourceEntry";
 
 export function SourceSideBar() {
-	const listSources = useListSources();
-	const [reading, setReading] = useState<SourceReading>(new LoadingSources());
-
-	useEffect(() => {
-		let isCurrent = true;
-		listSources
-			.run()
-			.then((entries) => new LoadedSources(entries))
-			.catch((error) => FailedSources.from(error))
-			.then((loaded) => {
-				if (isCurrent) {
-					setReading(loaded);
-				}
-			});
-		return () => {
-			isCurrent = false;
-		};
-	}, [listSources]);
-
-	function appendToReading(entry: SourceEntry) {
-		setReading((current) => current.append(entry));
-	}
+	const reading = useSourceReading();
 
 	return (
 		<SidebarProvider className="relative min-h-0 w-auto">
@@ -50,8 +20,7 @@ export function SourceSideBar() {
 				className="absolute h-full"
 			>
 				<SidebarHeader>
-					<SidebarTrigger />
-					<AddSourceDialog onAdded={appendToReading} />
+					<SidebarTrigger className="size-8 self-start" />
 				</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup>{reading.view()}</SidebarGroup>
