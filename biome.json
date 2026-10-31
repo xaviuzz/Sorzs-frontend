@@ -12,6 +12,7 @@
 			"!dist",
 			"!src/components/ui",
 			"!.claude",
+			"!.agents",
 			"!skills-lock.json",
 			"!src/api/schema.d.ts"
 		]
