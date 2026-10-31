@@ -34,6 +34,8 @@ A test that asserts before a component's mount fetch settles leaves a pending up
 
 After `shadcn add`, search `src/components/ui/` for `from "cn"`: the generator writes that import and adds a `cn` dependency. Point the import at `@/lib/utils`, drop `cn` from `package.json` and run `bun install` so `bun.lock` drops it too.
 
+`shadcn add sidebar` writes `--sidebar-*` colors in `hsl`, a `.dark` block and `@custom-variant dark` into `src/index.css`. Point each `--sidebar-*` at its Flexoki token (`--sidebar: var(--card)`) and delete the `.dark` block and the variant: the theme follows `prefers-color-scheme`, so they never apply.
+
 `shadcn add` stops at a prompt when a dependency is already installed (`field` rewrites `label.tsx`). Run it with `--yes --overwrite`, then repeat the `from "cn"` fix.
 
 A component does one thing: when its markup holds a second one (a trigger and its dialog, a row and its card), give that part its own component beside it in the same folder. The parent keeps the state and composes the parts, each part gets its content through props, and a rule-carrying callback is a named function in the parent. Tests stay on the parent until a part earns its own behavior.
