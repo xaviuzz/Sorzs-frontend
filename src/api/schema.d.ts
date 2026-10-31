@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sources.inspect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reads the title and favicon a page offers, registering nothing */
+        post: operations["sourcesInspect"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sources.list": {
         parameters: {
             query?: never;
@@ -85,19 +102,34 @@ export interface components {
         };
         SourceEntry: {
             sourceId: string;
-            name: string;
+            name: string | null;
             address: string;
+            title: string | null;
+            favicon: string | null;
         };
         SourcesAddCall: {
             header: components["schemas"]["CallHeader"];
             body: {
                 address: string;
-                name: string;
+                name?: string;
             };
         };
         SourcesAddReply: {
             header: components["schemas"]["ReplyHeader"];
             body: components["schemas"]["SourceEntry"] | components["schemas"]["ErrorBody"];
+        };
+        SourcesInspectCall: {
+            header: components["schemas"]["CallHeader"];
+            body: {
+                address: string;
+            };
+        };
+        SourcesInspectReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: {
+                title: string | null;
+                favicon: string | null;
+            } | components["schemas"]["ErrorBody"];
         };
         SourcesListCall: {
             header: components["schemas"]["CallHeader"];
@@ -172,6 +204,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SourcesAddReply"];
+                };
+            };
+            /** @description unreadable JSON or missing callId */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransportError"];
+                };
+            };
+        };
+    };
+    sourcesInspect: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourcesInspectCall"];
+            };
+        };
+        responses: {
+            /** @description the title and favicon, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourcesInspectReply"];
                 };
             };
             /** @description unreadable JSON or missing callId */
