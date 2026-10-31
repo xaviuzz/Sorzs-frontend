@@ -77,6 +77,114 @@ describe("AddSourceDialog", () => {
 		expect(sut.nameField()).toHaveValue("");
 	});
 
+	test("suggests the page title as the name when leaving the address", async () => {
+		sut.answerInspected({ title: "Example Domain", favicon: null });
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://example.com");
+
+		await waitFor(() => expect(sut.nameField()).toHaveValue("Example Domain"));
+		expect(sut.addressesInspected()).toEqual(["https://example.com"]);
+	});
+
+	test("keeps a name the user wrote", async () => {
+		sut.answerInspected({ title: "Example Domain", favicon: null });
+		sut.show();
+		await sut.open();
+		await userEvent.type(sut.nameField(), "Mine");
+
+		await sut.writeAddress("https://example.com");
+
+		await waitFor(() => expect(sut.addressesInspected()).toHaveLength(1));
+		expect(sut.nameField()).toHaveValue("Mine");
+	});
+
+	test("replaces an earlier suggestion with the title of a new address", async () => {
+		sut.answerInspected({ title: "Example Domain", favicon: null });
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://example.com");
+		await waitFor(() => expect(sut.nameField()).toHaveValue("Example Domain"));
+
+		sut.answerInspected({ title: "Other Site", favicon: null });
+		await sut.writeAddress("https://other.com");
+
+		await waitFor(() => expect(sut.nameField()).toHaveValue("Other Site"));
+	});
+
+	test("keeps a suggestion the user edited", async () => {
+		sut.answerInspected({ title: "Example Domain", favicon: null });
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://example.com");
+		await waitFor(() => expect(sut.nameField()).toHaveValue("Example Domain"));
+		await userEvent.type(sut.nameField(), "!");
+
+		sut.answerInspected({ title: "Other Site", favicon: null });
+		await sut.writeAddress("https://other.com");
+
+		await waitFor(() => expect(sut.addressesInspected()).toHaveLength(2));
+		expect(sut.nameField()).toHaveValue("Example Domain!");
+	});
+
+	test("suggests nothing when the page offers no title", async () => {
+		sut.answerInspected({ title: null, favicon: null });
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://example.com");
+
+		await waitFor(() => expect(sut.addressesInspected()).toHaveLength(1));
+		expect(sut.nameField()).toHaveValue("");
+	});
+
+	test("an inspect refusal is silent", async () => {
+		sut.refuseInspection("INVALID_BODY", "address must be complete");
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("not an address");
+
+		await waitFor(() => expect(sut.addressesInspected()).toHaveLength(1));
+		expect(sut.error()).not.toBeInTheDocument();
+		expect(sut.nameField()).toHaveValue("");
+	});
+
+	test("an inspect network failure is silent", async () => {
+		sut.failInspection();
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://example.com");
+
+		await waitFor(() => expect(sut.addressesInspected()).toHaveLength(1));
+		expect(sut.error()).not.toBeInTheDocument();
+		expect(sut.nameField()).toHaveValue("");
+	});
+
+	test("does not inspect an empty address", async () => {
+		sut.show();
+		await sut.open();
+
+		await userEvent.click(sut.addressField());
+		await userEvent.tab();
+
+		expect(sut.addressesInspected()).toEqual([]);
+	});
+
+	test("posts an empty name when none was given", async () => {
+		sut.show();
+		await sut.open();
+
+		await sut.fillAndSubmit("https://example.com", "");
+
+		expect(await sut.bodyPostedOnceSent()).toEqual({
+			address: "https://example.com",
+			name: "",
+		});
+	});
+
 	test.each([
 		["SOURCE_ALREADY_REGISTERED", "that address is already in your list"],
 		["SOURCE_NAME_TAKEN", "that name is already in your list"],
@@ -148,6 +256,8 @@ class SUT {
 	private answer: () => Promise<Response> = () => new Promise(() => {});
 	private added: SourceEntry[] = [];
 	private posted: unknown;
+	private inspectAnswer: () => Promise<Response> = () => new Promise(() => {});
+	private inspected: string[] = [];
 
 	answerCreated(entry: SourceEntryData) {
 		this.answer = async () => reply("ok", entry);
@@ -163,6 +273,20 @@ class SUT {
 		};
 	}
 
+	answerInspected(info: { title: string | null; favicon: string | null }) {
+		this.inspectAnswer = async () => reply("ok", info);
+	}
+
+	refuseInspection(code: string, message: string) {
+		this.inspectAnswer = async () => reply("error", { code, message });
+	}
+
+	failInspection() {
+		this.inspectAnswer = async () => {
+			throw new TypeError("network down");
+		};
+	}
+
 	neverAnswer() {
 		this.answer = () => new Promise(() => {});
 	}
@@ -170,6 +294,10 @@ class SUT {
 	show() {
 		const fetch = async (request: Request) => {
 			const call = await request.json();
+			if (request.url.endsWith("/sources.inspect")) {
+				this.inspected.push(call.body.address);
+				return this.inspectAnswer();
+			}
 			this.posted = call.body;
 			return this.answer();
 		};
@@ -184,11 +312,23 @@ class SUT {
 		await userEvent.click(screen.getByRole("button", { name: "Add Sorz" }));
 	}
 
+	async writeAddress(address: string) {
+		await userEvent.clear(this.addressField());
+		await userEvent.type(this.addressField(), address);
+		await userEvent.tab();
+	}
+
+	addressesInspected() {
+		return this.inspected;
+	}
+
 	async fillAndSubmit(address: string, name: string) {
 		await userEvent.clear(this.addressField());
 		await userEvent.type(this.addressField(), address);
 		await userEvent.clear(this.nameField());
-		await userEvent.type(this.nameField(), name);
+		if (name !== "") {
+			await userEvent.type(this.nameField(), name);
+		}
 		await this.submit();
 	}
 

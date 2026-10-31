@@ -45,3 +45,11 @@ export function useAddSource() {
 	}
 	return api.addSource;
 }
+
+export function useInspectSource() {
+	const api = useContext(ApiContext);
+	if (api === null) {
+		throw new Error("useInspectSource needs an ApiProvider");
+	}
+	return api.inspectSource;
+}

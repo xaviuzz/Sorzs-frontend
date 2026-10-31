@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from "react";
-import { useAddSource } from "@/api/ApiContext";
+import { useAddSource, useInspectSource } from "@/api/ApiContext";
 import { messageOf } from "@/components/sources/messageOf";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +21,11 @@ export function AddSourceDialog({
 	onAdded: (entry: SourceEntry) => void;
 }) {
 	const addSource = useAddSource();
+	const inspectSource = useInspectSource();
 	const [isOpen, setIsOpen] = useState(false);
 	const [address, setAddress] = useState("");
 	const [name, setName] = useState("");
+	const [suggestedName, setSuggestedName] = useState("");
 	const [isSending, setIsSending] = useState(false);
 	const [message, setMessage] = useState("");
 
@@ -36,6 +38,7 @@ export function AddSourceDialog({
 			onAdded(entry);
 			setAddress("");
 			setName("");
+			setSuggestedName("");
 			setIsOpen(false);
 		} catch (error) {
 			setMessage(messageOf(error, "Source could not be added"));
@@ -46,6 +49,23 @@ export function AddSourceDialog({
 
 	function typeAddress(event: FormEvent<HTMLInputElement>) {
 		setAddress(event.currentTarget.value);
+	}
+
+	async function leaveAddress() {
+		if (address === "") return;
+		try {
+			const page = await inspectSource.run(address);
+			suggest(page.title);
+		} catch {
+			return;
+		}
+	}
+
+	function suggest(title: string | null) {
+		const isNameFree = name === "" || name === suggestedName;
+		if (title === null || !isNameFree) return;
+		setName(title);
+		setSuggestedName(title);
 	}
 
 	function typeName(event: FormEvent<HTMLInputElement>) {
@@ -88,6 +108,7 @@ export function AddSourceDialog({
 								id="source-address"
 								value={address}
 								onChange={typeAddress}
+								onBlur={leaveAddress}
 							/>
 						</Field>
 						<Field>
