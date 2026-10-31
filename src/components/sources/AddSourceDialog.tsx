@@ -1,6 +1,6 @@
 import { type FormEvent, useState } from "react";
 import { useAddSource } from "@/api/ApiContext";
-import { messageOf } from "@/components/messageOf";
+import { messageOf } from "@/components/sources/messageOf";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,

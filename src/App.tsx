@@ -1,5 +1,5 @@
-import { Header } from "@/components/Header";
-import { SourceSideBar } from "@/components/SourceSideBar";
+import { Header } from "@/components/header/Header";
+import { SourceSideBar } from "@/components/sources/SourceSideBar";
 
 export function App() {
 	return (

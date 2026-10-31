@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useListSources } from "@/api/ApiContext";
-import { AddSourceDialog } from "@/components/AddSourceDialog";
+import { AddSourceDialog } from "@/components/sources/AddSourceDialog";
 import {
 	FailedSources,
 	LoadedSources,
 	LoadingSources,
 	type SourceReading,
-} from "@/components/SourceReading";
+} from "@/components/sources/SourceReading";
 import type { SourceEntry } from "@/domain/SourceEntry";
 
 export function SourceSideBar() {

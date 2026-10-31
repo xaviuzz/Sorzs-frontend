@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { messageOf } from "@/components/messageOf";
+import { messageOf } from "@/components/sources/messageOf";
 import type { SourceEntry } from "@/domain/SourceEntry";
 
 export interface SourceReading {

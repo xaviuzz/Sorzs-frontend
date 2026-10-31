@@ -1,4 +1,4 @@
-import { HealthMark } from "@/components/HealthMark";
+import { HealthMark } from "@/components/header/HealthMark";
 
 export function Header() {
 	return (

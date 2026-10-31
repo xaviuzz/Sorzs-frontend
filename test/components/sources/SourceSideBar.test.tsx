@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
-import { SourceSideBar } from "@/components/SourceSideBar";
+import { SourceSideBar } from "@/components/sources/SourceSideBar";
 
 describe("SourceSideBar", () => {
 	let sut: SUT;

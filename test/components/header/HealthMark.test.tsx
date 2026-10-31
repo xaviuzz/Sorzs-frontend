@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen } from "@testing-library/react";
 import { ApiProvider } from "@/api/ApiContext";
-import { HealthMark } from "@/components/HealthMark";
+import { HealthMark } from "@/components/header/HealthMark";
 
 describe("HealthMark", () => {
 	let sut: SUT;

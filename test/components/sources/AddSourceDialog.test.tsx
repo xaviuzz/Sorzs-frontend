@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
-import { AddSourceDialog } from "@/components/AddSourceDialog";
+import { AddSourceDialog } from "@/components/sources/AddSourceDialog";
 import type { SourceEntry } from "@/domain/SourceEntry";
 
 describe("AddSourceDialog", () => {
