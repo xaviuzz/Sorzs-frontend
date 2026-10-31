@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { AddSourceDialog } from "@/components/sources/AddSourceDialog";
-import type { SourceEntry } from "@/domain/SourceEntry";
+import { SourceEntry, type SourceEntryData } from "@/domain/SourceEntry";
 
 describe("AddSourceDialog", () => {
 	let sut: SUT;
@@ -38,17 +38,23 @@ describe("AddSourceDialog", () => {
 			sourceId: "s-1",
 			name: "Example",
 			address: "https://example.com",
+			title: null,
+			favicon: null,
 		});
 		sut.show();
 		await sut.open();
 
 		await sut.fillAndSubmit("https://example.com", "Example");
 
-		expect(await sut.entryOnceAdded()).toEqual({
-			sourceId: "s-1",
-			name: "Example",
-			address: "https://example.com",
-		});
+		expect(await sut.entryOnceAdded()).toEqual(
+			new SourceEntry({
+				sourceId: "s-1",
+				name: "Example",
+				address: "https://example.com",
+				title: null,
+				favicon: null,
+			}),
+		);
 		expect(sut.dialog()).not.toBeInTheDocument();
 	});
 
@@ -57,6 +63,8 @@ describe("AddSourceDialog", () => {
 			sourceId: "s-1",
 			name: "Example",
 			address: "https://example.com",
+			title: null,
+			favicon: null,
 		});
 		sut.show();
 		await sut.open();
@@ -141,7 +149,7 @@ class SUT {
 	private added: SourceEntry[] = [];
 	private posted: unknown;
 
-	answerCreated(entry: SourceEntry) {
+	answerCreated(entry: SourceEntryData) {
 		this.answer = async () => reply("ok", entry);
 	}
 

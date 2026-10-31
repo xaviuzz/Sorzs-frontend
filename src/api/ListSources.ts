@@ -1,7 +1,7 @@
 import type { Client } from "openapi-fetch";
 import { CallRefusedError } from "@/api/CallRefusedError";
 import type { paths } from "@/api/schema";
-import type { SourceEntry } from "@/domain/SourceEntry";
+import { SourceEntry } from "@/domain/SourceEntry";
 
 export class ListSources {
 	constructor(private readonly client: Client<paths>) {}
@@ -18,6 +18,10 @@ export class ListSources {
 		if ("code" in body) {
 			throw new CallRefusedError(body);
 		}
-		return body.sources;
+		const entries: SourceEntry[] = [];
+		for (const data of body.sources) {
+			entries.push(new SourceEntry(data));
+		}
+		return entries;
 	}
 }

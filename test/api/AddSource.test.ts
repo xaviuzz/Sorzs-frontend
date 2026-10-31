@@ -3,7 +3,7 @@ import createClient from "openapi-fetch";
 import { AddSource } from "@/api/AddSource";
 import { CallRefusedError } from "@/api/CallRefusedError";
 import type { paths } from "@/api/schema";
-import type { SourceEntry } from "@/domain/SourceEntry";
+import { SourceEntry, type SourceEntryData } from "@/domain/SourceEntry";
 
 describe("AddSource", () => {
 	let sut: SUT;
@@ -17,15 +17,21 @@ describe("AddSource", () => {
 			sourceId: "s-1",
 			name: "Example",
 			address: "https://example.com",
+			title: null,
+			favicon: null,
 		});
 
 		await sut.add("https://example.com", "Example");
 
-		expect(sut.created()).toEqual({
-			sourceId: "s-1",
-			name: "Example",
-			address: "https://example.com",
-		});
+		expect(sut.created()).toEqual(
+			new SourceEntry({
+				sourceId: "s-1",
+				name: "Example",
+				address: "https://example.com",
+				title: null,
+				favicon: null,
+			}),
+		);
 	});
 
 	test("posts the address and the name to /sources.add with a fresh callId", async () => {
@@ -86,6 +92,8 @@ class SUT {
 			sourceId: "s-0",
 			name: "n",
 			address: "https://a.com",
+			title: null,
+			favicon: null,
 		});
 	private received: Posted[] = [];
 	private entry: SourceEntry | undefined;
@@ -109,7 +117,7 @@ class SUT {
 		this.addSource = new AddSource(client);
 	}
 
-	answerCreated(entry: SourceEntry) {
+	answerCreated(entry: SourceEntryData) {
 		this.answer = async (callId) => reply(callId, "ok", entry);
 	}
 

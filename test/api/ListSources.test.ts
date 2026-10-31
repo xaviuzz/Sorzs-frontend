@@ -3,7 +3,7 @@ import createClient from "openapi-fetch";
 import { CallRefusedError } from "@/api/CallRefusedError";
 import { ListSources } from "@/api/ListSources";
 import type { paths } from "@/api/schema";
-import type { SourceEntry } from "@/domain/SourceEntry";
+import { SourceEntry, type SourceEntryData } from "@/domain/SourceEntry";
 
 describe("ListSources", () => {
 	let sut: SUT;
@@ -13,13 +13,28 @@ describe("ListSources", () => {
 	});
 
 	test("answers the entries in the order the backend sent them", async () => {
-		const beta = { sourceId: "s-2", name: "Beta", address: "https://b.com" };
-		const alpha = { sourceId: "s-1", name: "Alpha", address: "https://a.com" };
+		const beta = {
+			sourceId: "s-2",
+			name: "Beta",
+			address: "https://b.com",
+			title: null,
+			favicon: null,
+		};
+		const alpha = {
+			sourceId: "s-1",
+			name: "Alpha",
+			address: "https://a.com",
+			title: null,
+			favicon: null,
+		};
 		sut.answerEntries([beta, alpha]);
 
 		await sut.list();
 
-		expect(sut.listed()).toEqual([beta, alpha]);
+		expect(sut.listed()).toEqual([
+			new SourceEntry(beta),
+			new SourceEntry(alpha),
+		]);
 	});
 
 	test("answers no entries when the list is empty", async () => {
@@ -77,7 +92,7 @@ class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
 		reply(callId, "ok", { sources: [] });
 	private received: Posted[] = [];
-	private entries: SourceEntry[] | undefined;
+	private entries: SourceEntryData[] | undefined;
 	private thrown: unknown;
 	private readonly listSources: ListSources;
 
@@ -97,7 +112,7 @@ class SUT {
 		this.listSources = new ListSources(client);
 	}
 
-	answerEntries(entries: SourceEntry[]) {
+	answerEntries(entries: SourceEntryData[]) {
 		this.answer = async (callId) => reply(callId, "ok", { sources: entries });
 	}
 
