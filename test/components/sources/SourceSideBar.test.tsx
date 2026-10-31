@@ -3,6 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { SourceSideBar } from "@/components/sources/SourceSideBar";
+import type { SourceEntryData } from "@/domain/SourceEntry";
 
 describe("SourceSideBar", () => {
 	let sut: SUT;
@@ -19,8 +20,20 @@ describe("SourceSideBar", () => {
 
 	test("shows the names in the order of addition", async () => {
 		sut.answerEntries([
-			{ sourceId: "s-2", name: "Beta", address: "https://b.com" },
-			{ sourceId: "s-1", name: "Alpha", address: "https://a.com" },
+			{
+				sourceId: "s-2",
+				name: "Beta",
+				address: "https://b.com",
+				title: null,
+				favicon: null,
+			},
+			{
+				sourceId: "s-1",
+				name: "Alpha",
+				address: "https://a.com",
+				title: null,
+				favicon: null,
+			},
 		]);
 
 		sut.show();
@@ -30,7 +43,13 @@ describe("SourceSideBar", () => {
 
 	test("shows the address of a source that has no name", async () => {
 		sut.answerEntries([
-			{ sourceId: "s-1", name: null, address: "https://a.com" },
+			{
+				sourceId: "s-1",
+				name: null,
+				address: "https://a.com",
+				title: null,
+				favicon: null,
+			},
 		]);
 
 		sut.show();
@@ -38,9 +57,68 @@ describe("SourceSideBar", () => {
 		expect(await sut.namesOnceListed()).toEqual(["https://a.com"]);
 	});
 
+	test("shows the title of the page of a source that has no name", async () => {
+		sut.answerEntries([
+			{
+				sourceId: "s-1",
+				name: null,
+				address: "https://a.com",
+				title: "Page of A",
+				favicon: null,
+			},
+		]);
+
+		sut.show();
+
+		expect(await sut.namesOnceListed()).toEqual(["Page of A"]);
+	});
+
+	test("shows the favicon of a source on the left of its text", async () => {
+		sut.answerEntries([
+			{
+				sourceId: "s-1",
+				name: "Alpha",
+				address: "https://a.com",
+				title: null,
+				favicon: "https://a.com/icon.png",
+			},
+		]);
+
+		sut.show();
+
+		expect(await sut.faviconOnceListed()).toHaveAttribute(
+			"src",
+			"https://a.com/icon.png",
+		);
+	});
+
+	test("shows a neutral icon for a source that has no favicon", async () => {
+		sut.answerEntries([
+			{
+				sourceId: "s-1",
+				name: "Alpha",
+				address: "https://a.com",
+				title: null,
+				favicon: null,
+			},
+		]);
+
+		sut.show();
+
+		await sut.namesOnceListed();
+		expect(sut.favicon()).not.toBeInTheDocument();
+		expect(sut.neutralIcon()).toBeInTheDocument();
+	});
+
 	test("shows the address of each source as its title", async () => {
 		sut.answerEntries([
-			{ sourceId: "s-1", name: "Alpha", address: "https://a.com" },
+			{
+				sourceId: "s-1",
+				name: "Alpha",
+				address: "https://a.com",
+				title: null,
+				favicon: null,
+			},
 		]);
 
 		sut.show();
@@ -53,7 +131,13 @@ describe("SourceSideBar", () => {
 
 	test("shows the initial of each source for when the bar is collapsed", async () => {
 		sut.answerEntries([
-			{ sourceId: "s-1", name: "Alpha", address: "https://a.com" },
+			{
+				sourceId: "s-1",
+				name: "Alpha",
+				address: "https://a.com",
+				title: null,
+				favicon: null,
+			},
 		]);
 
 		sut.show();
@@ -87,12 +171,20 @@ describe("SourceSideBar", () => {
 
 	test("appends an added source after the ones already listed", async () => {
 		sut.answerEntries([
-			{ sourceId: "s-1", name: "Alpha", address: "https://a.com" },
+			{
+				sourceId: "s-1",
+				name: "Alpha",
+				address: "https://a.com",
+				title: null,
+				favicon: null,
+			},
 		]);
 		sut.answerCreated({
 			sourceId: "s-2",
 			name: "Beta",
 			address: "https://b.com",
+			title: null,
+			favicon: null,
 		});
 		sut.show();
 		await sut.namesOnceListed();
@@ -108,6 +200,8 @@ describe("SourceSideBar", () => {
 			sourceId: "s-1",
 			name: "Alpha",
 			address: "https://a.com",
+			title: null,
+			favicon: null,
 		});
 		sut.show();
 		await sut.emptyNoticeOnceListed();
@@ -128,7 +222,7 @@ describe("SourceSideBar", () => {
 	});
 });
 
-type Entry = { sourceId: string; name: string | null; address: string };
+type Entry = SourceEntryData;
 
 class SUT {
 	private answer: () => Promise<Response> = () => new Promise(() => {});
@@ -205,6 +299,18 @@ class SUT {
 
 	initialOnceListed(initial: string) {
 		return screen.findByText(initial);
+	}
+
+	faviconOnceListed() {
+		return screen.findByRole("img", { name: "Favicon of Alpha" });
+	}
+
+	favicon() {
+		return screen.queryByRole("img", { name: "Favicon of Alpha" });
+	}
+
+	neutralIcon() {
+		return screen.queryByRole("img", { name: "No favicon" });
 	}
 
 	emptyNoticeOnceListed() {
