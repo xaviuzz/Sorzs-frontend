@@ -15,6 +15,12 @@ describe("App", () => {
 
 		expect(sut.banner()).toBeInTheDocument();
 	});
+
+	test("shows the sources side bar", () => {
+		sut.show();
+
+		expect(sut.sideBar()).toBeInTheDocument();
+	});
 });
 
 class SUT {
@@ -27,6 +33,10 @@ class SUT {
 				<App />
 			</ApiProvider>,
 		);
+	}
+
+	sideBar() {
+		return screen.getByRole("complementary", { name: "Sources" });
 	}
 
 	banner() {
