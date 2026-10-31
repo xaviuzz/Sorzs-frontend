@@ -2,11 +2,12 @@ import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { SourceEntry } from "@/domain/SourceEntry";
 
 export function SourceMenuItem({ entry }: { entry: SourceEntry }) {
-	const initial = Array.from(entry.name)[0];
+	const text = entry.name ?? entry.address;
+	const initial = Array.from(text)[0];
 
 	return (
 		<SidebarMenuItem>
-			<SidebarMenuButton asChild tooltip={entry.name}>
+			<SidebarMenuButton asChild tooltip={text}>
 				<span>
 					<span
 						aria-hidden="true"
@@ -18,7 +19,7 @@ export function SourceMenuItem({ entry }: { entry: SourceEntry }) {
 						title={entry.address}
 						className="group-data-[collapsible=icon]:hidden"
 					>
-						{entry.name}
+						{text}
 					</span>
 				</span>
 			</SidebarMenuButton>

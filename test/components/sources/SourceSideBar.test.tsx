@@ -28,6 +28,16 @@ describe("SourceSideBar", () => {
 		expect(await sut.namesOnceListed()).toEqual(["Beta", "Alpha"]);
 	});
 
+	test("shows the address of a source that has no name", async () => {
+		sut.answerEntries([
+			{ sourceId: "s-1", name: null, address: "https://a.com" },
+		]);
+
+		sut.show();
+
+		expect(await sut.namesOnceListed()).toEqual(["https://a.com"]);
+	});
+
 	test("shows the address of each source as its title", async () => {
 		sut.answerEntries([
 			{ sourceId: "s-1", name: "Alpha", address: "https://a.com" },
@@ -118,7 +128,7 @@ describe("SourceSideBar", () => {
 	});
 });
 
-type Entry = { sourceId: string; name: string; address: string };
+type Entry = { sourceId: string; name: string | null; address: string };
 
 class SUT {
 	private answer: () => Promise<Response> = () => new Promise(() => {});

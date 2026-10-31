@@ -1,5 +1,5 @@
 export type SourceEntry = {
 	sourceId: string;
-	name: string;
+	name: string | null;
 	address: string;
 };
