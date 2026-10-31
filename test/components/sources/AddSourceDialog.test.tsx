@@ -152,6 +152,60 @@ describe("AddSourceDialog", () => {
 		expect(sut.nameField()).toHaveValue("");
 	});
 
+	test("shows the page favicon once the address is inspected", async () => {
+		sut.answerInspected({
+			title: "Example Domain",
+			favicon: "https://example.com/icon.png",
+		});
+		sut.show();
+		await sut.open();
+		expect(sut.favicon()).not.toBeInTheDocument();
+
+		await sut.writeAddress("https://example.com");
+
+		expect(await sut.faviconOnceInspected()).toHaveAttribute(
+			"src",
+			"https://example.com/icon.png",
+		);
+	});
+
+	test("shows the neutral icon when the page offers no favicon", async () => {
+		sut.answerInspected({ title: "Example Domain", favicon: null });
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://example.com");
+
+		expect(await sut.neutralIconOnceInspected()).toBeInTheDocument();
+	});
+
+	test("hides the favicon while a new address is typed", async () => {
+		sut.answerInspected({
+			title: null,
+			favicon: "https://example.com/icon.png",
+		});
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://example.com");
+		await sut.faviconOnceInspected();
+
+		await userEvent.type(sut.addressField(), "/more");
+
+		expect(sut.favicon()).not.toBeInTheDocument();
+	});
+
+	test("shows no icon when the page cannot be read", async () => {
+		sut.failInspection();
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://example.com");
+
+		await waitFor(() => expect(sut.addressesInspected()).toHaveLength(1));
+		expect(sut.favicon()).not.toBeInTheDocument();
+		expect(sut.neutralIcon()).not.toBeInTheDocument();
+	});
+
 	test("an inspect refusal is silent", async () => {
 		sut.refuseInspection("INVALID_BODY", "address must be complete");
 		sut.show();
@@ -369,6 +423,22 @@ class SUT {
 
 	nameField() {
 		return screen.getByRole("textbox", { name: "Title" });
+	}
+
+	favicon() {
+		return screen.queryByRole("img", { name: /^Favicon of / });
+	}
+
+	faviconOnceInspected() {
+		return screen.findByRole("img", { name: /^Favicon of / });
+	}
+
+	neutralIcon() {
+		return screen.queryByRole("img", { name: "No favicon" });
+	}
+
+	neutralIconOnceInspected() {
+		return screen.findByRole("img", { name: "No favicon" });
 	}
 
 	submitButton() {

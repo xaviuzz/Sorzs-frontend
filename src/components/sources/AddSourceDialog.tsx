@@ -1,7 +1,9 @@
 import { type FormEvent, useState } from "react";
 import { useAddSource, useInspectSource } from "@/api/ApiContext";
+import type { PageInfo } from "@/api/InspectSource";
 import { Brand } from "@/components/Brand";
 import { messageOf } from "@/components/sources/messageOf";
+import { SourceFavicon } from "@/components/sources/SourceFavicon";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -27,6 +29,7 @@ export function AddSourceDialog({
 	const [address, setAddress] = useState("");
 	const [name, setName] = useState("");
 	const [suggestedName, setSuggestedName] = useState("");
+	const [inspected, setInspected] = useState<PageInfo | null>(null);
 	const [isSending, setIsSending] = useState(false);
 	const [message, setMessage] = useState("");
 
@@ -40,6 +43,7 @@ export function AddSourceDialog({
 			setAddress("");
 			setName("");
 			setSuggestedName("");
+			setInspected(null);
 			setIsOpen(false);
 		} catch (error) {
 			setMessage(messageOf(error, "Source could not be added"));
@@ -50,12 +54,14 @@ export function AddSourceDialog({
 
 	function typeAddress(event: FormEvent<HTMLInputElement>) {
 		setAddress(event.currentTarget.value);
+		setInspected(null);
 	}
 
 	async function leaveAddress() {
 		if (address === "") return;
 		try {
 			const page = await inspectSource.run(address);
+			setInspected(page);
 			suggest(page.title);
 		} catch {
 			return;
@@ -71,6 +77,14 @@ export function AddSourceDialog({
 
 	function typeName(event: FormEvent<HTMLInputElement>) {
 		setName(event.currentTarget.value);
+	}
+
+	function showFavicon() {
+		let shown = null;
+		if (inspected !== null) {
+			shown = <SourceFavicon favicon={inspected.favicon} text={address} />;
+		}
+		return shown;
 	}
 
 	function showMessage() {
@@ -119,7 +133,10 @@ export function AddSourceDialog({
 						</Field>
 						<Field>
 							<FieldLabel htmlFor="source-name">Title</FieldLabel>
-							<Input id="source-name" value={name} onChange={typeName} />
+							<div className="flex items-center gap-2">
+								{showFavicon()}
+								<Input id="source-name" value={name} onChange={typeName} />
+							</div>
 						</Field>
 					</FieldGroup>
 					{showMessage()}
