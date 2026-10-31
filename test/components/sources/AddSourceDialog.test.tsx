@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "bun:test";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { AddSourceDialog } from "@/components/sources/AddSourceDialog";
@@ -19,6 +19,19 @@ describe("AddSourceDialog", () => {
 
 		expect(sut.addressField()).toBeInTheDocument();
 		expect(sut.nameField()).toBeInTheDocument();
+	});
+
+	test("titles itself Add Sorz with the name in the brand font", async () => {
+		sut.show();
+
+		await sut.open();
+
+		expect(sut.dialog()).toHaveAccessibleName("Add Sorz");
+		expect(sut.dialog()).toHaveAccessibleDescription(
+			"Register the URL of a site you trust and give it a title.",
+		);
+		expect(sut.description()).toHaveClass("sr-only");
+		expect(sut.brandName()).toHaveClass("font-script");
 	});
 
 	test("posts what was typed", async () => {
@@ -336,16 +349,26 @@ class SUT {
 		await userEvent.click(this.submitButton());
 	}
 
+	description() {
+		return screen.getByText(
+			"Register the URL of a site you trust and give it a title.",
+		);
+	}
+
+	brandName() {
+		return within(screen.getByRole("dialog")).getByText("Sorz");
+	}
+
 	dialog() {
 		return screen.queryByRole("dialog");
 	}
 
 	addressField() {
-		return screen.getByRole("textbox", { name: "Address" });
+		return screen.getByRole("textbox", { name: "URL" });
 	}
 
 	nameField() {
-		return screen.getByRole("textbox", { name: "Name" });
+		return screen.getByRole("textbox", { name: "Title" });
 	}
 
 	submitButton() {

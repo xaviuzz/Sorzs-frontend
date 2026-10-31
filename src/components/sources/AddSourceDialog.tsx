@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from "react";
 import { useAddSource, useInspectSource } from "@/api/ApiContext";
+import { Brand } from "@/components/Brand";
 import { messageOf } from "@/components/sources/messageOf";
 import { Button } from "@/components/ui/button";
 import {
@@ -89,21 +90,26 @@ export function AddSourceDialog({
 			<DialogTrigger asChild>
 				<Button aria-label="Add Sorz" size="icon-sm">
 					<span aria-hidden="true">
-						<span className="font-script text-xl">S</span>+
+						<span className="text-base">
+							<Brand>S</Brand>
+						</span>
+						+
 					</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<form onSubmit={submit} className="flex flex-col gap-4">
 					<DialogHeader>
-						<DialogTitle>Add Sorz</DialogTitle>
-						<DialogDescription>
-							Register a web address you trust and give it a name.
+						<DialogTitle>
+							Add <Brand>Sorz</Brand>
+						</DialogTitle>
+						<DialogDescription className="sr-only">
+							Register the URL of a site you trust and give it a title.
 						</DialogDescription>
 					</DialogHeader>
 					<FieldGroup>
 						<Field>
-							<FieldLabel htmlFor="source-address">Address</FieldLabel>
+							<FieldLabel htmlFor="source-address">URL</FieldLabel>
 							<Input
 								id="source-address"
 								value={address}
@@ -112,7 +118,7 @@ export function AddSourceDialog({
 							/>
 						</Field>
 						<Field>
-							<FieldLabel htmlFor="source-name">Name</FieldLabel>
+							<FieldLabel htmlFor="source-name">Title</FieldLabel>
 							<Input id="source-name" value={name} onChange={typeName} />
 						</Field>
 					</FieldGroup>
