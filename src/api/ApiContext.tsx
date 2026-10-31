@@ -29,3 +29,19 @@ export function useHealthCheck() {
 	}
 	return api.healthCheck;
 }
+
+export function useListSources() {
+	const api = useContext(ApiContext);
+	if (api === null) {
+		throw new Error("useListSources needs an ApiProvider");
+	}
+	return api.listSources;
+}
+
+export function useAddSource() {
+	const api = useContext(ApiContext);
+	if (api === null) {
+		throw new Error("useAddSource needs an ApiProvider");
+	}
+	return api.addSource;
+}
