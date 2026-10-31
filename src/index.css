@@ -1,0 +1,87 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+	--radius: 0.5rem;
+	--background: #fffcf0;
+	--foreground: #100f0f;
+	--card: #f2f0e5;
+	--card-foreground: #100f0f;
+	--popover: #fffcf0;
+	--popover-foreground: #100f0f;
+	--primary: #205ea6;
+	--primary-foreground: #fffcf0;
+	--secondary: #e6e4d9;
+	--secondary-foreground: #282726;
+	--muted: #f2f0e5;
+	--muted-foreground: #6f6e69;
+	--accent: #e6e4d9;
+	--accent-foreground: #282726;
+	--destructive: #af3029;
+	--border: #cecdc3;
+	--input: #cecdc3;
+	--ring: #205ea6;
+	--ok: #66800b;
+	--error: #af3029;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--background: #100f0f;
+		--foreground: #cecdc3;
+		--card: #1c1b1a;
+		--card-foreground: #cecdc3;
+		--popover: #1c1b1a;
+		--popover-foreground: #cecdc3;
+		--primary: #4385be;
+		--primary-foreground: #100f0f;
+		--secondary: #282726;
+		--secondary-foreground: #cecdc3;
+		--muted: #1c1b1a;
+		--muted-foreground: #878580;
+		--accent: #343331;
+		--accent-foreground: #cecdc3;
+		--destructive: #d14d41;
+		--border: #343331;
+		--input: #343331;
+		--ring: #4385be;
+		--ok: #879a39;
+		--error: #d14d41;
+	}
+}
+
+@theme inline {
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-ok: var(--ok);
+	--color-error: var(--error);
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}

@@ -1,0 +1,44 @@
+import { beforeEach, describe, expect, test } from "bun:test";
+import { render, screen } from "@testing-library/react";
+import { ApiProvider } from "@/api/ApiContext";
+import { Header } from "@/components/Header";
+
+describe("Header", () => {
+	let sut: SUT;
+
+	beforeEach(() => {
+		sut = new SUT();
+	});
+
+	test("shows the app name with the health mark beside it", () => {
+		sut.show();
+
+		expect(sut.banner()).toContainElement(sut.heading());
+		expect(sut.banner()).toContainElement(sut.mark());
+	});
+});
+
+class SUT {
+	show() {
+		render(
+			<ApiProvider
+				baseUrl="http://localhost"
+				fetch={() => new Promise(() => {})}
+			>
+				<Header />
+			</ApiProvider>,
+		);
+	}
+
+	banner() {
+		return screen.getByRole("banner");
+	}
+
+	heading() {
+		return screen.getByRole("heading", { name: "Sorzs" });
+	}
+
+	mark() {
+		return screen.getByRole("status");
+	}
+}
