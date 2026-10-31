@@ -67,7 +67,11 @@ export function AddSourceDialog({
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger asChild>
-				<Button>Add Sorz</Button>
+				<Button aria-label="Add Sorz" size="icon-sm">
+					<span aria-hidden="true">
+						<span className="font-script text-xl">S</span>+
+					</span>
+				</Button>
 			</DialogTrigger>
 			<DialogContent>
 				<form onSubmit={submit} className="flex flex-col gap-4">
