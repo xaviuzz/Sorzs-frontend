@@ -17,6 +17,7 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { SourceEntry } from "@/domain/SourceEntry";
+import { SuggestedName } from "@/domain/SuggestedName";
 
 export function AddSourceDialog({
 	onAdded,
@@ -71,8 +72,9 @@ export function AddSourceDialog({
 	function suggest(title: string | null) {
 		const isNameFree = name === "" || name === suggestedName;
 		if (title === null || !isNameFree) return;
-		setName(title);
-		setSuggestedName(title);
+		const suggestion = SuggestedName.from(title).text();
+		setName(suggestion);
+		setSuggestedName(suggestion);
 	}
 
 	function typeName(event: FormEvent<HTMLInputElement>) {

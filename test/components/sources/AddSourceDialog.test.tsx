@@ -101,6 +101,24 @@ describe("AddSourceDialog", () => {
 		expect(sut.addressesInspected()).toEqual(["https://example.com"]);
 	});
 
+	test("suggests a long page title shortened to fit the name", async () => {
+		sut.answerInspected({
+			title:
+				"elDiario.es - Noticias de actualidad - Periodismo a pesar de todo",
+			favicon: null,
+		});
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://www.eldiario.es/");
+
+		await waitFor(() =>
+			expect(sut.nameField()).toHaveValue(
+				"elDiario.es - Noticias de actualidad",
+			),
+		);
+	});
+
 	test("keeps a name the user wrote", async () => {
 		sut.answerInspected({ title: "Example Domain", favicon: null });
 		sut.show();
