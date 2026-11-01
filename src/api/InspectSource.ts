@@ -1,10 +1,12 @@
 import type { Client } from "openapi-fetch";
 import { CallRefusedError } from "@/api/CallRefusedError";
 import type { paths } from "@/api/schema";
+import { AddressCandidate } from "@/domain/AddressCandidate";
 
 export type PageInfo = {
 	title: string | null;
 	favicon: string | null;
+	candidates: AddressCandidate[];
 };
 
 export class InspectSource {
@@ -22,6 +24,10 @@ export class InspectSource {
 		if ("code" in body) {
 			throw new CallRefusedError(body);
 		}
-		return body;
+		const candidates: AddressCandidate[] = [];
+		for (const candidate of body.candidates) {
+			candidates.push(new AddressCandidate(candidate));
+		}
+		return { title: body.title, favicon: body.favicon, candidates };
 	}
 }

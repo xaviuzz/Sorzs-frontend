@@ -1,7 +1,8 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import { useAddSource, useInspectSource } from "@/api/ApiContext";
 import type { PageInfo } from "@/api/InspectSource";
 import { Brand } from "@/components/Brand";
+import { CandidateList } from "@/components/sources/CandidateList";
 import { messageOf } from "@/components/sources/messageOf";
 import { SourceFavicon } from "@/components/sources/SourceFavicon";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import type { AddressCandidate } from "@/domain/AddressCandidate";
 import type { SourceEntry } from "@/domain/SourceEntry";
 import { SuggestedName } from "@/domain/SuggestedName";
 
@@ -33,6 +35,7 @@ export function AddSourceDialog({
 	const [inspected, setInspected] = useState<PageInfo | null>(null);
 	const [isSending, setIsSending] = useState(false);
 	const [message, setMessage] = useState("");
+	const currentAddress = useRef("");
 
 	async function submit(event: FormEvent) {
 		event.preventDefault();
@@ -41,7 +44,7 @@ export function AddSourceDialog({
 		try {
 			const entry = await addSource.run(address, name);
 			onAdded(entry);
-			setAddress("");
+			writeAddress("");
 			setName("");
 			setSuggestedName("");
 			setInspected(null);
@@ -53,19 +56,35 @@ export function AddSourceDialog({
 		}
 	}
 
+	function writeAddress(value: string) {
+		currentAddress.current = value;
+		setAddress(value);
+	}
+
 	function typeAddress(event: FormEvent<HTMLInputElement>) {
-		setAddress(event.currentTarget.value);
+		writeAddress(event.currentTarget.value);
 		setInspected(null);
 	}
 
 	async function leaveAddress() {
-		if (address === "") return;
+		const inspectedAddress = address;
+		if (inspectedAddress === "") return;
 		try {
-			const page = await inspectSource.run(address);
+			const page = await inspectSource.run(inspectedAddress);
+			if (currentAddress.current !== inspectedAddress) return;
 			setInspected(page);
 			suggest(page.title);
 		} catch {
 			return;
+		}
+	}
+
+	function choose(candidate: AddressCandidate) {
+		writeAddress(candidate.address);
+		setName(candidate.suggestedName());
+		setSuggestedName(candidate.suggestedName());
+		if (inspected !== null) {
+			setInspected({ ...inspected, favicon: candidate.favicon });
 		}
 	}
 
@@ -85,6 +104,21 @@ export function AddSourceDialog({
 		let shown = null;
 		if (inspected !== null) {
 			shown = <SourceFavicon favicon={inspected.favicon} text={address} />;
+		}
+		return shown;
+	}
+
+	function showCandidates() {
+		let shown = null;
+		if (inspected !== null) {
+			shown = (
+				<CandidateList
+					candidates={inspected.candidates}
+					address={address}
+					name={name}
+					onChoose={choose}
+				/>
+			);
 		}
 		return shown;
 	}
@@ -132,6 +166,7 @@ export function AddSourceDialog({
 								onChange={typeAddress}
 								onBlur={leaveAddress}
 							/>
+							{showCandidates()}
 						</Field>
 						<Field>
 							<FieldLabel htmlFor="source-name">Title</FieldLabel>

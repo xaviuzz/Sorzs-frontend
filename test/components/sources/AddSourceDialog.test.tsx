@@ -258,6 +258,175 @@ describe("AddSourceDialog", () => {
 		expect(sut.addressesInspected()).toEqual([]);
 	});
 
+	test("offers no candidates when the page has only itself", async () => {
+		sut.answerInspected({
+			title: "A",
+			favicon: null,
+			candidates: [{ address: "https://a.com", title: "A", favicon: null }],
+		});
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://a.com");
+
+		await waitFor(() => expect(sut.nameField()).toHaveValue("A"));
+		expect(sut.candidate("A")).not.toBeInTheDocument();
+	});
+
+	test("offers every candidate by title with two or more", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://a.com/docs/guide");
+
+		expect(await sut.candidateOnceInspected("Home")).toBeInTheDocument();
+		expect(sut.candidate("Docs")).toBeInTheDocument();
+		expect(sut.candidate("Guide")).toBeInTheDocument();
+	});
+
+	test("shows a long candidate title shortened as a name would be", async () => {
+		sut.answerInspected({
+			title: "Home",
+			favicon: null,
+			candidates: [
+				{ address: "https://a.com", title: "Home", favicon: null },
+				{
+					address: "https://a.com/long",
+					title:
+						"elDiario.es - Noticias de actualidad - Periodismo a pesar de todo",
+					favicon: null,
+				},
+			],
+		});
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://a.com/long");
+
+		expect(
+			await sut.candidateOnceInspected("elDiario.es - Noticias de actualidad"),
+		).toBeInTheDocument();
+	});
+
+	test("shows the address of a candidate on hover", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://a.com/docs/guide");
+
+		expect(await sut.candidateOnceInspected("Docs")).toHaveAttribute(
+			"title",
+			"https://a.com/docs",
+		);
+	});
+
+	test("shows every candidate even when titles repeat", async () => {
+		sut.answerInspected({
+			title: "Same",
+			favicon: null,
+			candidates: [
+				{ address: "https://a.com", title: "Same", favicon: null },
+				{ address: "https://a.com/docs", title: "Same", favicon: null },
+			],
+		});
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://a.com/docs");
+
+		expect(await sut.candidatesOnceInspected("Same")).toHaveLength(2);
+	});
+
+	test("marks the pasted address as the chosen candidate", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+
+		await sut.writeAddress("https://a.com/docs/guide");
+
+		expect(await sut.candidateOnceInspected("Guide")).toHaveAttribute(
+			"aria-pressed",
+			"true",
+		);
+		expect(sut.candidate("Home")).toHaveAttribute("aria-pressed", "false");
+	});
+
+	test("choosing a candidate overwrites the address and the name", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://a.com/docs/guide");
+		await userEvent.type(sut.nameField(), "!");
+
+		await sut.choose("Home");
+
+		expect(sut.addressField()).toHaveValue("https://a.com");
+		expect(sut.nameField()).toHaveValue("Home");
+	});
+
+	test("choosing a candidate marks it and keeps the list", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://a.com/docs/guide");
+
+		await sut.choose("Home");
+
+		expect(sut.candidate("Home")).toHaveAttribute("aria-pressed", "true");
+		expect(sut.candidate("Guide")).toHaveAttribute("aria-pressed", "false");
+	});
+
+	test("choosing a candidate moves the favicon beside the name", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://a.com/docs/guide");
+
+		await sut.choose("Home");
+
+		expect(sut.favicon()).toHaveAttribute("src", "https://a.com/home.png");
+	});
+
+	test("the chosen candidate is marked no more once the name is edited", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://a.com/docs/guide");
+		await sut.choose("Home");
+
+		await userEvent.type(sut.nameField(), "!");
+
+		expect(sut.candidate("Home")).toHaveAttribute("aria-pressed", "false");
+	});
+
+	test("hides the candidates while a new address is typed", async () => {
+		sut.answerInspected(deepSite());
+		sut.show();
+		await sut.open();
+		await sut.writeAddress("https://a.com/docs/guide");
+		await sut.candidateOnceInspected("Home");
+
+		await userEvent.type(sut.addressField(), "/more");
+
+		expect(sut.candidate("Home")).not.toBeInTheDocument();
+	});
+
+	test("drops a reply for an address the user has since changed", async () => {
+		sut.show();
+		await sut.open();
+		const release = sut.holdInspection(deepSite());
+		await sut.writeAddress("https://a.com/docs/guide");
+		await userEvent.type(sut.addressField(), "/more");
+
+		await release();
+
+		expect(sut.candidate("Home")).not.toBeInTheDocument();
+		expect(sut.nameField()).toHaveValue("");
+		expect(sut.favicon()).not.toBeInTheDocument();
+	});
+
 	test("posts an empty name when none was given", async () => {
 		sut.show();
 		await sut.open();
@@ -358,8 +527,24 @@ class SUT {
 		};
 	}
 
-	answerInspected(info: { title: string | null; favicon: string | null }) {
-		this.inspectAnswer = async () => reply("ok", info);
+	answerInspected(info: InspectedInfo) {
+		this.inspectAnswer = async () => reply("ok", { candidates: [], ...info });
+	}
+
+	holdInspection(info: InspectedInfo) {
+		let release = () => {};
+		const held = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		this.inspectAnswer = async () => {
+			await held;
+			return reply("ok", { candidates: [], ...info });
+		};
+		return async () => {
+			release();
+			await waitFor(() => expect(this.inspected.length).toBeGreaterThan(0));
+			await new Promise((resolve) => setTimeout(resolve, 20));
+		};
 	}
 
 	refuseInspection(code: string, message: string) {
@@ -443,6 +628,22 @@ class SUT {
 		return screen.getByRole("textbox", { name: "Title" });
 	}
 
+	candidate(title: string) {
+		return screen.queryByRole("button", { name: title });
+	}
+
+	candidateOnceInspected(title: string) {
+		return screen.findByRole("button", { name: title });
+	}
+
+	candidatesOnceInspected(title: string) {
+		return screen.findAllByRole("button", { name: title });
+	}
+
+	async choose(title: string) {
+		await userEvent.click(screen.getByRole("button", { name: title }));
+	}
+
 	favicon() {
 		return screen.queryByRole("img", { name: /^Favicon of / });
 	}
@@ -484,6 +685,32 @@ class SUT {
 	entries() {
 		return this.added;
 	}
+}
+
+type InspectedInfo = {
+	title: string | null;
+	favicon: string | null;
+	candidates?: { address: string; title: string; favicon: string | null }[];
+};
+
+function deepSite(): InspectedInfo {
+	return {
+		title: "Guide",
+		favicon: "https://a.com/guide.png",
+		candidates: [
+			{
+				address: "https://a.com",
+				title: "Home",
+				favicon: "https://a.com/home.png",
+			},
+			{ address: "https://a.com/docs", title: "Docs", favicon: null },
+			{
+				address: "https://a.com/docs/guide",
+				title: "Guide",
+				favicon: "https://a.com/guide.png",
+			},
+		],
+	};
 }
 
 function reply(status: string, body: unknown) {

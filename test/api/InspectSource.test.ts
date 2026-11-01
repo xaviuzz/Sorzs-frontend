@@ -3,6 +3,7 @@ import createClient from "openapi-fetch";
 import { CallRefusedError } from "@/api/CallRefusedError";
 import { InspectSource } from "@/api/InspectSource";
 import type { paths } from "@/api/schema";
+import { AddressCandidate } from "@/domain/AddressCandidate";
 
 describe("InspectSource", () => {
 	let sut: SUT;
@@ -12,22 +13,61 @@ describe("InspectSource", () => {
 	});
 
 	test("answers the title and the favicon the backend found", async () => {
-		sut.answerPage({ title: "Example", favicon: "https://example.com/i.png" });
+		sut.answerPage({
+			title: "Example",
+			favicon: "https://example.com/i.png",
+			candidates: [],
+		});
 
 		await sut.inspect("https://example.com");
 
 		expect(sut.inspected()).toEqual({
 			title: "Example",
 			favicon: "https://example.com/i.png",
+			candidates: [],
 		});
 	});
 
 	test("answers missing parts as nothing", async () => {
-		sut.answerPage({ title: null, favicon: null });
+		sut.answerPage({ title: null, favicon: null, candidates: [] });
 
 		await sut.inspect("https://example.com");
 
-		expect(sut.inspected()).toEqual({ title: null, favicon: null });
+		expect(sut.inspected()).toEqual({
+			title: null,
+			favicon: null,
+			candidates: [],
+		});
+	});
+
+	test("answers the candidates as address candidates, in the order sent", async () => {
+		sut.answerPage({
+			title: "Deep",
+			favicon: null,
+			candidates: [
+				{
+					address: "https://a.com",
+					title: "A",
+					favicon: "https://a.com/i.png",
+				},
+				{ address: "https://a.com/docs", title: "Docs", favicon: null },
+			],
+		});
+
+		await sut.inspect("https://a.com/docs");
+
+		expect(sut.inspected()?.candidates).toEqual([
+			new AddressCandidate({
+				address: "https://a.com",
+				title: "A",
+				favicon: "https://a.com/i.png",
+			}),
+			new AddressCandidate({
+				address: "https://a.com/docs",
+				title: "Docs",
+				favicon: null,
+			}),
+		]);
 	});
 
 	test("posts the address to /sources.inspect with a fresh callId", async () => {
@@ -72,7 +112,11 @@ describe("InspectSource", () => {
 	});
 });
 
-type Page = { title: string | null; favicon: string | null };
+type Page = {
+	title: string | null;
+	favicon: string | null;
+	candidates: { address: string; title: string; favicon: string | null }[];
+};
 
 type Posted = {
 	path: string;
@@ -83,7 +127,7 @@ type Posted = {
 
 class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
-		reply(callId, "ok", { title: null, favicon: null });
+		reply(callId, "ok", { title: null, favicon: null, candidates: [] });
 	private received: Posted[] = [];
 	private page: Page | undefined;
 	private thrown: unknown;
