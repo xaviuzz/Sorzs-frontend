@@ -46,6 +46,14 @@ export function useAddSource() {
 	return api.addSource;
 }
 
+export function useSearchSources() {
+	const api = useContext(ApiContext);
+	if (api === null) {
+		throw new Error("useSearchSources needs an ApiProvider");
+	}
+	return api.searchSources;
+}
+
 export function useInspectSource() {
 	const api = useContext(ApiContext);
 	if (api === null) {

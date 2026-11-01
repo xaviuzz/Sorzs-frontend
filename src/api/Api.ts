@@ -3,6 +3,7 @@ import { AddSource } from "@/api/AddSource";
 import { HealthCheck } from "@/api/HealthCheck";
 import { InspectSource } from "@/api/InspectSource";
 import { ListSources } from "@/api/ListSources";
+import { SearchSources } from "@/api/SearchSources";
 import type { paths } from "@/api/schema";
 
 export class Api {
@@ -10,11 +11,13 @@ export class Api {
 	readonly addSource: AddSource;
 	readonly inspectSource: InspectSource;
 	readonly listSources: ListSources;
+	readonly searchSources: SearchSources;
 
 	constructor(client: Client<paths>) {
 		this.healthCheck = new HealthCheck(client);
 		this.addSource = new AddSource(client);
 		this.inspectSource = new InspectSource(client);
 		this.listSources = new ListSources(client);
+		this.searchSources = new SearchSources(client);
 	}
 }
