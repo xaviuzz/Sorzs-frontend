@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sources.search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Searches a term across the user's sources */
+        post: operations["sourcesSearch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -144,6 +161,23 @@ export interface components {
             header: components["schemas"]["ReplyHeader"];
             body: {
                 sources: components["schemas"]["SourceEntry"][];
+            } | components["schemas"]["ErrorBody"];
+        };
+        SourcesSearchCall: {
+            header: components["schemas"]["CallHeader"];
+            body: {
+                query: string;
+            };
+        };
+        SourcesSearchReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: {
+                results: {
+                    title: string;
+                    url: string;
+                    description: string;
+                    source: string;
+                }[];
             } | components["schemas"]["ErrorBody"];
         };
         TransportError: components["schemas"]["ErrorBody"];
@@ -275,6 +309,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SourcesListReply"];
+                };
+            };
+            /** @description unreadable JSON or missing callId */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TransportError"];
+                };
+            };
+        };
+    };
+    sourcesSearch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourcesSearchCall"];
+            };
+        };
+        responses: {
+            /** @description one result per source in list order, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SourcesSearchReply"];
                 };
             };
             /** @description unreadable JSON or missing callId */

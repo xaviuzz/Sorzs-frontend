@@ -14,6 +14,7 @@ Bun.serve({
 		"/sources.add": proxyTo("/sources.add"),
 		"/sources.inspect": proxyTo("/sources.inspect"),
 		"/sources.list": proxyTo("/sources.list"),
+		"/sources.search": proxyTo("/sources.search"),
 	},
 	development: true,
 });
