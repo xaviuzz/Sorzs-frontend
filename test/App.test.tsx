@@ -16,6 +16,12 @@ describe("App", () => {
 		expect(sut.banner()).toBeInTheDocument();
 	});
 
+	test("shows the main area for the results", () => {
+		sut.show();
+
+		expect(sut.main()).toBeInTheDocument();
+	});
+
 	test("shows the sources side bar", () => {
 		sut.show();
 
@@ -37,6 +43,10 @@ class SUT {
 
 	sideBar() {
 		return screen.getByRole("complementary", { name: "Sources" });
+	}
+
+	main() {
+		return screen.getByRole("main");
 	}
 
 	banner() {

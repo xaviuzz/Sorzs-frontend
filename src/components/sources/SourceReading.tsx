@@ -9,11 +9,21 @@ const HIDDEN_WHEN_COLLAPSED = "group-data-[collapsible=icon]:hidden";
 export interface SourceReading {
 	view(): ReactNode;
 	append(entry: SourceEntry): SourceReading;
+	hasSources(): boolean;
+	faviconOf(shownText: string): string | null;
 }
 
 export class LoadingSources implements SourceReading {
 	append(): SourceReading {
 		return this;
+	}
+
+	hasSources(): boolean {
+		return false;
+	}
+
+	faviconOf(): string | null {
+		return null;
 	}
 
 	view(): ReactNode {
@@ -30,6 +40,19 @@ export class LoadedSources implements SourceReading {
 
 	append(entry: SourceEntry): SourceReading {
 		return new LoadedSources([...this.entries, entry]);
+	}
+
+	hasSources(): boolean {
+		return this.entries.length > 0;
+	}
+
+	faviconOf(shownText: string): string | null {
+		const entry = this.entries.find((each) => each.shownText() === shownText);
+		let favicon: string | null = null;
+		if (entry !== undefined) {
+			favicon = entry.favicon;
+		}
+		return favicon;
 	}
 
 	view(): ReactNode {
@@ -61,6 +84,14 @@ export class FailedSources implements SourceReading {
 
 	append(): SourceReading {
 		return this;
+	}
+
+	hasSources(): boolean {
+		return false;
+	}
+
+	faviconOf(): string | null {
+		return null;
 	}
 
 	view(): ReactNode {
