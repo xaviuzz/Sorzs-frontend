@@ -129,6 +129,11 @@ export interface components {
             body: {
                 title: string | null;
                 favicon: string | null;
+                candidates: {
+                    address: string;
+                    title: string;
+                    favicon: string | null;
+                }[];
             } | components["schemas"]["ErrorBody"];
         };
         SourcesListCall: {
