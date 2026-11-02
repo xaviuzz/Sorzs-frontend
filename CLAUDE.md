@@ -42,7 +42,9 @@ After `shadcn add`, search `src/components/ui/` for `from "cn"`: the generator w
 
 A component does one thing: when its markup holds a second one (a trigger and its dialog, a row and its card), give that part its own component beside it in the same folder. The parent keeps the state and composes the parts, each part gets its content through props, and a rule-carrying callback is a named function in the parent. Tests stay on the parent until a part earns its own behavior.
 
-Type a form's `onSubmit` handler with `SubmitEvent`. `FormEvent` is deprecated in `@types/react` 19, and neither `tsc` nor Biome flags it.
+Biome fails any function in `src/` over 60 lines (`noExcessiveLinesPerFunction`; `test/` is exempt). A component past it gives its markup parts their own components; one whose state and handlers fill the limit moves them to a `use<Name>` hook beside it (`useAddSourceForm`), leaving the component as markup. Never raise `maxLines` to pass.
+
+Type a form's `onSubmit` handler with `SubmitEvent` imported from `react`; the global DOM `SubmitEvent` fails `tsc`. `FormEvent` is deprecated in `@types/react` 19, and neither `tsc` nor Biome flags it.
 
 A step that removes a method lists what else that method did (saving, navigating, notifying) and keeps a test for each effect that must survive.
 
