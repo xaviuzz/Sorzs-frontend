@@ -42,6 +42,8 @@ After `shadcn add`, search `src/components/ui/` for `from "cn"`: the generator w
 
 A component does one thing: when its markup holds a second one (a trigger and its dialog, a row and its card), give that part its own component beside it in the same folder. The parent keeps the state and composes the parts, each part gets its content through props, and a rule-carrying callback is a named function in the parent. Tests stay on the parent until a part earns its own behavior.
 
+Type a form's `onSubmit` handler with `SubmitEvent`. `FormEvent` is deprecated in `@types/react` 19, and neither `tsc` nor Biome flags it.
+
 A step that removes a method lists what else that method did (saving, navigating, notifying) and keeps a test for each effect that must survive.
 
 A value a component hard-codes in a Tailwind arbitrary class (`text-[1.25em]`) becomes a token in `@theme` of `src/index.css` (`--text-wordmark`, used as `text-wordmark`), so changing it is one edit. Name the token for what it is. Never use `@apply` for a custom class: the component is the unit of reuse.
