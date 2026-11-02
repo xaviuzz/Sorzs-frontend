@@ -5,3 +5,9 @@ declare module "bun:test" {
 	interface AsymmetricMatchers
 		extends TestingLibraryMatchers<unknown, unknown> {}
 }
+
+declare global {
+	interface Window {
+		happyDOM: { setURL(url: string): void };
+	}
+}

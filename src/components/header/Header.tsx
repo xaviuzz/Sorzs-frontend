@@ -1,12 +1,19 @@
 import { Brand } from "@/components/Brand";
+import { BackofficeButton } from "@/components/header/BackofficeButton";
 import { HealthMark } from "@/components/header/HealthMark";
 import { LogoutButton } from "@/components/header/LogoutButton";
 import { SearchBox } from "@/components/search/SearchBox";
+import { useMayEnterBackoffice } from "@/components/session/SessionProvider";
 import { AddSourceDialog } from "@/components/sources/add/AddSourceDialog";
 import { useAppendSource } from "@/components/sources/SourcesProvider";
 
 export function Header() {
 	const appendSource = useAppendSource();
+	const mayEnterBackoffice = useMayEnterBackoffice();
+	let backofficeButton = <></>;
+	if (mayEnterBackoffice) {
+		backofficeButton = <BackofficeButton />;
+	}
 
 	return (
 		<header className="flex items-center gap-2 border-b p-4">
@@ -19,6 +26,7 @@ export function Header() {
 			</div>
 			<div className="flex items-center gap-2">
 				<AddSourceDialog onAdded={appendSource} />
+				{backofficeButton}
 				<LogoutButton />
 			</div>
 		</header>

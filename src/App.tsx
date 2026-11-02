@@ -1,23 +1,34 @@
-import { Header } from "@/components/header/Header";
-import { SearchProvider } from "@/components/search/SearchProvider";
-import { SearchResultList } from "@/components/search/SearchResultList";
-import { SourceSideBar } from "@/components/sources/list/SourceSideBar";
-import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { useEffect } from "react";
+import { BackofficeScreen } from "@/components/backoffice/BackofficeScreen";
+import {
+	usePath,
+	useReplace,
+} from "@/components/navigation/NavigationProvider";
+import { SorzsScreen } from "@/components/SorzsScreen";
+import { useMayEnterBackoffice } from "@/components/session/SessionProvider";
+import type { BackofficeSection } from "@/domain/BackofficeSection";
+import { placeAt } from "@/domain/placeAt";
+
+function showSorzs() {
+	return <SorzsScreen />;
+}
+
+function showBackoffice(section: BackofficeSection) {
+	return <BackofficeScreen section={section} />;
+}
 
 export function App() {
-	return (
-		<SourcesProvider>
-			<SearchProvider>
-				<div className="flex min-h-screen flex-col">
-					<Header />
-					<div className="flex flex-1">
-						<SourceSideBar />
-						<main className="flex-1 p-4">
-							<SearchResultList />
-						</main>
-					</div>
-				</div>
-			</SearchProvider>
-		</SourcesProvider>
-	);
+	const path = usePath();
+	const replace = useReplace();
+	const mayEnterBackoffice = useMayEnterBackoffice();
+	const place = placeAt(path, mayEnterBackoffice);
+	const placePath = place.path();
+
+	useEffect(() => {
+		if (placePath !== path) {
+			replace(placePath);
+		}
+	}, [path, placePath, replace]);
+
+	return place.choose({ sorzs: showSorzs, backoffice: showBackoffice });
 }

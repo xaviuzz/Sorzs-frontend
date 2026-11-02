@@ -1,0 +1,36 @@
+import type { LucideIcon } from "lucide-react";
+import { HIDDEN_WHEN_COLLAPSED } from "@/components/sources/reading/hiddenWhenCollapsed";
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import type { BackofficeSection } from "@/domain/BackofficeSection";
+
+export function BackofficeMenuItem({
+	section,
+	Icon,
+	isActive,
+	onChoose,
+}: {
+	section: BackofficeSection;
+	Icon: LucideIcon;
+	isActive: boolean;
+	onChoose: () => void;
+}) {
+	const title = section.title();
+	let current: "page" | undefined;
+	if (isActive) {
+		current = "page";
+	}
+
+	return (
+		<SidebarMenuItem>
+			<SidebarMenuButton
+				tooltip={title}
+				isActive={isActive}
+				aria-current={current}
+				onClick={onChoose}
+			>
+				<Icon aria-hidden="true" />
+				<span className={HIDDEN_WHEN_COLLAPSED}>{title}</span>
+			</SidebarMenuButton>
+		</SidebarMenuItem>
+	);
+}
