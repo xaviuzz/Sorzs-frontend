@@ -1,4 +1,4 @@
-import type { ChangeEvent, FormEvent } from "react";
+import type { ChangeEvent, SubmitEvent } from "react";
 import { useSearch } from "@/components/search/SearchProvider";
 import { useSourceReading } from "@/components/sources/SourcesProvider";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ export function SearchBox() {
 		search.write(event.target.value);
 	}
 
-	function searchIt(event: FormEvent) {
+	function searchIt(event: SubmitEvent) {
 		event.preventDefault();
 		if (cannotSearch) return;
 		search.run();
