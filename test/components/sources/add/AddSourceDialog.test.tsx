@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { AddSourceDialog } from "@/components/sources/add/AddSourceDialog";
 import { SourceEntry, type SourceEntryData } from "@/domain/SourceEntry";
+import { openSession } from "../../../support/openSession";
 
 describe("AddSourceDialog", () => {
 	let sut: SUT;
@@ -584,7 +585,11 @@ class SUT {
 			return this.answer();
 		};
 		render(
-			<ApiProvider baseUrl="http://localhost" fetch={fetch}>
+			<ApiProvider
+				session={openSession()}
+				baseUrl="http://localhost"
+				fetch={fetch}
+			>
 				<AddSourceDialog onAdded={(entry) => this.added.push(entry)} />
 			</ApiProvider>,
 		);

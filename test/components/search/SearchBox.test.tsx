@@ -5,6 +5,7 @@ import { ApiProvider } from "@/api/ApiContext";
 import { SearchBox } from "@/components/search/SearchBox";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { openSession } from "../../support/openSession";
 
 describe("SearchBox", () => {
 	let sut: SUT;
@@ -128,7 +129,11 @@ class SUT {
 
 	show() {
 		render(
-			<ApiProvider baseUrl="http://localhost" fetch={this.fetchIt}>
+			<ApiProvider
+				session={openSession()}
+				baseUrl="http://localhost"
+				fetch={this.fetchIt}
+			>
 				<SourcesProvider>
 					<SearchProvider>
 						<SearchBox />

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { SearchProvider, useSearch } from "@/components/search/SearchProvider";
 import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { openSession } from "../../support/openSession";
 
 describe("SearchProvider", () => {
 	let sut: SUT;
@@ -135,7 +136,11 @@ class SUT {
 
 	show() {
 		render(
-			<ApiProvider baseUrl="http://localhost" fetch={this.fetchIt}>
+			<ApiProvider
+				session={openSession()}
+				baseUrl="http://localhost"
+				fetch={this.fetchIt}
+			>
 				<SourcesProvider>
 					<SearchProvider>
 						<Reader />

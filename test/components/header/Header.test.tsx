@@ -4,6 +4,7 @@ import { ApiProvider } from "@/api/ApiContext";
 import { Header } from "@/components/header/Header";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { openSession } from "../../support/openSession";
 
 describe("Header", () => {
 	let sut: SUT;
@@ -36,6 +37,7 @@ class SUT {
 	show() {
 		render(
 			<ApiProvider
+				session={openSession()}
 				baseUrl="http://localhost"
 				fetch={() => new Promise(() => {})}
 			>

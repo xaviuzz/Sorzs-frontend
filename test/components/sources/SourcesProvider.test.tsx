@@ -9,6 +9,7 @@ import {
 } from "@/components/sources/SourcesProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SourceEntry, type SourceEntryData } from "@/domain/SourceEntry";
+import { openSession } from "../../support/openSession";
 
 describe("SourcesProvider", () => {
 	let sut: SUT;
@@ -115,7 +116,11 @@ class SUT {
 
 	show() {
 		render(
-			<ApiProvider baseUrl="http://localhost" fetch={() => this.answer()}>
+			<ApiProvider
+				session={openSession()}
+				baseUrl="http://localhost"
+				fetch={() => this.answer()}
+			>
 				<SourcesProvider>
 					<Reader />
 					<Appender added={this.added} />

@@ -4,6 +4,7 @@ import { ApiProvider } from "@/api/ApiContext";
 import { SourceSideBar } from "@/components/sources/list/SourceSideBar";
 import { SourcesProvider } from "@/components/sources/SourcesProvider";
 import type { SourceEntryData } from "@/domain/SourceEntry";
+import { openSession } from "../../../support/openSession";
 
 describe("SourceSideBar", () => {
 	let sut: SUT;
@@ -189,7 +190,11 @@ class SUT {
 			return this.answer();
 		};
 		render(
-			<ApiProvider baseUrl="http://localhost" fetch={fetch}>
+			<ApiProvider
+				session={openSession()}
+				baseUrl="http://localhost"
+				fetch={fetch}
+			>
 				<SourcesProvider>
 					<SourceSideBar />
 				</SourcesProvider>

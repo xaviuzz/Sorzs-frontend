@@ -10,6 +10,7 @@ import {
 	useAppendSource,
 } from "@/components/sources/SourcesProvider";
 import { SourceEntry } from "@/domain/SourceEntry";
+import { openSession } from "../../support/openSession";
 
 describe("SearchResultList", () => {
 	let sut: SUT;
@@ -197,7 +198,11 @@ class SUT {
 
 	show() {
 		render(
-			<ApiProvider baseUrl="http://localhost" fetch={this.fetchIt}>
+			<ApiProvider
+				session={openSession()}
+				baseUrl="http://localhost"
+				fetch={this.fetchIt}
+			>
 				<SourcesProvider>
 					<SearchProvider>
 						<SearchBox />
@@ -211,7 +216,11 @@ class SUT {
 
 	showSearchingWithoutBox() {
 		render(
-			<ApiProvider baseUrl="http://localhost" fetch={this.fetchIt}>
+			<ApiProvider
+				session={openSession()}
+				baseUrl="http://localhost"
+				fetch={this.fetchIt}
+			>
 				<SourcesProvider>
 					<SearchProvider>
 						<SearchResultList />
