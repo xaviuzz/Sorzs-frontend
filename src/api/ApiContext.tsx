@@ -22,42 +22,35 @@ export function ApiProvider({
 	return <ApiContext.Provider value={api}>{children}</ApiContext.Provider>;
 }
 
-export function useHealthCheck() {
+function useApi(hookName: string) {
 	const api = useContext(ApiContext);
 	if (api === null) {
-		throw new Error("useHealthCheck needs an ApiProvider");
+		throw new Error(`${hookName} needs an ApiProvider`);
 	}
+	return api;
+}
+
+export function useHealthCheck() {
+	const api = useApi("useHealthCheck");
 	return api.healthCheck;
 }
 
 export function useListSources() {
-	const api = useContext(ApiContext);
-	if (api === null) {
-		throw new Error("useListSources needs an ApiProvider");
-	}
+	const api = useApi("useListSources");
 	return api.listSources;
 }
 
 export function useAddSource() {
-	const api = useContext(ApiContext);
-	if (api === null) {
-		throw new Error("useAddSource needs an ApiProvider");
-	}
+	const api = useApi("useAddSource");
 	return api.addSource;
 }
 
 export function useSearchSources() {
-	const api = useContext(ApiContext);
-	if (api === null) {
-		throw new Error("useSearchSources needs an ApiProvider");
-	}
+	const api = useApi("useSearchSources");
 	return api.searchSources;
 }
 
 export function useInspectSource() {
-	const api = useContext(ApiContext);
-	if (api === null) {
-		throw new Error("useInspectSource needs an ApiProvider");
-	}
+	const api = useApi("useInspectSource");
 	return api.inspectSource;
 }
