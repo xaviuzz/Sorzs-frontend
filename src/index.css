@@ -60,6 +60,7 @@
 
 @theme inline {
 	--font-script: "Rouge Script", cursive;
+	--text-wordmark: 1.25em;
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);

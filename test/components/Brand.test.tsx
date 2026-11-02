@@ -18,7 +18,7 @@ describe("Brand", () => {
 	test("compensates the size and weight the brand font lacks", () => {
 		sut.show("Sorzs");
 
-		expect(sut.name("Sorzs")).toHaveClass("text-[1.25em]", "font-semibold");
+		expect(sut.name("Sorzs")).toHaveClass("text-wordmark", "font-semibold");
 	});
 });
 
