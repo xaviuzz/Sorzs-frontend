@@ -44,6 +44,8 @@ A component does one thing: when its markup holds a second one (a trigger and it
 
 A step that removes a method lists what else that method did (saving, navigating, notifying) and keeps a test for each effect that must survive.
 
+A value a component hard-codes in a Tailwind arbitrary class (`text-[1.25em]`) becomes a token in `@theme` of `src/index.css` (`--text-wordmark`, used as `text-wordmark`), so changing it is one edit. Name the token for what it is. Never use `@apply` for a custom class: the component is the unit of reuse.
+
 ## Skills
 
 Before writing or changing a component, read `.claude/skills/shadcn/SKILL.md` and `.claude/skills/vercel-react-best-practices/SKILL.md`; from a session started outside `frontend/` the Skill tool cannot load them. Check `src/components/ui/` and run `bunx --bun shadcn@latest add <component>` before styling markup by hand.
