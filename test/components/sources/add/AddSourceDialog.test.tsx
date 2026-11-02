@@ -427,6 +427,18 @@ describe("AddSourceDialog", () => {
 		expect(sut.favicon()).not.toBeInTheDocument();
 	});
 
+	test("keeps a name written while the address is still being inspected", async () => {
+		sut.show();
+		await sut.open();
+		const release = sut.holdInspection({ title: null, favicon: null });
+		await sut.writeAddress("https://example.com");
+		await userEvent.type(sut.nameField(), "Mine");
+
+		await release();
+
+		expect(sut.nameField()).toHaveValue("Mine");
+	});
+
 	test("posts an empty name when none was given", async () => {
 		sut.show();
 		await sut.open();

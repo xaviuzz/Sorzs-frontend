@@ -47,7 +47,7 @@ export function useAddSourceForm(onAdded: (entry: SourceEntry) => void) {
 			const page = await inspectSource.run(inspectedAddress);
 			if (currentAddress.current !== inspectedAddress) return;
 			setInspected(page);
-			setDraft(draft.suggest(page.title));
+			setDraft((current) => current.suggest(page.title));
 		} catch {
 			return;
 		}
