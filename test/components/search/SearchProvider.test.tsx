@@ -168,7 +168,7 @@ class SUT {
 	async answer(query: string, sources: string[]) {
 		const results = sources.map((source) => ({
 			title: "Search it on Google",
-			url: `https://www.google.com/search?q=${query}`,
+			url: `https://www.google.com/search?q=${query} site:${source}`,
 			description: `Google search for «${query}»`,
 			source,
 		}));
@@ -223,9 +223,8 @@ class SUT {
 	private fetchIt = (request: Request) => {
 		return new Promise<Response>((resolve, reject) => {
 			request.json().then((call) => {
-				if (call.body === undefined) {
-					resolve(ok({ sources: [] }));
-				} else {
+				const isSearch = call.body !== undefined;
+				if (isSearch) {
 					this.pending.push({ query: call.body.query, resolve, reject });
 				}
 			});
