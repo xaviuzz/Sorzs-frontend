@@ -34,6 +34,8 @@ Visibility driven by CSS variants (collapsed sidebar, breakpoints) cannot be ass
 
 A test that asserts before a component's mount fetch settles leaves a pending update and an `act` warning. Either await the settled state, or give the test a `fetch` that never answers (`new Promise(() => {})`).
 
+A test that reads or changes the address starts from `navigationAt(path)` in `test/support/openSession.ts`: happy-dom begins at `about:blank`, where `location.pathname` is `blank`. A test that subscribes to `Navigation` unsubscribes in `afterEach`; `window` is shared by every test in the file.
+
 After `shadcn add`, search `src/components/ui/` for `from "cn"`: the generator writes that import and adds a `cn` dependency. Point the import at `@/lib/utils`, drop `cn` from `package.json` and run `bun install` so `bun.lock` drops it too.
 
 `shadcn add sidebar` writes `--sidebar-*` colors in `hsl`, a `.dark` block and `@custom-variant dark` into `src/index.css`. Point each `--sidebar-*` at its Flexoki token (`--sidebar: var(--card)`) and delete the `.dark` block and the variant: the theme follows `prefers-color-scheme`, so they never apply.
