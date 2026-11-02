@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen } from "@testing-library/react";
 import { App } from "@/App";
 import { ApiProvider } from "@/api/ApiContext";
+import { SessionProvider } from "@/components/session/SessionProvider";
 import { openSession } from "./support/openSession";
 
 describe("App", () => {
@@ -32,13 +33,16 @@ describe("App", () => {
 
 class SUT {
 	show() {
+		const session = openSession();
 		render(
 			<ApiProvider
-				session={openSession()}
+				session={session}
 				baseUrl="http://localhost"
 				fetch={() => new Promise(() => {})}
 			>
-				<App />
+				<SessionProvider session={session}>
+					<App />
+				</SessionProvider>
 			</ApiProvider>,
 		);
 	}

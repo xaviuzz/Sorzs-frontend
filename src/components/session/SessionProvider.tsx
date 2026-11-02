@@ -38,3 +38,13 @@ export function useEnterSession() {
 		session.enter(token);
 	};
 }
+
+export function useLeaveSession() {
+	const session = useContext(SessionContext);
+	if (session === null) {
+		throw new Error("useLeaveSession needs a SessionProvider");
+	}
+	return function leave() {
+		session.leave();
+	};
+}

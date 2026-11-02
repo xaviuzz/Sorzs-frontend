@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { ApiProvider } from "@/api/ApiContext";
 import { Header } from "@/components/header/Header";
 import { SearchProvider } from "@/components/search/SearchProvider";
+import { SessionProvider } from "@/components/session/SessionProvider";
 import { SourcesProvider } from "@/components/sources/SourcesProvider";
 import { openSession } from "../../support/openSession";
 
@@ -31,21 +32,33 @@ describe("Header", () => {
 
 		expect(sut.banner()).toContainElement(sut.addButton());
 	});
+
+	test("offers the Log out button after the Add Sorz button", () => {
+		sut.show();
+
+		expect(sut.banner()).toContainElement(sut.logoutButton());
+		expect(sut.addButton().compareDocumentPosition(sut.logoutButton())).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING,
+		);
+	});
 });
 
 class SUT {
 	show() {
+		const session = openSession();
 		render(
 			<ApiProvider
-				session={openSession()}
+				session={session}
 				baseUrl="http://localhost"
 				fetch={() => new Promise(() => {})}
 			>
-				<SourcesProvider>
-					<SearchProvider>
-						<Header />
-					</SearchProvider>
-				</SourcesProvider>
+				<SessionProvider session={session}>
+					<SourcesProvider>
+						<SearchProvider>
+							<Header />
+						</SearchProvider>
+					</SourcesProvider>
+				</SessionProvider>
 			</ApiProvider>,
 		);
 	}
@@ -64,6 +77,10 @@ class SUT {
 
 	addButton() {
 		return screen.getByRole("button", { name: "Add Sorz" });
+	}
+
+	logoutButton() {
+		return screen.getByRole("button", { name: "Log out" });
 	}
 
 	mark() {

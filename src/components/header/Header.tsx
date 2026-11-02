@@ -1,5 +1,6 @@
 import { Brand } from "@/components/Brand";
 import { HealthMark } from "@/components/header/HealthMark";
+import { LogoutButton } from "@/components/header/LogoutButton";
 import { SearchBox } from "@/components/search/SearchBox";
 import { AddSourceDialog } from "@/components/sources/add/AddSourceDialog";
 import { useAppendSource } from "@/components/sources/SourcesProvider";
@@ -16,8 +17,9 @@ export function Header() {
 			<div className="mx-auto w-full max-w-xl">
 				<SearchBox />
 			</div>
-			<div>
+			<div className="flex items-center gap-2">
 				<AddSourceDialog onAdded={appendSource} />
+				<LogoutButton />
 			</div>
 		</header>
 	);
