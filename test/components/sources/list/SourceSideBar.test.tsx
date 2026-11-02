@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen, waitFor } from "@testing-library/react";
 import { ApiProvider } from "@/api/ApiContext";
-import { SourceSideBar } from "@/components/sources/SourceSideBar";
+import { SourceSideBar } from "@/components/sources/list/SourceSideBar";
 import { SourcesProvider } from "@/components/sources/SourcesProvider";
 import type { SourceEntryData } from "@/domain/SourceEntry";
 

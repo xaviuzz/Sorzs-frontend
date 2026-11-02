@@ -2,10 +2,10 @@ import { type FormEvent, useRef, useState } from "react";
 import { useAddSource, useInspectSource } from "@/api/ApiContext";
 import type { PageInfo } from "@/api/sources/InspectSource";
 import { Brand } from "@/components/Brand";
-import { AddSourceMessage } from "@/components/sources/AddSourceMessage";
-import { AddSourceTrigger } from "@/components/sources/AddSourceTrigger";
-import { CandidateList } from "@/components/sources/CandidateList";
-import { InspectedFavicon } from "@/components/sources/InspectedFavicon";
+import { AddSourceMessage } from "@/components/sources/add/AddSourceMessage";
+import { AddSourceTrigger } from "@/components/sources/add/AddSourceTrigger";
+import { CandidateList } from "@/components/sources/add/CandidateList";
+import { InspectedFavicon } from "@/components/sources/add/InspectedFavicon";
 import { messageOf } from "@/components/sources/messageOf";
 import { Button } from "@/components/ui/button";
 import {

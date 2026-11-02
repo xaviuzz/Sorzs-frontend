@@ -1,7 +1,7 @@
 import { Brand } from "@/components/Brand";
 import { HealthMark } from "@/components/header/HealthMark";
 import { SearchBox } from "@/components/search/SearchBox";
-import { AddSourceDialog } from "@/components/sources/AddSourceDialog";
+import { AddSourceDialog } from "@/components/sources/add/AddSourceDialog";
 import { useAppendSource } from "@/components/sources/SourcesProvider";
 
 export function Header() {

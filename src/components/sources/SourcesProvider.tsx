@@ -12,7 +12,7 @@ import {
 	LoadedSources,
 	LoadingSources,
 	type SourceReading,
-} from "@/components/sources/SourceReading";
+} from "@/components/sources/list/SourceReading";
 import type { SourceEntry } from "@/domain/SourceEntry";
 
 interface Sources {

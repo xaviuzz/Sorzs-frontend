@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import { SourceMenuItem } from "@/components/sources/list/SourceMenuItem";
 import { messageOf } from "@/components/sources/messageOf";
-import { SourceMenuItem } from "@/components/sources/SourceMenuItem";
 import { SidebarMenu } from "@/components/ui/sidebar";
 import type { SourceEntry } from "@/domain/SourceEntry";
 

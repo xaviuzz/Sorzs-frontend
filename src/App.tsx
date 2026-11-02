@@ -1,7 +1,7 @@
 import { Header } from "@/components/header/Header";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { SearchResultList } from "@/components/search/SearchResultList";
-import { SourceSideBar } from "@/components/sources/SourceSideBar";
+import { SourceSideBar } from "@/components/sources/list/SourceSideBar";
 import { SourcesProvider } from "@/components/sources/SourcesProvider";
 
 export function App() {
