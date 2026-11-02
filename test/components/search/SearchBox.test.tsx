@@ -33,6 +33,26 @@ describe("SearchBox", () => {
 		expect(sut.searchButton()).toBeDisabled();
 	});
 
+	test("cannot search while the sources are loading", async () => {
+		sut.neverListSources();
+		sut.show();
+		await sut.sourcesListed();
+
+		await sut.write("bun");
+
+		expect(sut.searchButton()).toBeDisabled();
+	});
+
+	test("cannot search when the sources failed to load", async () => {
+		sut.refuseSourceList();
+		sut.show();
+		await sut.sourcesListed();
+
+		await sut.write("bun");
+
+		expect(sut.searchButton()).toBeDisabled();
+	});
+
 	test("can search with a query and sources", async () => {
 		sut.hasSources(["Alpha"]);
 		sut.show();
@@ -90,9 +110,20 @@ describe("SearchBox", () => {
 class SUT {
 	private names: string[] = [];
 	private sent: string[] = [];
+	private sourceListAnswer: () => Promise<Response> = async () =>
+		reply({ sources: this.names.map(entry) });
 
 	hasSources(names: string[]) {
 		this.names = names;
+	}
+
+	neverListSources() {
+		this.sourceListAnswer = () => new Promise(() => {});
+	}
+
+	refuseSourceList() {
+		this.sourceListAnswer = async () =>
+			reply({ code: "INTERNAL_ERROR", message: "sources are down" }, "error");
 	}
 
 	show() {
@@ -151,14 +182,14 @@ class SUT {
 	private fetchIt = async (request: Request) => {
 		const path = new URL(request.url).pathname;
 		const call = await request.json();
-		let body: unknown = { results: [] };
+		let response: Promise<Response> = Promise.resolve(reply({ results: [] }));
 		if (path === "/sources.list") {
 			this.listed = true;
-			body = { sources: this.names.map(entry) };
+			response = this.sourceListAnswer();
 		} else {
 			this.sent.push(call.body.query);
 		}
-		return reply(body);
+		return response;
 	};
 }
 
@@ -172,8 +203,8 @@ function entry(name: string) {
 	};
 }
 
-function reply(body: unknown) {
-	const message = { header: { callId: "c", status: "ok" }, body };
+function reply(body: unknown, status = "ok") {
+	const message = { header: { callId: "c", status }, body };
 	return new Response(JSON.stringify(message), {
 		headers: { "content-type": "application/json" },
 	});

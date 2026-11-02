@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { SearchBox } from "@/components/search/SearchBox";
-import { SearchProvider } from "@/components/search/SearchProvider";
+import { SearchProvider, useSearch } from "@/components/search/SearchProvider";
 import { SearchResultList } from "@/components/search/SearchResultList";
 import {
 	SourcesProvider,
@@ -66,11 +66,11 @@ describe("SearchResultList", () => {
 		await sut.search("bun");
 
 		await sut.linksOnceShown(2);
-		expect(screen.getByAltText("Favicon of Alpha")).toHaveAttribute(
+		expect(sut.faviconOf("Alpha")).toHaveAttribute(
 			"src",
 			"https://alpha.com/i.png",
 		);
-		expect(screen.getByRole("img", { name: "No favicon" })).toBeInTheDocument();
+		expect(sut.missingFavicon()).toBeInTheDocument();
 	});
 
 	test("shows that it is searching until the answer arrives", async () => {
@@ -81,7 +81,7 @@ describe("SearchResultList", () => {
 
 		await sut.search("bun");
 
-		expect(await screen.findByRole("status")).toHaveTextContent("Searching");
+		expect(await sut.searchingNotice()).toHaveTextContent("Searching");
 	});
 
 	test("shows why the search failed", async () => {
@@ -92,9 +92,31 @@ describe("SearchResultList", () => {
 
 		await sut.search("bun");
 
-		expect(await screen.findByRole("alert")).toHaveTextContent(
-			"query is too long",
-		);
+		expect(await sut.failureNotice()).toHaveTextContent("query is too long");
+	});
+
+	test("shows a result without favicon while the sources are loading", async () => {
+		sut.hasSources(["Alpha"]);
+		sut.neverListSources();
+		sut.showSearchingWithoutBox();
+		await sut.sourcesListed();
+
+		await sut.forceSearch();
+
+		await sut.linksOnceShown(1);
+		expect(sut.missingFavicon()).toBeInTheDocument();
+	});
+
+	test("shows a result without favicon when the sources failed to load", async () => {
+		sut.hasSources(["Alpha"]);
+		sut.refuseSourceList();
+		sut.showSearchingWithoutBox();
+		await sut.sourcesListed();
+
+		await sut.forceSearch();
+
+		await sut.linksOnceShown(1);
+		expect(sut.missingFavicon()).toBeInTheDocument();
 	});
 
 	test("keeps the results when a source is added afterwards", async () => {
@@ -122,11 +144,29 @@ function Adder({ entry }: { entry: SourceEntry }) {
 	);
 }
 
+function Forcer() {
+	const search = useSearch();
+	function writeIt() {
+		search.write("bun");
+	}
+	return (
+		<>
+			<button type="button" onClick={writeIt}>
+				Write
+			</button>
+			<button type="button" onClick={search.run}>
+				Run
+			</button>
+		</>
+	);
+}
+
 class SUT {
 	private names: string[] = [];
 	private favicons = new Map<string, string>();
 	private searchAnswer: () => Promise<Response> = async () => this.results();
 	private listed = false;
+	private sourceListAnswer: (() => Promise<Response>) | null = null;
 	private extra = new SourceEntry(entry("Gamma", null));
 
 	hasSources(names: string[]) {
@@ -135,6 +175,15 @@ class SUT {
 
 	hasFavicon(name: string, favicon: string) {
 		this.favicons.set(name, favicon);
+	}
+
+	neverListSources() {
+		this.sourceListAnswer = () => new Promise(() => {});
+	}
+
+	refuseSourceList() {
+		this.sourceListAnswer = async () =>
+			reply({ code: "INTERNAL_ERROR", message: "sources are down" }, "error");
 	}
 
 	neverAnswerSearches() {
@@ -160,6 +209,24 @@ class SUT {
 		);
 	}
 
+	showSearchingWithoutBox() {
+		render(
+			<ApiProvider baseUrl="http://localhost" fetch={this.fetchIt}>
+				<SourcesProvider>
+					<SearchProvider>
+						<SearchResultList />
+						<Forcer />
+					</SearchProvider>
+				</SourcesProvider>
+			</ApiProvider>,
+		);
+	}
+
+	async forceSearch() {
+		await userEvent.click(screen.getByRole("button", { name: "Write" }));
+		await userEvent.click(screen.getByRole("button", { name: "Run" }));
+	}
+
 	async sourcesListed() {
 		await waitFor(() => expect(this.listed).toBe(true));
 		await new Promise((resolve) => setTimeout(resolve, 20));
@@ -176,6 +243,22 @@ class SUT {
 
 	links() {
 		return screen.queryAllByRole("link");
+	}
+
+	searchingNotice() {
+		return screen.findByRole("status");
+	}
+
+	failureNotice() {
+		return screen.findByRole("alert");
+	}
+
+	faviconOf(name: string) {
+		return screen.getByAltText(`Favicon of ${name}`);
+	}
+
+	missingFavicon() {
+		return screen.getByRole("img", { name: "No favicon" });
 	}
 
 	async linksOnceShown(count: number) {
@@ -206,6 +289,9 @@ class SUT {
 				entry(name, this.favicons.get(name) ?? null),
 			);
 			response = Promise.resolve(reply({ sources }));
+			if (this.sourceListAnswer !== null) {
+				response = this.sourceListAnswer();
+			}
 		}
 		return response;
 	};

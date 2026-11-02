@@ -40,6 +40,29 @@ describe("SourcesProvider", () => {
 		expect(sut.emptyNotice()).not.toBeInTheDocument();
 	});
 
+	test("ignores an added source while the sources are loading", async () => {
+		sut.willAdd(entry("s-1", "Alpha"));
+		sut.show();
+		await sut.loadingNotice();
+
+		await sut.add();
+
+		expect(sut.loadingNoticeNow()).toBeInTheDocument();
+		expect(sut.names()).toEqual([]);
+	});
+
+	test("ignores an added source when the sources failed to load", async () => {
+		sut.refuseEntries("sources are down");
+		sut.willAdd(entry("s-1", "Alpha"));
+		sut.show();
+		await sut.failureNotice();
+
+		await sut.add();
+
+		expect(sut.failureNoticeNow()).toHaveTextContent("sources are down");
+		expect(sut.names()).toEqual([]);
+	});
+
 	test("needs its provider to read the sources", () => {
 		expect(() => sut.showReaderWithoutProvider()).toThrow("SourcesProvider");
 	});
@@ -86,6 +109,10 @@ class SUT {
 		this.answer = async () => reply({ sources: entries });
 	}
 
+	refuseEntries(message: string) {
+		this.answer = async () => refusal(message);
+	}
+
 	show() {
 		render(
 			<ApiProvider baseUrl="http://localhost" fetch={() => this.answer()}>
@@ -122,6 +149,26 @@ class SUT {
 			.map((item) => item.querySelector("[title]")?.textContent);
 	}
 
+	loadingNotice() {
+		return screen.findByRole("status");
+	}
+
+	loadingNoticeNow() {
+		return screen.getByRole("status");
+	}
+
+	failureNotice() {
+		return screen.findByRole("alert");
+	}
+
+	failureNoticeNow() {
+		return screen.getByRole("alert");
+	}
+
+	names() {
+		return screen.queryAllByRole("listitem");
+	}
+
 	emptyNoticeOnceListed() {
 		return screen.findByText("You have no sources yet");
 	}
@@ -144,6 +191,16 @@ class SUT {
 function reply(body: unknown) {
 	const message = { header: { callId: "c", status: "ok" }, body };
 	return new Response(JSON.stringify(message), {
+		headers: { "content-type": "application/json" },
+	});
+}
+
+function refusal(message: string) {
+	const reply = {
+		header: { callId: "c", status: "error" },
+		body: { code: "INTERNAL_ERROR", message },
+	};
+	return new Response(JSON.stringify(reply), {
 		headers: { "content-type": "application/json" },
 	});
 }
