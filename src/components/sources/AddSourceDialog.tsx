@@ -2,9 +2,11 @@ import { type FormEvent, useRef, useState } from "react";
 import { useAddSource, useInspectSource } from "@/api/ApiContext";
 import type { PageInfo } from "@/api/InspectSource";
 import { Brand } from "@/components/Brand";
+import { AddSourceMessage } from "@/components/sources/AddSourceMessage";
+import { AddSourceTrigger } from "@/components/sources/AddSourceTrigger";
 import { CandidateList } from "@/components/sources/CandidateList";
+import { InspectedFavicon } from "@/components/sources/InspectedFavicon";
 import { messageOf } from "@/components/sources/messageOf";
-import { SourceFavicon } from "@/components/sources/SourceFavicon";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -13,13 +15,12 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { AddressCandidate } from "@/domain/AddressCandidate";
+import { NameDraft } from "@/domain/NameDraft";
 import type { SourceEntry } from "@/domain/SourceEntry";
-import { SuggestedName } from "@/domain/SuggestedName";
 
 export function AddSourceDialog({
 	onAdded,
@@ -30,8 +31,8 @@ export function AddSourceDialog({
 	const inspectSource = useInspectSource();
 	const [isOpen, setIsOpen] = useState(false);
 	const [address, setAddress] = useState("");
-	const [name, setName] = useState("");
-	const [suggestedName, setSuggestedName] = useState("");
+	const [draft, setDraft] = useState(NameDraft.empty());
+	const name = draft.text();
 	const [inspected, setInspected] = useState<PageInfo | null>(null);
 	const [isSending, setIsSending] = useState(false);
 	const [message, setMessage] = useState("");
@@ -44,16 +45,19 @@ export function AddSourceDialog({
 		try {
 			const entry = await addSource.run(address, name);
 			onAdded(entry);
-			writeAddress("");
-			setName("");
-			setSuggestedName("");
-			setInspected(null);
+			resetForm();
 			setIsOpen(false);
 		} catch (error) {
 			setMessage(messageOf(error, "Source could not be added"));
 		} finally {
 			setIsSending(false);
 		}
+	}
+
+	function resetForm() {
+		writeAddress("");
+		setDraft(NameDraft.empty());
+		setInspected(null);
 	}
 
 	function writeAddress(value: string) {
@@ -73,7 +77,7 @@ export function AddSourceDialog({
 			const page = await inspectSource.run(inspectedAddress);
 			if (currentAddress.current !== inspectedAddress) return;
 			setInspected(page);
-			suggest(page.title);
+			setDraft(draft.suggest(page.title));
 		} catch {
 			return;
 		}
@@ -81,31 +85,14 @@ export function AddSourceDialog({
 
 	function choose(candidate: AddressCandidate) {
 		writeAddress(candidate.address);
-		setName(candidate.suggestedName());
-		setSuggestedName(candidate.suggestedName());
+		setDraft(draft.choose(candidate));
 		if (inspected !== null) {
 			setInspected({ ...inspected, favicon: candidate.favicon });
 		}
 	}
 
-	function suggest(title: string | null) {
-		const isNameFree = name === "" || name === suggestedName;
-		if (title === null || !isNameFree) return;
-		const suggestion = SuggestedName.from(title).text();
-		setName(suggestion);
-		setSuggestedName(suggestion);
-	}
-
 	function typeName(event: FormEvent<HTMLInputElement>) {
-		setName(event.currentTarget.value);
-	}
-
-	function showFavicon() {
-		let shown = null;
-		if (inspected !== null) {
-			shown = <SourceFavicon favicon={inspected.favicon} text={address} />;
-		}
-		return shown;
+		setDraft(draft.type(event.currentTarget.value));
 	}
 
 	function showCandidates() {
@@ -123,30 +110,9 @@ export function AddSourceDialog({
 		return shown;
 	}
 
-	function showMessage() {
-		let shown = null;
-		if (message !== "") {
-			shown = (
-				<p role="alert" className="text-error">
-					{message}
-				</p>
-			);
-		}
-		return shown;
-	}
-
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogTrigger asChild>
-				<Button aria-label="Add Sorz" size="icon-sm">
-					<span aria-hidden="true">
-						<span className="text-base">
-							<Brand>S</Brand>
-						</span>
-						+
-					</span>
-				</Button>
-			</DialogTrigger>
+			<AddSourceTrigger />
 			<DialogContent>
 				<form onSubmit={submit} className="flex flex-col gap-4">
 					<DialogHeader>
@@ -171,12 +137,12 @@ export function AddSourceDialog({
 						<Field>
 							<FieldLabel htmlFor="source-name">Title</FieldLabel>
 							<div className="flex items-center gap-2">
-								{showFavicon()}
+								<InspectedFavicon inspected={inspected} address={address} />
 								<Input id="source-name" value={name} onChange={typeName} />
 							</div>
 						</Field>
 					</FieldGroup>
-					{showMessage()}
+					<AddSourceMessage message={message} />
 					<DialogFooter>
 						<Button type="submit" disabled={isSending}>
 							Add

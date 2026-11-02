@@ -1,0 +1,16 @@
+import type { PageInfo } from "@/api/InspectSource";
+import { SourceFavicon } from "@/components/sources/SourceFavicon";
+
+export function InspectedFavicon({
+	inspected,
+	address,
+}: {
+	inspected: PageInfo | null;
+	address: string;
+}) {
+	let shown = null;
+	if (inspected !== null) {
+		shown = <SourceFavicon favicon={inspected.favicon} text={address} />;
+	}
+	return shown;
+}
