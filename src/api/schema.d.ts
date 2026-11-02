@@ -144,6 +144,8 @@ export interface components {
         };
         AuthLoginBody: {
             token: string;
+            /** @enum {string} */
+            role: "admin" | "user";
         };
         AuthLoginReply: {
             header: components["schemas"]["ReplyHeader"];
