@@ -96,7 +96,7 @@ export interface components {
         CallHeader: {
             callId: string;
         };
-        HealthCheckCall: {
+        CallWithoutBody: {
             header: components["schemas"]["CallHeader"];
             body?: Record<string, never>;
         };
@@ -110,12 +110,13 @@ export interface components {
             code: "INVALID_BODY" | "SOURCE_ALREADY_REGISTERED" | "SOURCE_NAME_TAKEN" | "INTERNAL_ERROR";
             message: string;
         };
+        HealthCheckBody: {
+            /** @enum {string} */
+            status: "ok";
+        };
         HealthCheckReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: {
-                /** @enum {string} */
-                status: "ok";
-            } | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["HealthCheckBody"] | components["schemas"]["ErrorBody"];
         };
         SourceEntry: {
             sourceId: string;
@@ -141,27 +142,26 @@ export interface components {
                 address: string;
             };
         };
+        InspectCandidate: {
+            address: string;
+            title: string;
+            favicon: string | null;
+        };
+        SourcesInspectBody: {
+            title: string | null;
+            favicon: string | null;
+            candidates: components["schemas"]["InspectCandidate"][];
+        };
         SourcesInspectReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: {
-                title: string | null;
-                favicon: string | null;
-                candidates: {
-                    address: string;
-                    title: string;
-                    favicon: string | null;
-                }[];
-            } | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SourcesInspectBody"] | components["schemas"]["ErrorBody"];
         };
-        SourcesListCall: {
-            header: components["schemas"]["CallHeader"];
-            body?: Record<string, never>;
+        SourcesListBody: {
+            sources: components["schemas"]["SourceEntry"][];
         };
         SourcesListReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: {
-                sources: components["schemas"]["SourceEntry"][];
-            } | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SourcesListBody"] | components["schemas"]["ErrorBody"];
         };
         SourcesSearchCall: {
             header: components["schemas"]["CallHeader"];
@@ -169,20 +169,31 @@ export interface components {
                 query: string;
             };
         };
+        SearchResult: {
+            title: string;
+            url: string;
+            description: string;
+            source: string;
+        };
+        SourcesSearchBody: {
+            results: components["schemas"]["SearchResult"][];
+        };
         SourcesSearchReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: {
-                results: {
-                    title: string;
-                    url: string;
-                    description: string;
-                    source: string;
-                }[];
-            } | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SourcesSearchBody"] | components["schemas"]["ErrorBody"];
         };
-        TransportError: components["schemas"]["ErrorBody"];
     };
-    responses: never;
+    responses: {
+        /** @description unreadable JSON or missing callId */
+        TransportError: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorBody"];
+            };
+        };
+    };
     parameters: never;
     requestBodies: never;
     headers: never;
@@ -199,7 +210,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["HealthCheckCall"];
+                "application/json": components["schemas"]["CallWithoutBody"];
             };
         };
         responses: {
@@ -212,15 +223,7 @@ export interface operations {
                     "application/json": components["schemas"]["HealthCheckReply"];
                 };
             };
-            /** @description unreadable JSON or missing callId */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TransportError"];
-                };
-            };
+            400: components["responses"]["TransportError"];
         };
     };
     sourcesAdd: {
@@ -245,15 +248,7 @@ export interface operations {
                     "application/json": components["schemas"]["SourcesAddReply"];
                 };
             };
-            /** @description unreadable JSON or missing callId */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TransportError"];
-                };
-            };
+            400: components["responses"]["TransportError"];
         };
     };
     sourcesInspect: {
@@ -278,15 +273,7 @@ export interface operations {
                     "application/json": components["schemas"]["SourcesInspectReply"];
                 };
             };
-            /** @description unreadable JSON or missing callId */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TransportError"];
-                };
-            };
+            400: components["responses"]["TransportError"];
         };
     };
     sourcesList: {
@@ -298,7 +285,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SourcesListCall"];
+                "application/json": components["schemas"]["CallWithoutBody"];
             };
         };
         responses: {
@@ -311,15 +298,7 @@ export interface operations {
                     "application/json": components["schemas"]["SourcesListReply"];
                 };
             };
-            /** @description unreadable JSON or missing callId */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TransportError"];
-                };
-            };
+            400: components["responses"]["TransportError"];
         };
     };
     sourcesSearch: {
@@ -344,15 +323,7 @@ export interface operations {
                     "application/json": components["schemas"]["SourcesSearchReply"];
                 };
             };
-            /** @description unreadable JSON or missing callId */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TransportError"];
-                };
-            };
+            400: components["responses"]["TransportError"];
         };
     };
 }
