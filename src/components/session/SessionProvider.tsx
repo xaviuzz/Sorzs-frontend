@@ -48,3 +48,11 @@ export function useLeaveSession() {
 		session.leave();
 	};
 }
+
+export function useMayEnterBackoffice(): boolean {
+	const session = useContext(SessionContext);
+	if (session === null) {
+		throw new Error("useMayEnterBackoffice needs a SessionProvider");
+	}
+	return useSyncExternalStore(session.subscribe, session.mayEnterBackoffice);
+}

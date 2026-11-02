@@ -3,6 +3,7 @@ import createClient from "openapi-fetch";
 import { Login } from "@/api/auth/Login";
 import { CallRefusedError } from "@/api/CallRefusedError";
 import type { paths } from "@/api/schema";
+import { AdminRole } from "@/domain/AdminRole";
 import { BearerToken } from "@/domain/BearerToken";
 import type { Token } from "@/domain/Token";
 
@@ -19,6 +20,14 @@ describe("Login", () => {
 		await sut.enter("xaviuzz", "p1casso");
 
 		expect(sut.issued()).toEqual(new BearerToken("t-1"));
+	});
+
+	test("answers the role the backend named", async () => {
+		sut.answerToken("t-1", "admin");
+
+		await sut.enter("xaviuzz", "p1casso");
+
+		expect(sut.issued()).toEqual(new BearerToken("t-1", new AdminRole()));
 	});
 
 	test("posts the username and the password to /auth.login with a fresh callId", async () => {
@@ -61,7 +70,7 @@ type Posted = {
 
 class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
-		reply(callId, "ok", { token: "t-0" });
+		reply(callId, "ok", { token: "t-0", role: "user" });
 	private received: Posted[] = [];
 	private token: Token | undefined;
 	private thrown: unknown;
@@ -84,8 +93,8 @@ class SUT {
 		this.login = new Login(client);
 	}
 
-	answerToken(token: string) {
-		this.answer = async (callId) => reply(callId, "ok", { token });
+	answerToken(token: string, role = "user") {
+		this.answer = async (callId) => reply(callId, "ok", { token, role });
 	}
 
 	answerRefusal(code: string, message: string) {

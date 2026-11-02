@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test } from "bun:test";
+import { AdminRole } from "@/domain/AdminRole";
 import { BearerToken } from "@/domain/BearerToken";
 import { Session } from "@/domain/Session";
 import { InMemoryTokenStore } from "../support/InMemoryTokenStore";
@@ -34,6 +35,34 @@ describe("Session", () => {
 
 		expect(sut.isOpen()).toBe(false);
 		expect(sut.stored().isPresent()).toBe(false);
+	});
+
+	test("lets an admin enter the backoffice", () => {
+		sut.enterAdmin("t-1");
+
+		expect(sut.mayEnterBackoffice()).toBe(true);
+	});
+
+	test("does not let a user enter the backoffice", () => {
+		sut.enter("t-1");
+
+		expect(sut.mayEnterBackoffice()).toBe(false);
+	});
+
+	test("does not let anyone enter the backoffice after leaving", () => {
+		sut.enterAdmin("t-1");
+
+		sut.leave();
+
+		expect(sut.mayEnterBackoffice()).toBe(false);
+	});
+
+	test("lets an admin enter the backoffice after a reload", () => {
+		sut.enterAdmin("t-1");
+
+		sut.reload();
+
+		expect(sut.mayEnterBackoffice()).toBe(true);
 	});
 
 	test("signs requests with the token that entered", () => {
@@ -82,6 +111,18 @@ class SUT {
 
 	enter(text: string) {
 		this.session.enter(new BearerToken(text));
+	}
+
+	enterAdmin(text: string) {
+		this.session.enter(new BearerToken(text, new AdminRole()));
+	}
+
+	reload() {
+		this.session = new Session(this.store);
+	}
+
+	mayEnterBackoffice() {
+		return this.session.mayEnterBackoffice();
 	}
 
 	leave() {

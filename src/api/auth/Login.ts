@@ -3,6 +3,7 @@ import { CallId } from "@/api/CallId";
 import { Refusable } from "@/api/Refusable";
 import type { paths } from "@/api/schema";
 import { BearerToken } from "@/domain/BearerToken";
+import { roleNamed } from "@/domain/roleNamed";
 import type { Token } from "@/domain/Token";
 
 export class Login {
@@ -13,6 +14,6 @@ export class Login {
 			body: { header: CallId.next().header(), body: { username, password } },
 		});
 		const body = Refusable.of(answer).success();
-		return new BearerToken(body.token);
+		return new BearerToken(body.token, roleNamed(body.role));
 	}
 }

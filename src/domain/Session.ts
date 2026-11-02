@@ -26,6 +26,10 @@ export class Session {
 		return this.current.signed(request);
 	}
 
+	mayEnterBackoffice = (): boolean => {
+		return this.current.role().mayEnterBackoffice();
+	};
+
 	isOpen = (): boolean => {
 		return this.current.isPresent();
 	};
