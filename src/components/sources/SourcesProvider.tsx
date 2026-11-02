@@ -7,12 +7,10 @@ import {
 	useState,
 } from "react";
 import { useListSources } from "@/api/ApiContext";
-import {
-	FailedSources,
-	LoadedSources,
-	LoadingSources,
-	type SourceReading,
-} from "@/components/sources/list/SourceReading";
+import { FailedSources } from "@/components/sources/reading/FailedSources";
+import { LoadedSources } from "@/components/sources/reading/LoadedSources";
+import { LoadingSources } from "@/components/sources/reading/LoadingSources";
+import type { SourceReading } from "@/components/sources/reading/SourceReading";
 import type { SourceEntry } from "@/domain/SourceEntry";
 
 interface Sources {

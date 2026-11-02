@@ -7,13 +7,11 @@ import {
 	useState,
 } from "react";
 import { useSearchSources } from "@/api/ApiContext";
-import {
-	FailedSearch,
-	FoundResults,
-	NoSearchYet,
-	Searching,
-	type SearchReading,
-} from "@/components/search/SearchReading";
+import { FailedSearch } from "@/components/search/reading/FailedSearch";
+import { FoundResults } from "@/components/search/reading/FoundResults";
+import { NoSearchYet } from "@/components/search/reading/NoSearchYet";
+import { Searching } from "@/components/search/reading/Searching";
+import type { SearchReading } from "@/components/search/reading/SearchReading";
 
 interface Search {
 	query: string;
