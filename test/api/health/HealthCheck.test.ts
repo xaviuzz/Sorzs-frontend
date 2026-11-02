@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import createClient from "openapi-fetch";
-import { type Health, HealthCheck } from "@/api/HealthCheck";
+import { type Health, HealthCheck } from "@/api/health/HealthCheck";
 import type { paths } from "@/api/schema";
 
 describe("HealthCheck", () => {

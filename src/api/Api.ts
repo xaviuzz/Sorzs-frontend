@@ -1,10 +1,10 @@
 import type { Client } from "openapi-fetch";
-import { AddSource } from "@/api/AddSource";
-import { HealthCheck } from "@/api/HealthCheck";
-import { InspectSource } from "@/api/InspectSource";
-import { ListSources } from "@/api/ListSources";
-import { SearchSources } from "@/api/SearchSources";
+import { HealthCheck } from "@/api/health/HealthCheck";
 import type { paths } from "@/api/schema";
+import { AddSource } from "@/api/sources/AddSource";
+import { InspectSource } from "@/api/sources/InspectSource";
+import { ListSources } from "@/api/sources/ListSources";
+import { SearchSources } from "@/api/sources/SearchSources";
 
 export class Api {
 	readonly healthCheck: HealthCheck;

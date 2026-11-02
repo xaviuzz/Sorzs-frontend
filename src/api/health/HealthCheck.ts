@@ -1,4 +1,5 @@
 import type { Client } from "openapi-fetch";
+import { CallId } from "@/api/CallId";
 import type { paths } from "@/api/schema";
 
 export type Health = "ok" | "error";
@@ -13,9 +14,8 @@ export class HealthCheck {
 	async run(): Promise<Health> {
 		let health: Health = "error";
 		try {
-			const callId = crypto.randomUUID();
 			const answer = await this.#client.POST("/health.check", {
-				body: { header: { callId } },
+				body: { header: CallId.next().header() },
 			});
 			if (answer.data?.header.status === "ok") {
 				health = "ok";

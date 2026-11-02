@@ -1,5 +1,6 @@
 import type { Client } from "openapi-fetch";
-import { CallRefusedError } from "@/api/CallRefusedError";
+import { CallId } from "@/api/CallId";
+import { Refusable } from "@/api/Refusable";
 import type { paths } from "@/api/schema";
 import { AddressCandidate } from "@/domain/AddressCandidate";
 
@@ -13,17 +14,10 @@ export class InspectSource {
 	constructor(private readonly client: Client<paths>) {}
 
 	async run(address: string): Promise<PageInfo> {
-		const callId = crypto.randomUUID();
 		const answer = await this.client.POST("/sources.inspect", {
-			body: { header: { callId }, body: { address } },
+			body: { header: CallId.next().header(), body: { address } },
 		});
-		if (answer.error) {
-			throw new CallRefusedError(answer.error);
-		}
-		const body = answer.data.body;
-		if ("code" in body) {
-			throw new CallRefusedError(body);
-		}
+		const body = Refusable.of(answer).success();
 		const candidates: AddressCandidate[] = [];
 		for (const candidate of body.candidates) {
 			candidates.push(new AddressCandidate(candidate));

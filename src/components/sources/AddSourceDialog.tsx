@@ -1,6 +1,6 @@
 import { type FormEvent, useRef, useState } from "react";
 import { useAddSource, useInspectSource } from "@/api/ApiContext";
-import type { PageInfo } from "@/api/InspectSource";
+import type { PageInfo } from "@/api/sources/InspectSource";
 import { Brand } from "@/components/Brand";
 import { AddSourceMessage } from "@/components/sources/AddSourceMessage";
 import { AddSourceTrigger } from "@/components/sources/AddSourceTrigger";

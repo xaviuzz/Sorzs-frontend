@@ -1,7 +1,7 @@
 import { Check, Circle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useHealthCheck } from "@/api/ApiContext";
-import type { Health } from "@/api/HealthCheck";
+import type { Health } from "@/api/health/HealthCheck";
 
 type Reading = Health | "checking";
 

@@ -1,74 +1,75 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import createClient from "openapi-fetch";
 import { CallRefusedError } from "@/api/CallRefusedError";
-import { SearchSources } from "@/api/SearchSources";
 import type { paths } from "@/api/schema";
-import { SearchResult, type SearchResultData } from "@/domain/SearchResult";
+import { ListSources } from "@/api/sources/ListSources";
+import { SourceEntry, type SourceEntryData } from "@/domain/SourceEntry";
 
-describe("SearchSources", () => {
+describe("ListSources", () => {
 	let sut: SUT;
 
 	beforeEach(() => {
 		sut = new SUT();
 	});
 
-	test("answers the results in the order the backend sent them", async () => {
+	test("answers the entries in the order the backend sent them", async () => {
 		const beta = {
-			title: "Search it on Google",
-			url: "https://www.google.com/search?q=bun site:b.com",
-			description: "Google search for «bun» limited to b.com",
-			source: "Beta",
+			sourceId: "s-2",
+			name: "Beta",
+			address: "https://b.com",
+			title: null,
+			favicon: null,
 		};
 		const alpha = {
-			title: "Search it on Google",
-			url: "https://www.google.com/search?q=bun site:a.com",
-			description: "Google search for «bun» limited to a.com",
-			source: "Alpha",
+			sourceId: "s-1",
+			name: "Alpha",
+			address: "https://a.com",
+			title: null,
+			favicon: null,
 		};
-		sut.answerResults([beta, alpha]);
+		sut.answerEntries([beta, alpha]);
 
-		await sut.search("bun");
+		await sut.list();
 
-		expect(sut.found()).toEqual([
-			new SearchResult(beta),
-			new SearchResult(alpha),
+		expect(sut.listed()).toEqual([
+			new SourceEntry(beta),
+			new SourceEntry(alpha),
 		]);
 	});
 
-	test("answers no results when the backend found none", async () => {
-		sut.answerResults([]);
+	test("answers no entries when the list is empty", async () => {
+		sut.answerEntries([]);
 
-		await sut.search("bun");
+		await sut.list();
 
-		expect(sut.found()).toEqual([]);
+		expect(sut.listed()).toEqual([]);
 	});
 
-	test("posts the query to /sources.search with a fresh callId", async () => {
-		await sut.search("bun");
-		await sut.search("react");
+	test("posts to /sources.list with a fresh callId", async () => {
+		await sut.list();
+		await sut.list();
 
 		const [first, second] = sut.posted();
-		expect(first?.path).toBe("/sources.search");
+		expect(first?.path).toBe("/sources.list");
 		expect(first?.method).toBe("POST");
-		expect(first?.body).toEqual({ query: "bun" });
 		expect(first?.callId).not.toBe(second?.callId);
 	});
 
 	test("a refusal reaches the caller with its code and message", async () => {
-		sut.answerRefusal("INVALID_BODY", "query is required");
+		sut.answerRefusal("INTERNAL_ERROR", "internal error");
 
-		await sut.search("bun");
+		await sut.list();
 
 		expect(sut.refusal()).toEqual({
-			code: "INVALID_BODY",
-			message: "query is required",
+			code: "INTERNAL_ERROR",
+			message: "internal error",
 		});
 	});
 
 	test("a bad call reaches the caller with its code and message", async () => {
 		sut.answerBadCall("INVALID_BODY", "callId is required");
 
-		await sut.search("bun");
+		await sut.list();
 
 		expect(sut.refusal()).toEqual({
 			code: "INVALID_BODY",
@@ -79,26 +80,21 @@ describe("SearchSources", () => {
 	test("a network failure reaches the caller as it is", async () => {
 		sut.failNetwork();
 
-		await sut.search("bun");
+		await sut.list();
 
 		expect(sut.failure()).toBeInstanceOf(TypeError);
 	});
 });
 
-type Posted = {
-	path: string;
-	method: string;
-	callId: string;
-	body: unknown;
-};
+type Posted = { path: string; method: string; callId: string };
 
 class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
-		reply(callId, "ok", { results: [] });
+		reply(callId, "ok", { sources: [] });
 	private received: Posted[] = [];
-	private results: SearchResult[] | undefined;
+	private entries: SourceEntryData[] | undefined;
 	private thrown: unknown;
-	private readonly searchSources: SearchSources;
+	private readonly listSources: ListSources;
 
 	constructor() {
 		const client = createClient<paths>({
@@ -109,16 +105,15 @@ class SUT {
 					path: new URL(request.url).pathname,
 					method: request.method,
 					callId: call.header.callId,
-					body: call.body,
 				});
 				return this.answer(call.header.callId);
 			},
 		});
-		this.searchSources = new SearchSources(client);
+		this.listSources = new ListSources(client);
 	}
 
-	answerResults(results: SearchResultData[]) {
-		this.answer = async (callId) => reply(callId, "ok", { results });
+	answerEntries(entries: SourceEntryData[]) {
+		this.answer = async (callId) => reply(callId, "ok", { sources: entries });
 	}
 
 	answerRefusal(code: string, message: string) {
@@ -135,16 +130,16 @@ class SUT {
 		};
 	}
 
-	async search(query: string) {
+	async list() {
 		try {
-			this.results = await this.searchSources.run(query);
+			this.entries = await this.listSources.run();
 		} catch (error) {
 			this.thrown = error;
 		}
 	}
 
-	found() {
-		return this.results;
+	listed() {
+		return this.entries;
 	}
 
 	refusal() {

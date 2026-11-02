@@ -1,101 +1,68 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import createClient from "openapi-fetch";
 import { CallRefusedError } from "@/api/CallRefusedError";
-import { InspectSource } from "@/api/InspectSource";
 import type { paths } from "@/api/schema";
-import { AddressCandidate } from "@/domain/AddressCandidate";
+import { AddSource } from "@/api/sources/AddSource";
+import { SourceEntry, type SourceEntryData } from "@/domain/SourceEntry";
 
-describe("InspectSource", () => {
+describe("AddSource", () => {
 	let sut: SUT;
 
 	beforeEach(() => {
 		sut = new SUT();
 	});
 
-	test("answers the title and the favicon the backend found", async () => {
-		sut.answerPage({
-			title: "Example",
-			favicon: "https://example.com/i.png",
-			candidates: [],
-		});
-
-		await sut.inspect("https://example.com");
-
-		expect(sut.inspected()).toEqual({
-			title: "Example",
-			favicon: "https://example.com/i.png",
-			candidates: [],
-		});
-	});
-
-	test("answers missing parts as nothing", async () => {
-		sut.answerPage({ title: null, favicon: null, candidates: [] });
-
-		await sut.inspect("https://example.com");
-
-		expect(sut.inspected()).toEqual({
+	test("answers the entry the backend created", async () => {
+		sut.answerCreated({
+			sourceId: "s-1",
+			name: "Example",
+			address: "https://example.com",
 			title: null,
 			favicon: null,
-			candidates: [],
-		});
-	});
-
-	test("answers the candidates as address candidates, in the order sent", async () => {
-		sut.answerPage({
-			title: "Deep",
-			favicon: null,
-			candidates: [
-				{
-					address: "https://a.com",
-					title: "A",
-					favicon: "https://a.com/i.png",
-				},
-				{ address: "https://a.com/docs", title: "Docs", favicon: null },
-			],
 		});
 
-		await sut.inspect("https://a.com/docs");
+		await sut.add("https://example.com", "Example");
 
-		expect(sut.inspected()?.candidates).toEqual([
-			new AddressCandidate({
-				address: "https://a.com",
-				title: "A",
-				favicon: "https://a.com/i.png",
-			}),
-			new AddressCandidate({
-				address: "https://a.com/docs",
-				title: "Docs",
+		expect(sut.created()).toEqual(
+			new SourceEntry({
+				sourceId: "s-1",
+				name: "Example",
+				address: "https://example.com",
+				title: null,
 				favicon: null,
 			}),
-		]);
+		);
 	});
 
-	test("posts the address to /sources.inspect with a fresh callId", async () => {
-		await sut.inspect("https://example.com");
-		await sut.inspect("https://other.com");
+	test("posts the address and the name to /sources.add with a fresh callId", async () => {
+		await sut.add("https://example.com", "Example");
+		await sut.add("https://other.com", "Other");
 
 		const [first, second] = sut.posted();
-		expect(first?.path).toBe("/sources.inspect");
+		expect(first?.path).toBe("/sources.add");
 		expect(first?.method).toBe("POST");
-		expect(first?.body).toEqual({ address: "https://example.com" });
+		expect(first?.body).toEqual({
+			address: "https://example.com",
+			name: "Example",
+		});
 		expect(first?.callId).not.toBe(second?.callId);
 	});
 
 	test("a refusal reaches the caller with its code and message", async () => {
-		sut.answerRefusal("INVALID_BODY", "address is required");
+		sut.answerRefusal("SOURCE_NAME_TAKEN", "that name is already in your list");
 
-		await sut.inspect("https://example.com");
+		await sut.add("https://example.com", "Example");
 
 		expect(sut.refusal()).toEqual({
-			code: "INVALID_BODY",
-			message: "address is required",
+			code: "SOURCE_NAME_TAKEN",
+			message: "that name is already in your list",
 		});
 	});
 
 	test("a bad call reaches the caller with its code and message", async () => {
 		sut.answerBadCall("INVALID_BODY", "callId is required");
 
-		await sut.inspect("https://example.com");
+		await sut.add("https://example.com", "Example");
 
 		expect(sut.refusal()).toEqual({
 			code: "INVALID_BODY",
@@ -106,17 +73,11 @@ describe("InspectSource", () => {
 	test("a network failure reaches the caller as it is", async () => {
 		sut.failNetwork();
 
-		await sut.inspect("https://example.com");
+		await sut.add("https://example.com", "Example");
 
 		expect(sut.failure()).toBeInstanceOf(TypeError);
 	});
 });
-
-type Page = {
-	title: string | null;
-	favicon: string | null;
-	candidates: { address: string; title: string; favicon: string | null }[];
-};
 
 type Posted = {
 	path: string;
@@ -127,11 +88,17 @@ type Posted = {
 
 class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
-		reply(callId, "ok", { title: null, favicon: null, candidates: [] });
+		reply(callId, "ok", {
+			sourceId: "s-0",
+			name: "n",
+			address: "https://a.com",
+			title: null,
+			favicon: null,
+		});
 	private received: Posted[] = [];
-	private page: Page | undefined;
+	private entry: SourceEntry | undefined;
 	private thrown: unknown;
-	private readonly inspectSource: InspectSource;
+	private readonly addSource: AddSource;
 
 	constructor() {
 		const client = createClient<paths>({
@@ -147,11 +114,11 @@ class SUT {
 				return this.answer(call.header.callId);
 			},
 		});
-		this.inspectSource = new InspectSource(client);
+		this.addSource = new AddSource(client);
 	}
 
-	answerPage(page: Page) {
-		this.answer = async (callId) => reply(callId, "ok", page);
+	answerCreated(entry: SourceEntryData) {
+		this.answer = async (callId) => reply(callId, "ok", entry);
 	}
 
 	answerRefusal(code: string, message: string) {
@@ -168,16 +135,16 @@ class SUT {
 		};
 	}
 
-	async inspect(address: string) {
+	async add(address: string, name: string) {
 		try {
-			this.page = await this.inspectSource.run(address);
+			this.entry = await this.addSource.run(address, name);
 		} catch (error) {
 			this.thrown = error;
 		}
 	}
 
-	inspected() {
-		return this.page;
+	created() {
+		return this.entry;
 	}
 
 	refusal() {
