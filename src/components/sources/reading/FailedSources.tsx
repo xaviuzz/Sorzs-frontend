@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { messageOf } from "@/components/sources/messageOf";
+import { messageOf } from "@/components/messageOf";
 import { HIDDEN_WHEN_COLLAPSED } from "@/components/sources/reading/hiddenWhenCollapsed";
 import type { SourceReading } from "@/components/sources/reading/SourceReading";
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
+import { messageOf } from "@/components/messageOf";
 import type { SearchReading } from "@/components/search/reading/SearchReading";
-import { messageOf } from "@/components/sources/messageOf";
 
 export class FailedSearch implements SearchReading {
 	constructor(private readonly message: string) {}

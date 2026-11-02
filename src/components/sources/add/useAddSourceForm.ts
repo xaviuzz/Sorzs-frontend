@@ -1,7 +1,7 @@
 import { type FormEvent, type SubmitEvent, useRef, useState } from "react";
 import { useAddSource, useInspectSource } from "@/api/ApiContext";
 import type { PageInfo } from "@/api/sources/InspectSource";
-import { messageOf } from "@/components/sources/messageOf";
+import { messageOf } from "@/components/messageOf";
 import type { AddressCandidate } from "@/domain/AddressCandidate";
 import { NameDraft } from "@/domain/NameDraft";
 import type { SourceEntry } from "@/domain/SourceEntry";
