@@ -10,7 +10,7 @@ export class SessionMiddleware {
 	};
 
 	onResponse = ({ response }: { response: Response }): undefined => {
-		if (response.status === FORBIDDEN) this.session.forget();
+		if (response.status === FORBIDDEN) this.session.leave();
 		return undefined;
 	};
 }

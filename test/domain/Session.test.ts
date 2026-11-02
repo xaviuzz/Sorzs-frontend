@@ -27,10 +27,10 @@ describe("Session", () => {
 		expect(sut.stored()).toEqual(new BearerToken("t-1"));
 	});
 
-	test("closes when the token is forgotten and clears the store", () => {
+	test("closes when the user leaves and clears the store", () => {
 		sut.startWithStored("t-1");
 
-		sut.forget();
+		sut.leave();
 
 		expect(sut.isOpen()).toBe(false);
 		expect(sut.stored().isPresent()).toBe(false);
@@ -42,19 +42,19 @@ describe("Session", () => {
 		expect(sut.signedHeader()).toBe("Bearer t-1");
 	});
 
-	test("signs nothing once the token is forgotten", () => {
+	test("signs nothing once the user leaves", () => {
 		sut.enter("t-1");
 
-		sut.forget();
+		sut.leave();
 
 		expect(sut.signedHeader()).toBeNull();
 	});
 
-	test("tells its listeners when a token enters or is forgotten", () => {
+	test("tells its listeners when a token enters or the user leaves", () => {
 		sut.listen();
 
 		sut.enter("t-1");
-		sut.forget();
+		sut.leave();
 
 		expect(sut.notifications()).toBe(2);
 	});
@@ -84,8 +84,8 @@ class SUT {
 		this.session.enter(new BearerToken(text));
 	}
 
-	forget() {
-		this.session.forget();
+	leave() {
+		this.session.leave();
 	}
 
 	listen() {

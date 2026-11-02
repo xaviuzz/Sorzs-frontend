@@ -17,7 +17,7 @@ export class Session {
 		this.change(token);
 	}
 
-	forget(): void {
+	leave(): void {
 		this.store.clear();
 		this.change(new NoToken());
 	}
