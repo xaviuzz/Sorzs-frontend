@@ -21,6 +21,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth.login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Exchanges a username and password for a token */
+        post: operations["authLogin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sources.add": {
         parameters: {
             query?: never;
@@ -107,7 +124,7 @@ export interface components {
         };
         ErrorBody: {
             /** @enum {string} */
-            code: "INVALID_BODY" | "SOURCE_ALREADY_REGISTERED" | "SOURCE_NAME_TAKEN" | "INTERNAL_ERROR";
+            code: "INVALID_BODY" | "INVALID_CREDENTIALS" | "FORBIDDEN" | "SOURCE_ALREADY_REGISTERED" | "SOURCE_NAME_TAKEN" | "INTERNAL_ERROR";
             message: string;
         };
         HealthCheckBody: {
@@ -117,6 +134,20 @@ export interface components {
         HealthCheckReply: {
             header: components["schemas"]["ReplyHeader"];
             body: components["schemas"]["HealthCheckBody"] | components["schemas"]["ErrorBody"];
+        };
+        AuthLoginCall: {
+            header: components["schemas"]["CallHeader"];
+            body: {
+                username: string;
+                password: string;
+            };
+        };
+        AuthLoginBody: {
+            token: string;
+        };
+        AuthLoginReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: components["schemas"]["AuthLoginBody"] | components["schemas"]["ErrorBody"];
         };
         SourceEntry: {
             sourceId: string;
@@ -193,6 +224,15 @@ export interface components {
                 "application/json": components["schemas"]["ErrorBody"];
             };
         };
+        /** @description missing, malformed or altered token */
+        Forbidden: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorBody"];
+            };
+        };
     };
     parameters: never;
     requestBodies: never;
@@ -226,6 +266,31 @@ export interface operations {
             400: components["responses"]["TransportError"];
         };
     };
+    authLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuthLoginCall"];
+            };
+        };
+        responses: {
+            /** @description the token, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuthLoginReply"];
+                };
+            };
+            400: components["responses"]["TransportError"];
+        };
+    };
     sourcesAdd: {
         parameters: {
             query?: never;
@@ -249,6 +314,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["TransportError"];
+            403: components["responses"]["Forbidden"];
         };
     };
     sourcesInspect: {
@@ -274,6 +340,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["TransportError"];
+            403: components["responses"]["Forbidden"];
         };
     };
     sourcesList: {
@@ -299,6 +366,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["TransportError"];
+            403: components["responses"]["Forbidden"];
         };
     };
     sourcesSearch: {
@@ -324,6 +392,7 @@ export interface operations {
                 };
             };
             400: components["responses"]["TransportError"];
+            403: components["responses"]["Forbidden"];
         };
     };
 }

@@ -10,6 +10,7 @@ Bun.serve({
 	port: Number(process.env.PORT ?? 5173),
 	routes: {
 		"/*": index,
+		"/auth.login": proxyTo("/auth.login"),
 		"/health.check": proxyTo("/health.check"),
 		"/sources.add": proxyTo("/sources.add"),
 		"/sources.inspect": proxyTo("/sources.inspect"),
