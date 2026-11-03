@@ -1,4 +1,5 @@
 import type { Role } from "@/domain/Role";
+import { UserRole } from "@/domain/UserRole";
 
 export class AdminRole implements Role {
 	text(): string {
@@ -7,5 +8,13 @@ export class AdminRole implements Role {
 
 	mayEnterBackoffice(): boolean {
 		return true;
+	}
+
+	opposite(): Role {
+		return new UserRole();
+	}
+
+	changeLabel(): string {
+		return "Make user";
 	}
 }
