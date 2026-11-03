@@ -16,6 +16,7 @@ Bun.serve({
 		"/sources.inspect": proxyTo("/sources.inspect"),
 		"/sources.list": proxyTo("/sources.list"),
 		"/sources.search": proxyTo("/sources.search"),
+		"/sorzs.sources": proxyTo("/sorzs.sources"),
 		"/users.add": proxyTo("/users.add"),
 		"/users.list": proxyTo("/users.list"),
 		"/users.setRole": proxyTo("/users.setRole"),
