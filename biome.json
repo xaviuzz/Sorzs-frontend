@@ -13,6 +13,8 @@
 			"!src/components/ui",
 			"!.claude",
 			"!.agents",
+			"!.impeccable",
+			"!DESIGN.md",
 			"!skills-lock.json",
 			"!src/api/schema.d.ts"
 		]
