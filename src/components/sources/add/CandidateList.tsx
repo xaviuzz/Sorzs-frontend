@@ -61,7 +61,7 @@ function CandidateButton({
 			aria-pressed={isChosen}
 			title={candidate.address}
 			onClick={choose}
-			className="w-full justify-start"
+			className="w-full min-w-0 justify-start"
 		>
 			<span aria-hidden="true">
 				<SourceFavicon favicon={candidate.favicon} text={candidate.title} />

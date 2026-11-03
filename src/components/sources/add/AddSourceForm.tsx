@@ -16,7 +16,7 @@ export function AddSourceForm({
 	const form = useAddSourceForm(onAdded);
 
 	return (
-		<form onSubmit={form.submit} className="flex flex-col gap-4">
+		<form onSubmit={form.submit} className="flex min-w-0 flex-col gap-4">
 			<AddSourceHeader />
 			<FieldGroup className="gap-4">
 				<AddressField
