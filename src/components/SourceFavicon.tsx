@@ -1,4 +1,5 @@
 import { Globe } from "lucide-react";
+import { IconTile } from "@/components/IconTile";
 
 export function SourceFavicon({
 	favicon,
@@ -19,5 +20,5 @@ export function SourceFavicon({
 			/>
 		);
 	}
-	return icon;
+	return <IconTile>{icon}</IconTile>;
 }

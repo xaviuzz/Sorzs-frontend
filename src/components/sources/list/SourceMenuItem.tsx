@@ -7,7 +7,7 @@ export function SourceMenuItem({ entry }: { entry: SourceEntry }) {
 
 	return (
 		<SidebarMenuItem>
-			<SidebarMenuButton asChild tooltip={text}>
+			<SidebarMenuButton asChild tooltip={text} className="h-10 gap-3">
 				<span>
 					<SourceFavicon favicon={entry.favicon} text={text} />
 					<span
