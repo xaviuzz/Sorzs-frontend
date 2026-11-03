@@ -8,8 +8,9 @@ import {
 export function AddSourceHeader() {
 	return (
 		<DialogHeader className="text-left">
-			<DialogTitle>
-				Add <Brand>Sorz</Brand>
+			<DialogTitle className="flex items-baseline gap-1 text-base leading-snug">
+				Add
+				<Brand>Sorz</Brand>
 			</DialogTitle>
 			<DialogDescription className="sr-only">
 				Register the URL of a site you trust and give it a title.
