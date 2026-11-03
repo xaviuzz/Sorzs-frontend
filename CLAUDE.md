@@ -56,6 +56,16 @@ A step that removes a method lists what else that method did (saving, navigating
 
 A value a component hard-codes in a Tailwind arbitrary class (`text-[1.25em]`) becomes a token in `@theme` of `src/index.css` (`--text-wordmark`, used as `text-wordmark`), so changing it is one edit. Name the token for what it is. Never use `@apply` for a custom class: the component is the unit of reuse.
 
+## Design
+
+`PRODUCT.md` (who Sorzs is for and what it is) and `DESIGN.md` (the visual system) sit at the root of this repo, written by the Impeccable plugin. They live here, not in the umbrella, because Impeccable looks for them from the git root of the repo it starts in. `.impeccable/design.json` is the sidecar `DESIGN.md` generates; `.impeccable/live/` holds the state of live mode.
+
+- `DESIGN.md` frontmatter holds the normative tokens; its prose says how to use them. A visual change that alters a token, a component or a rule updates `DESIGN.md` and `.impeccable/design.json` in the same change (`/impeccable document` regenerates both).
+- Biome skips `.impeccable/` (live mode writes JSON there that Biome would reformat) and `DESIGN.md` (Biome strips the indentation of its YAML frontmatter, which the format needs).
+- Live mode: `.impeccable/live/config.json` names `index.html` as the file to inject. Start it with `/impeccable live` while `bun run dev` and the backend run; `live-server stop` removes the script tag from `index.html`. Pick the component, not a shadcn shell: a `Dialog` or other portal in `components/ui/` cannot be wrapped in variants.
+- A `generate` event's scaffold matches by class names and can name a sibling component (`AddUserForm.tsx` for `AddSourceForm.tsx`, `BackofficeHeader.tsx` for `Header.tsx`). Compare `scaffold.file` with the component you picked; when they differ, run `live-wrap --file <path>` yourself.
+- After accepting a variant, the CSS lands as Tailwind classes in the component that owns it, with a token in `@theme` for any hard-coded value.
+
 ## Skills
 
-Before writing or changing a component, read `.claude/skills/shadcn/SKILL.md` and `.claude/skills/vercel-react-best-practices/SKILL.md`; from a session started outside `frontend/` the Skill tool cannot load them. Check `src/components/ui/` and run `bunx --bun shadcn@latest add <component>` before styling markup by hand.
+Before writing or changing a component, read `.claude/skills/shadcn/SKILL.md` and `.claude/skills/vercel-react-best-practices/SKILL.md` with the Read tool; from a session started outside `frontend/` the Skill tool cannot load them. Check `src/components/ui/` and run `bunx --bun shadcn@latest add <component>` before styling markup by hand.

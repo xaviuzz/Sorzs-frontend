@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-03T18:00:00Z",
+  "title": "Design System: Sorzs",
+  "extensions": {
+    "colorMeta": {
+      "library-blue": {
+        "role": "primary",
+        "displayName": "Library Blue",
+        "canonical": "#205ea6",
+        "tonalRamp": [
+          "#142539",
+          "#1d3d62",
+          "#24558e",
+          "#286dbd",
+          "#5994d9",
+          "#9dbde2",
+          "#d2dfef",
+          "#edf2f8"
+        ]
+      },
+      "ledger-green": {
+        "role": "secondary",
+        "displayName": "Ledger Green",
+        "canonical": "#66800b",
+        "tonalRamp": [
+          "#333d0f",
+          "#586b15",
+          "#7e9b17",
+          "#a6cf16",
+          "#c5e84a",
+          "#d7ea94",
+          "#eaf2ce",
+          "#f6f9eb"
+        ]
+      },
+      "stamp-red": {
+        "role": "secondary",
+        "displayName": "Stamp Red",
+        "canonical": "#af3029",
+        "tonalRamp": [
+          "#371715",
+          "#5f2320",
+          "#8a2e29",
+          "#b7362e",
+          "#d3655f",
+          "#dfa3a0",
+          "#eed5d3",
+          "#f7eeed"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#fffcf0",
+        "tonalRamp": [
+          "#100f0f",
+          "#1c1b1a",
+          "#343331",
+          "#6f6e69",
+          "#878580",
+          "#cecdc3",
+          "#e6e4d9",
+          "#fffcf0"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#100f0f",
+        "tonalRamp": [
+          "#100f0f",
+          "#1c1b1a",
+          "#282726",
+          "#343331",
+          "#6f6e69",
+          "#878580",
+          "#cecdc3",
+          "#e6e4d9"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "The brand: 3rem heading in the Sorzs header (about 3.75rem on screen), 1.5rem on the entry screen, plus the S of the add button and Sorz in the add dialog title. Script face only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page heading."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Backoffice section title and each search result title."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Descriptions, rows and form text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons and field labels."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-xs",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Faint lift on outline buttons."
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        "purpose": "Floating dialogs."
+      }
+    ],
+    "motion": [
+      {
+        "name": "dialog-in",
+        "value": "200ms fade and zoom-in 95%",
+        "purpose": "Dialog open and close."
+      },
+      {
+        "name": "button-transition",
+        "value": "transition-all",
+        "purpose": "Hover and focus changes on buttons."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main confirm action such as Add or Log in.",
+      "html": "<button class=\"ds-btn-primary\">Add</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 8px 16px; border: 0; border-radius: 6px; background: #205ea6; color: #fffcf0; font-size: 14px; font-weight: 500; cursor: pointer; transition: all .15s; } .ds-btn-primary:hover { background: rgb(32 94 166 / .9); } .ds-btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px rgb(32 94 166 / .5); }"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Icon-only header and row action, 32px; transparent with the icon in Library Blue, Paper Hover on hover.",
+      "html": "<button class=\"ds-btn-icon\" aria-label=\"Backoffice\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3\"/></svg></button>",
+      "css": ".ds-btn-icon { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border: 0; border-radius: 6px; background: transparent; color: #205ea6; cursor: pointer; transition: all .15s; } .ds-btn-icon:hover { background: #e6e4d9; color: #282726; } .ds-btn-icon:focus-visible { outline: none; box-shadow: 0 0 0 3px rgb(32 94 166 / .5); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Search box and form fields.",
+      "html": "<input class=\"ds-input\" placeholder=\"Search your sources\" />",
+      "css": ".ds-input { width: 100%; height: 36px; padding: 4px 12px; border: 1px solid #cecdc3; border-radius: 6px; background: #fffcf0; color: #100f0f; font-size: 14px; box-sizing: border-box; } .ds-input::placeholder { color: #6f6e69; } .ds-input:focus-visible { outline: none; border-color: #205ea6; box-shadow: 0 0 0 3px rgb(32 94 166 / .5); }"
+    },
+    {
+      "name": "Source Menu Item",
+      "kind": "nav",
+      "refersTo": "sidebar",
+      "description": "A trusted source in the side bar: favicon and name.",
+      "html": "<div class=\"ds-side\"><a class=\"ds-side-item\" href=\"#\"><span class=\"ds-side-icon\"></span>Example docs</a></div>",
+      "css": ".ds-side { width: 256px; padding: 8px; background: #f2f0e5; border-right: 1px solid #cecdc3; box-sizing: border-box; } .ds-side-item { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; color: #100f0f; font-size: 14px; text-decoration: none; } .ds-side-item:hover { background: #e6e4d9; color: #282726; } .ds-side-icon { width: 16px; height: 16px; border-radius: 4px; background: #cecdc3; }"
+    },
+    {
+      "name": "Search Result",
+      "kind": "custom",
+      "refersTo": "body",
+      "description": "A result link: source in faded ink, title, description. No card.",
+      "html": "<a class=\"ds-result\" href=\"#\"><span class=\"ds-result-source\">example.com</span><span class=\"ds-result-title\">Search it on Google</span><span class=\"ds-result-desc\">Google search for \u00abterm\u00bb limited to example.com</span></a>",
+      "css": ".ds-result { display: flex; flex-direction: column; gap: 4px; color: #100f0f; text-decoration: none; } .ds-result-source, .ds-result-desc { color: #6f6e69; font-size: 14px; } .ds-result-title { font-size: 18px; line-height: 28px; }"
+    },
+    {
+      "name": "Health Mark",
+      "kind": "custom",
+      "refersTo": "ledger-green",
+      "description": "Status icon beside the brand: checking, up, down.",
+      "html": "<svg class=\"ds-health\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" role=\"status\" aria-label=\"Service is up\"><path d=\"M20 6 9 17l-5-5\"/></svg>",
+      "css": ".ds-health { color: #66800b; }"
+    },
+    {
+      "name": "Dialog",
+      "kind": "card",
+      "refersTo": "dialog",
+      "description": "Floating surface for adding a source or a user.",
+      "html": "<div class=\"ds-dialog\"><h2 class=\"ds-dialog-title\">Add source</h2><p class=\"ds-dialog-body\">Paste the address of a site you trust.</p></div>",
+      "css": ".ds-dialog { max-width: 512px; padding: 24px; border: 1px solid #cecdc3; border-radius: 8px; background: #fffcf0; color: #100f0f; box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1); } .ds-dialog-title { margin: 0 0 8px; font-size: 18px; font-weight: 600; } .ds-dialog-body { margin: 0; color: #6f6e69; font-size: 14px; }"
+    },
+    {
+      "name": "Side Label Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Add-source form field: label in a 3.5rem column on the left, control beside it.",
+      "html": "<div class=\"ds-side-field\"><label class=\"ds-side-label\" for=\"ds-url\">URL</label><input class=\"ds-side-input\" id=\"ds-url\" /></div>",
+      "css": ".ds-side-field { display: grid; grid-template-columns: 3.5rem 1fr; align-items: center; column-gap: 12px; } .ds-side-label { font-size: 14px; font-weight: 500; color: #100f0f; } .ds-side-input { height: 36px; padding: 4px 12px; border: 1px solid #cecdc3; border-radius: 6px; background: #fffcf0; color: #100f0f; font-size: 14px; box-sizing: border-box; } .ds-side-input:focus-visible { outline: none; border-color: #205ea6; box-shadow: 0 0 0 3px rgb(32 94 166 / .5); }"
+    },
+    {
+      "name": "Empty Source List",
+      "kind": "custom",
+      "refersTo": "sidebar",
+      "description": "Side bar with no sources: library icon over faded text.",
+      "html": "<div class=\"ds-empty\"><svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m16 6 4 14\"/><path d=\"M12 6v14\"/><path d=\"M8 8v12\"/><path d=\"M4 4v16\"/></svg><p>You have no sources yet</p></div>",
+      "css": ".ds-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 8px; text-align: center; color: #6f6e69; } .ds-empty p { margin: 0; font-size: 14px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Private Library",
+    "overview": "Sorzs looks like a small reading room kept by one person: warm paper, dark ink, a handwritten nameplate over the door, and shelves of sites someone chose. Nothing performs. The interface is calm, bookish and understated, and it gets out of the way of the links, which are the whole point.\n\nDensity is moderate and chrome is thin. A single header with a hairline rule, a tonal shelf (the side bar) for the user's sources, and an open main area for results. One blue accent does all the pointing; green and red appear only as status. The only flourish is the script wordmark.\n\nThe look follows the operating system's light or dark preference, with no toggle. Light is paper and ink; dark is the same room at night.",
+    "keyCharacteristics": [
+      "Warm Flexoki paper and ink, never pure white or pure black.",
+      "One blue accent; green and red are status only.",
+      "Flat: borders and tonal surfaces carry depth, shadows are rare.",
+      "One handwritten element, the wordmark; everything else is system sans.",
+      "Icon-first controls with tooltips and accessible names."
+    ],
+    "rules": [
+      {
+        "name": "The One Pointer Rule",
+        "body": "Blue is the only accent. It marks what can be acted on and where focus is. Green and red never decorate.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Pure Rule",
+        "body": "No #fff or #000. Every neutral is tinted warm, in both themes.",
+        "section": "colors"
+      },
+      {
+        "name": "The Single Script Rule",
+        "body": "The script face appears only as the brand, never as plain text. Section headings, button labels and results use the sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Shelf Rule",
+        "body": "Surfaces at rest have no shadow. A shadow means the surface floats above the page (dialog, popover, tooltip).",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do fill every color from the shadcn variables so light and dark swap together.",
+      "Do make header and row actions icon-only with a tooltip and an accessible name.",
+      "Do keep results as plain text blocks on the page; the link is the interface.",
+      "Do give any hard-coded size a token in @theme (as --text-wordmark) rather than an arbitrary class.",
+      "Do use Lucide line icons."
+    ],
+    "donts": [
+      "Don't use pure white or pure black; stay in the tinted Flexoki neutrals.",
+      "Don't add a second accent color or use green or red for decoration.",
+      "Don't use the script face outside the brand.",
+      "Don't add shadows to surfaces at rest, and don't wrap results in cards.",
+      "Don't add a theme toggle; the theme follows the operating system.",
+      "Don't give the backoffice its own tokens or components; it differs from Sorzs only in what it shows.",
+      "Don't make more than one button in a row solid blue."
+    ]
+  }
+}
