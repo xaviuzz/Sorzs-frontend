@@ -166,9 +166,9 @@
       "name": "Source Menu Item",
       "kind": "nav",
       "refersTo": "sidebar",
-      "description": "A trusted source in the side bar: favicon and name.",
+      "description": "A trusted source in the side bar: favicon in a 24px tile and name, 40px tall.",
       "html": "<div class=\"ds-side\"><a class=\"ds-side-item\" href=\"#\"><span class=\"ds-side-icon\"></span>Example docs</a></div>",
-      "css": ".ds-side { width: 256px; padding: 8px; background: #f2f0e5; border-right: 1px solid #cecdc3; box-sizing: border-box; } .ds-side-item { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; color: #100f0f; font-size: 14px; text-decoration: none; } .ds-side-item:hover { background: #e6e4d9; color: #282726; } .ds-side-icon { width: 16px; height: 16px; border-radius: 4px; background: #cecdc3; }"
+      "css": ".ds-side { width: 256px; padding: 8px; background: #f2f0e5; border-right: 1px solid #cecdc3; box-sizing: border-box; } .ds-side-item { display: flex; align-items: center; gap: 12px; height: 40px; padding: 8px; border-radius: 6px; color: #100f0f; font-size: 14px; text-decoration: none; } .ds-side-item:hover { background: #e6e4d9; color: #282726; } .ds-side-icon { width: 24px; height: 24px; box-sizing: border-box; border: 1px solid #cecdc3; border-radius: 4px; background: #fffcf0; }"
     },
     {
       "name": "Search Result",

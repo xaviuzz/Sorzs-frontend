@@ -136,7 +136,7 @@ A Flexoki palette: tinted neutrals with a single blue accent, mapped onto shadcn
 **Character:** A handwritten nameplate against plain, neutral sans. The contrast is the identity; the sans never competes.
 
 ### Hierarchy
-- **Wordmark** (600, 1.25em of the heading it sits in): the brand. In the Sorzs header the heading is 3rem, so the nameplate reads about 3.75rem and is the largest thing on the screen; on the entry screen the heading is 1.5rem. It also appears as the "S" of the add button and the "Sorz" in the add dialog's title. Always the script face, never used for anything else.
+- **Wordmark** (600, 1.25em of the heading it sits in): the brand. In the Sorzs header the heading is 3rem, so the nameplate reads about 3.75rem and is the largest thing on the screen; on the entry screen the heading is 1.5rem. It also appears as the "S" of the add button and the "Sorz" in the add dialog's title, where the heading is 1rem so "Sorz" reads at 20px, the same size as the "S" of the button, on one baseline with "Add". Always the script face, never used for anything else.
 - **Headline** (400, 1.5rem / 2rem): the page `h1` on screens that show one.
 - **Title** (400, 1.25rem for section titles, 1.125rem for a result title): backoffice section title and the title of each search result.
 - **Body** (400, 0.875rem): descriptions, rows, form text. Source names above results use the faded ink.
@@ -147,7 +147,7 @@ A Flexoki palette: tinted neutrals with a single blue accent, mapped onto shadcn
 
 ## Layout
 
-An app shell: a full-width header with a bottom hairline, below it a collapsible left side bar (256px open, 48px collapsed to icons, a sheet at 288px on mobile) and a flexible main area with 16px padding. The header is tall and led by the wordmark: 24px above and below, 16px at the sides, 12px between items; the search box is centered, grows to a 672px maximum, and the action icons sit on the right with 8px between them. The backoffice uses the same header without search and add: the wordmark, the health mark, and the back and log out icons pushed to the right.
+An app shell: a full-width header with a bottom hairline, below it a collapsible left side bar (256px open, 48px collapsed to icons, a sheet at 288px on mobile) and a flexible main area with 16px padding. In the backoffice the main area is a two-column grid up to 56rem wide: the section title on the left and its action (add user) on the right, then rows in aligned columns, each row with a Paper Hover fill on hover. The header is tall and led by the wordmark: 24px above and below, 16px at the sides, 12px between items; the search box is centered, grows to a 672px maximum, and the action icons sit on the right with 8px between them. The backoffice uses the same header without search and add: the wordmark, the health mark, and the back and log out icons pushed to the right.
 
 Spacing is Tailwind's 4px scale; 8px between related controls, 16px around regions, 24px inside dialogs. Results are a plain vertical list with no cards.
 
@@ -160,7 +160,7 @@ Flat by default. Depth comes from the hairline under the header, the 1px border 
 
 ## Shapes
 
-Gently rounded and consistent: a base radius of 8px with steps at 4px, 6px (buttons, inputs, menu items), 8px (dialogs) and 12px. Borders are 1px in the Rule color. Icons are Lucide line icons at 16px in buttons. The favicon of each source is a small image beside its name, with a generic globe when none is known.
+Gently rounded and consistent: a base radius of 8px with steps at 4px, 6px (buttons, inputs, menu items), 8px (dialogs) and 12px. Borders are 1px in the Rule color. Icons are Lucide line icons at 16px in buttons. The favicon of each source is a 16px image centered in a 24px square tile with a 1px Rule border, 4px radius and Paper fill, with a generic globe in the same tile when none is known. Every tile is the same size wherever it appears: side bar, results, add dialog, candidates and backoffice. Collapsed to icons, the side bar drops the border and the fill and shows the 16px image alone.
 
 ## Components
 
@@ -181,14 +181,14 @@ Refined and restrained: small, quiet controls that read as part of the page.
 - **Labelled on the side:** in the add-source form, each label sits to the left of its control in a 3.5rem column with a 12px gap, and the controls line up. Anything under the control, such as the candidate list, aligns with it. The form's blocks are 16px apart.
 
 ### Navigation
-- **Side bar:** Paper Shelf fill, 1px border, entries with a favicon or icon and text. The active entry takes the Paper Hover accent. Collapses to icons only; the keyboard shortcut is `b`.
+- **Side bar:** Paper Shelf fill, 1px border, entries 40px tall with a 24px tile (favicon or icon) and text, 12px apart. The toggle at the top is a 24px button with 12px at the sides, on the same axis as the tiles, so the header is about 32px tall. The active entry takes the Paper Hover accent. Collapses to icons only; the keyboard shortcut is `b`. The backoffice side bar is identical.
 - **Header:** Paper, a bottom hairline, brand and health mark at left.
 
 ### Empty source list
 In the side bar with no sources: a centered 32px library icon in faded ink with a thin 1.5 stroke, and below it "You have no sources yet" in faded ink at 0.875rem. 24px above and below. Hidden when the side bar collapses to icons.
 
 ### Search result
-A plain link block: favicon with source name in faded ink, the title at 1.125rem, the description in faded ink below. No card, no border. Opens in a new tab.
+A plain link block: favicon tile with source name in faded ink, the title at 1.125rem, the description in faded ink below. No card, no border. Opens in a new tab.
 
 ### Health mark
 A single 16px status icon next to the brand: circle while checking (faded), check in Ledger Green, cross in Stamp Red. It carries `role="status"` with a spoken label.
