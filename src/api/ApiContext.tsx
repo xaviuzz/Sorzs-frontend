@@ -64,3 +64,18 @@ export function useInspectSource() {
 	const api = useApi("useInspectSource");
 	return api.inspectSource;
 }
+
+export function useListUsers() {
+	const api = useApi("useListUsers");
+	return api.listUsers;
+}
+
+export function useAddUser() {
+	const api = useApi("useAddUser");
+	return api.addUser;
+}
+
+export function useSetRole() {
+	const api = useApi("useSetRole");
+	return api.setRole;
+}

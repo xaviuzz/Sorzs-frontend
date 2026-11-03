@@ -6,6 +6,9 @@ import { AddSource } from "@/api/sources/AddSource";
 import { InspectSource } from "@/api/sources/InspectSource";
 import { ListSources } from "@/api/sources/ListSources";
 import { SearchSources } from "@/api/sources/SearchSources";
+import { AddUser } from "@/api/users/AddUser";
+import { ListUsers } from "@/api/users/ListUsers";
+import { SetRole } from "@/api/users/SetRole";
 
 export class Api {
 	readonly healthCheck: HealthCheck;
@@ -14,6 +17,9 @@ export class Api {
 	readonly inspectSource: InspectSource;
 	readonly listSources: ListSources;
 	readonly searchSources: SearchSources;
+	readonly listUsers: ListUsers;
+	readonly addUser: AddUser;
+	readonly setRole: SetRole;
 
 	constructor(client: Client<paths>) {
 		this.healthCheck = new HealthCheck(client);
@@ -22,5 +28,8 @@ export class Api {
 		this.inspectSource = new InspectSource(client);
 		this.listSources = new ListSources(client);
 		this.searchSources = new SearchSources(client);
+		this.listUsers = new ListUsers(client);
+		this.addUser = new AddUser(client);
+		this.setRole = new SetRole(client);
 	}
 }
