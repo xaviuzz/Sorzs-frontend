@@ -21,7 +21,9 @@ export function BackToSorzsButton() {
 				<TooltipTrigger asChild>
 					<Button
 						aria-label="Back to Sorzs"
+						variant="ghost"
 						size="icon-sm"
+						className="text-primary"
 						onClick={backToSorzs}
 					>
 						<ArrowLeft aria-hidden="true" />

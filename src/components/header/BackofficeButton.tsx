@@ -21,7 +21,9 @@ export function BackofficeButton() {
 				<TooltipTrigger asChild>
 					<Button
 						aria-label="Backoffice"
+						variant="ghost"
 						size="icon-sm"
+						className="text-primary"
 						onClick={enterBackoffice}
 					>
 						<Shield aria-hidden="true" />

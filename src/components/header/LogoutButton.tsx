@@ -15,7 +15,13 @@ export function LogoutButton() {
 		<TooltipProvider>
 			<Tooltip>
 				<TooltipTrigger asChild>
-					<Button aria-label="Log out" size="icon-sm" onClick={leave}>
+					<Button
+						aria-label="Log out"
+						variant="ghost"
+						size="icon-sm"
+						className="text-primary"
+						onClick={leave}
+					>
 						<LogOut aria-hidden="true" />
 					</Button>
 				</TooltipTrigger>
