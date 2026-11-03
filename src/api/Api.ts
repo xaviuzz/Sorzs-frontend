@@ -2,6 +2,7 @@ import type { Client } from "openapi-fetch";
 import { Login } from "@/api/auth/Login";
 import { HealthCheck } from "@/api/health/HealthCheck";
 import type { paths } from "@/api/schema";
+import { ListSorzsSources } from "@/api/sorzs/ListSorzsSources";
 import { AddSource } from "@/api/sources/AddSource";
 import { InspectSource } from "@/api/sources/InspectSource";
 import { ListSources } from "@/api/sources/ListSources";
@@ -18,6 +19,7 @@ export class Api {
 	readonly listSources: ListSources;
 	readonly searchSources: SearchSources;
 	readonly listUsers: ListUsers;
+	readonly listSorzsSources: ListSorzsSources;
 	readonly addUser: AddUser;
 	readonly setRole: SetRole;
 
@@ -29,6 +31,7 @@ export class Api {
 		this.listSources = new ListSources(client);
 		this.searchSources = new SearchSources(client);
 		this.listUsers = new ListUsers(client);
+		this.listSorzsSources = new ListSorzsSources(client);
 		this.addUser = new AddUser(client);
 		this.setRole = new SetRole(client);
 	}

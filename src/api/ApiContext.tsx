@@ -70,6 +70,11 @@ export function useListUsers() {
 	return api.listUsers;
 }
 
+export function useListSorzsSources() {
+	const api = useApi("useListSorzsSources");
+	return api.listSorzsSources;
+}
+
 export function useAddUser() {
 	const api = useApi("useAddUser");
 	return api.addUser;
