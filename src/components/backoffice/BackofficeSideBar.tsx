@@ -45,8 +45,8 @@ export function BackofficeSideBar({ active }: { active: BackofficeSection }) {
 				collapsible="icon"
 				className="absolute h-full"
 			>
-				<SidebarHeader>
-					<SidebarTrigger className="size-8 self-start" />
+				<SidebarHeader className="px-3 py-1">
+					<SidebarTrigger className="size-6 self-start" />
 				</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup>
