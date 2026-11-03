@@ -1,4 +1,4 @@
-import { SourceFavicon } from "@/components/sources/SourceFavicon";
+import { SourceFavicon } from "@/components/SourceFavicon";
 import { useSourceReading } from "@/components/sources/SourcesProvider";
 import type { SearchResult } from "@/domain/SearchResult";
 

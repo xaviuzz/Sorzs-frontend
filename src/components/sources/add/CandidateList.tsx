@@ -1,4 +1,4 @@
-import { SourceFavicon } from "@/components/sources/SourceFavicon";
+import { SourceFavicon } from "@/components/SourceFavicon";
 import { Button } from "@/components/ui/button";
 import type { AddressCandidate } from "@/domain/AddressCandidate";
 

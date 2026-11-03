@@ -1,4 +1,4 @@
-import { SourceFavicon } from "@/components/sources/SourceFavicon";
+import { SourceFavicon } from "@/components/SourceFavicon";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { SourceEntry } from "@/domain/SourceEntry";
 

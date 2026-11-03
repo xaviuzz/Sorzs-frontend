@@ -1,5 +1,5 @@
 import type { PageInfo } from "@/api/sources/InspectSource";
-import { SourceFavicon } from "@/components/sources/SourceFavicon";
+import { SourceFavicon } from "@/components/SourceFavicon";
 
 export function InspectedFavicon({
 	inspected,
