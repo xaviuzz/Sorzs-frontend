@@ -16,12 +16,12 @@ export function Header() {
 	}
 
 	return (
-		<header className="flex items-center gap-2 border-b p-4">
-			<h1 className="text-2xl">
+		<header className="flex items-center gap-3 border-b px-4 py-6">
+			<h1 className="text-5xl">
 				<Brand>Sorzs</Brand>
 			</h1>
 			<HealthMark />
-			<div className="mx-auto w-full max-w-xl">
+			<div className="mx-auto w-full max-w-2xl">
 				<SearchBox />
 			</div>
 			<div className="flex items-center gap-2">
