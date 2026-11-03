@@ -62,6 +62,9 @@
 	--font-script: "Rouge Script", cursive;
 	--text-wordmark: 1.25em;
 	--field-label-width: 3.5rem;
+	--user-name-width: 10rem;
+	--user-role-width: 5rem;
+	--backoffice-content-width: 56rem;
 	--radius-sm: calc(var(--radius) - 4px);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);

@@ -11,6 +11,10 @@ export class LoadingUsers implements UsersReading {
 	}
 
 	view(): ReactNode {
-		return <p role="status">Loading users</p>;
+		return (
+			<p role="status" className="col-span-2">
+				Loading users
+			</p>
+		);
 	}
 }

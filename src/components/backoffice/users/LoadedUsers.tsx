@@ -25,14 +25,14 @@ export class LoadedUsers implements UsersReading {
 
 	view(): ReactNode {
 		return (
-			<div className="flex flex-col gap-4">
+			<>
 				<UsersToolbar />
-				<ul className="flex flex-col gap-2">
+				<ul className="col-span-2 flex flex-col">
 					{this.entries.map((entry) => (
 						<UserRow key={entry.username} entry={entry} />
 					))}
 				</ul>
-			</div>
+			</>
 		);
 	}
 }

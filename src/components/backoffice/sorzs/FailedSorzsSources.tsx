@@ -12,7 +12,7 @@ export class FailedSorzsSources implements SorzsSourcesReading {
 
 	view(): ReactNode {
 		return (
-			<p role="alert" className="text-error">
+			<p role="alert" className="col-span-2 text-error">
 				{this.message}
 			</p>
 		);

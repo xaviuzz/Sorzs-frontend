@@ -7,9 +7,9 @@ export function SorzsSourceRow({ entry }: { entry: SorzsSourceEntry }) {
 	if (entry.favicon.isPresent()) faviconText = entry.favicon.address();
 
 	return (
-		<li className="flex items-center gap-4">
+		<li className="-mx-2 grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-md px-2 py-1 hover:bg-accent">
 			<SourceFavicon favicon={faviconText} text={entry.address} />
-			<span className="flex-1">{entry.address}</span>
+			<span>{entry.address}</span>
 			<UserCount users={entry.users} />
 		</li>
 	);

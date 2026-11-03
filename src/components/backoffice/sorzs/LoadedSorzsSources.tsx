@@ -8,7 +8,7 @@ export class LoadedSorzsSources implements SorzsSourcesReading {
 
 	view(): ReactNode {
 		return (
-			<ul className="flex flex-col gap-2">
+			<ul className="col-span-2 flex flex-col">
 				{this.entries.map((entry) => (
 					<SorzsSourceRow key={entry.address} entry={entry} />
 				))}

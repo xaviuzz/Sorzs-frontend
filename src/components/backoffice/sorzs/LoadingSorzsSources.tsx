@@ -3,6 +3,10 @@ import type { SorzsSourcesReading } from "@/components/backoffice/sorzs/SorzsSou
 
 export class LoadingSorzsSources implements SorzsSourcesReading {
 	view(): ReactNode {
-		return <p role="status">Loading sources</p>;
+		return (
+			<p role="status" className="col-span-2">
+				Loading sources
+			</p>
+		);
 	}
 }
