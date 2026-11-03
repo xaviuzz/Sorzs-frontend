@@ -1,3 +1,4 @@
+import { Library } from "lucide-react";
 import type { ReactNode } from "react";
 import { SourceMenuItem } from "@/components/sources/list/SourceMenuItem";
 import { HIDDEN_WHEN_COLLAPSED } from "@/components/sources/reading/hiddenWhenCollapsed";
@@ -27,9 +28,16 @@ export class LoadedSources implements SourceReading {
 
 	view(): ReactNode {
 		let view: ReactNode = (
-			<p className={`text-muted-foreground ${HIDDEN_WHEN_COLLAPSED}`}>
-				You have no sources yet
-			</p>
+			<div
+				className={`flex flex-col items-center gap-3 px-2 py-6 text-center ${HIDDEN_WHEN_COLLAPSED}`}
+			>
+				<Library
+					className="size-8 text-muted-foreground"
+					strokeWidth={1.5}
+					aria-hidden="true"
+				/>
+				<p className="text-sm text-muted-foreground">You have no sources yet</p>
+			</div>
 		);
 		if (this.entries.length > 0) {
 			view = (
