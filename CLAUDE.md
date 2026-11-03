@@ -50,6 +50,8 @@ A class that serves as an `openapi-fetch` middleware declares `onRequest` and `o
 
 Type a form's `onSubmit` handler with `SubmitEvent` imported from `react`; the global DOM `SubmitEvent` fails `tsc`. `FormEvent` is deprecated in `@types/react` 19, and neither `tsc` nor Biome flags it.
 
+A text-only element that needs an accessible name (a count, a badge) takes `role="img"` with its `aria-label`; Biome rejects `aria-label` on a bare `span`. Query it by role `img` and a `name` pattern, since a row with a favicon holds another `img`.
+
 A step that removes a method lists what else that method did (saving, navigating, notifying) and keeps a test for each effect that must survive.
 
 A value a component hard-codes in a Tailwind arbitrary class (`text-[1.25em]`) becomes a token in `@theme` of `src/index.css` (`--text-wordmark`, used as `text-wordmark`), so changing it is one edit. Name the token for what it is. Never use `@apply` for a custom class: the component is the unit of reuse.
