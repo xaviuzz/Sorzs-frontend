@@ -21,11 +21,18 @@ describe("BackofficeScreen", () => {
 		expect(sut.backButton()).toBeInTheDocument();
 	});
 
-	test("shows only the title of the active section", () => {
+	test("shows only the title of the Sorzs section", () => {
+		sut.showAt("/backoffice/sorzs");
+
+		expect(sut.title()).toHaveTextContent("Sorzs");
+		expect(sut.main()).toHaveTextContent(/^Sorzs$/);
+	});
+
+	test("shows the users under the title of the Users section", () => {
 		sut.showAt("/backoffice/users");
 
 		expect(sut.title()).toHaveTextContent("Users");
-		expect(sut.main()).toHaveTextContent(/^Users$/);
+		expect(sut.main()).toHaveTextContent("Loading users");
 	});
 
 	test("offers Users and Sorzs in the side bar, marking the active one", () => {
