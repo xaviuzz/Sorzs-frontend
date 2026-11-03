@@ -106,6 +106,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/users.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Lists every user with their role, for an admin */
+        post: operations["usersList"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users.add": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Adds a user with a password and a role, for an admin */
+        post: operations["usersAdd"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users.setRole": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Changes the role of a user, for an admin */
+        post: operations["usersSetRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -124,7 +175,7 @@ export interface components {
         };
         ErrorBody: {
             /** @enum {string} */
-            code: "INVALID_BODY" | "INVALID_CREDENTIALS" | "FORBIDDEN" | "SOURCE_ALREADY_REGISTERED" | "SOURCE_NAME_TAKEN" | "INTERNAL_ERROR";
+            code: "INVALID_BODY" | "INVALID_CREDENTIALS" | "FORBIDDEN" | "SOURCE_ALREADY_REGISTERED" | "SOURCE_NAME_TAKEN" | "USERNAME_TAKEN" | "LAST_ADMIN" | "INTERNAL_ERROR";
             message: string;
         };
         HealthCheckBody: {
@@ -215,6 +266,43 @@ export interface components {
             header: components["schemas"]["ReplyHeader"];
             body: components["schemas"]["SourcesSearchBody"] | components["schemas"]["ErrorBody"];
         };
+        UserEntry: {
+            username: string;
+            /** @enum {string} */
+            role: "admin" | "user";
+        };
+        UsersListBody: {
+            users: components["schemas"]["UserEntry"][];
+        };
+        UsersListReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: components["schemas"]["UsersListBody"] | components["schemas"]["ErrorBody"];
+        };
+        UsersAddCall: {
+            header: components["schemas"]["CallHeader"];
+            body: {
+                username: string;
+                password: string;
+                /** @enum {string} */
+                role: "admin" | "user";
+            };
+        };
+        UsersAddReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: components["schemas"]["UserEntry"] | components["schemas"]["ErrorBody"];
+        };
+        UsersSetRoleCall: {
+            header: components["schemas"]["CallHeader"];
+            body: {
+                username: string;
+                /** @enum {string} */
+                role: "admin" | "user";
+            };
+        };
+        UsersSetRoleReply: {
+            header: components["schemas"]["ReplyHeader"];
+            body: components["schemas"]["UserEntry"] | components["schemas"]["ErrorBody"];
+        };
     };
     responses: {
         /** @description unreadable JSON or missing callId */
@@ -226,7 +314,7 @@ export interface components {
                 "application/json": components["schemas"]["ErrorBody"];
             };
         };
-        /** @description missing, malformed or altered token */
+        /** @description missing, malformed or altered token, or a user who is not an admin on an admin operation */
         Forbidden: {
             headers: {
                 [name: string]: unknown;
@@ -391,6 +479,84 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SourcesSearchReply"];
+                };
+            };
+            400: components["responses"]["TransportError"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    usersList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CallWithoutBody"];
+            };
+        };
+        responses: {
+            /** @description the users, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersListReply"];
+                };
+            };
+            400: components["responses"]["TransportError"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    usersAdd: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsersAddCall"];
+            };
+        };
+        responses: {
+            /** @description the created user, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersAddReply"];
+                };
+            };
+            400: components["responses"]["TransportError"];
+            403: components["responses"]["Forbidden"];
+        };
+    };
+    usersSetRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UsersSetRoleCall"];
+            };
+        };
+        responses: {
+            /** @description the user with the new role, or an error carried in the message */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UsersSetRoleReply"];
                 };
             };
             400: components["responses"]["TransportError"];
