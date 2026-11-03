@@ -1,7 +1,8 @@
 import type { FormEvent } from "react";
 import type { PageInfo } from "@/api/sources/InspectSource";
 import { CandidateList } from "@/components/sources/add/CandidateList";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { SideLabelField } from "@/components/sources/add/SideLabelField";
+import { FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { AddressCandidate } from "@/domain/AddressCandidate";
 
@@ -36,7 +37,7 @@ export function AddressField({
 	}
 
 	return (
-		<Field>
+		<SideLabelField>
 			<FieldLabel htmlFor="source-address">URL</FieldLabel>
 			<Input
 				id="source-address"
@@ -45,6 +46,6 @@ export function AddressField({
 				onBlur={onLeave}
 			/>
 			{showCandidates()}
-		</Field>
+		</SideLabelField>
 	);
 }

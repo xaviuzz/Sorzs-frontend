@@ -7,7 +7,7 @@ import {
 
 export function AddSourceHeader() {
 	return (
-		<DialogHeader>
+		<DialogHeader className="text-left">
 			<DialogTitle>
 				Add <Brand>Sorz</Brand>
 			</DialogTitle>

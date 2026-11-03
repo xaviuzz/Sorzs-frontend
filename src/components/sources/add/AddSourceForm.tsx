@@ -18,7 +18,7 @@ export function AddSourceForm({
 	return (
 		<form onSubmit={form.submit} className="flex flex-col gap-4">
 			<AddSourceHeader />
-			<FieldGroup>
+			<FieldGroup className="gap-4">
 				<AddressField
 					address={form.address}
 					name={form.name}
