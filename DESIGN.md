@@ -138,7 +138,7 @@ A Flexoki palette: tinted neutrals with a single blue accent, mapped onto shadcn
 ### Hierarchy
 - **Wordmark** (600, 1.25em of the heading it sits in): the brand. In the Sorzs header the heading is 3rem, so the nameplate reads about 3.75rem and is the largest thing on the screen; on the entry screen the heading is 1.5rem. It also appears as the "S" of the add button and the "Sorz" in the add dialog's title, where the heading is 1rem so "Sorz" reads at 20px, the same size as the "S" of the button, on one baseline with "Add". Always the script face, never used for anything else.
 - **Headline** (400, 1.5rem / 2rem): the page `h1` on screens that show one.
-- **Title** (400, 1.25rem for section titles, 1.125rem for a result title): backoffice section title and the title of each search result.
+- **Title** (400, 1.25rem for section titles, 1.0625rem for a result title): backoffice section title and the title of each search result.
 - **Body** (400, 0.875rem): descriptions, rows, form text. Source names above results use the faded ink.
 - **Label** (500, 0.875rem): buttons, field labels.
 
@@ -147,7 +147,7 @@ A Flexoki palette: tinted neutrals with a single blue accent, mapped onto shadcn
 
 ## Layout
 
-An app shell: a full-width header with a bottom hairline, below it a collapsible left side bar (256px open, 48px collapsed to icons, a sheet at 288px on mobile) and a flexible main area with 16px padding. In the backoffice the main area is a two-column grid up to 56rem wide: the section title on the left and its action (add user) on the right, then rows in aligned columns, each row with a Paper Hover fill on hover. The header is tall and led by the wordmark: 24px above and below, 16px at the sides, 12px between items; the search box is centered, grows to a 672px maximum, and the action icons sit on the right with 8px between them. The backoffice uses the same header without search and add: the wordmark, the health mark, and the back and log out icons pushed to the right.
+An app shell: a full-width header with a bottom hairline, below it a collapsible left side bar (256px open, 48px collapsed to icons, a sheet at 288px on mobile) and a flexible main area with 16px padding (36px at the sides and 32px above and below on the search results). In the backoffice the main area is a two-column grid up to 56rem wide: the section title on the left and its action (add user) on the right, then rows in aligned columns, each row with a Paper Hover fill on hover. The header is tall and led by the wordmark: 24px above and below, 16px at the sides, 12px between items; the search box is centered, grows to a 672px maximum, and the action icons sit on the right with 8px between them. The backoffice uses the same header without search and add: the wordmark, the health mark, and the back and log out icons pushed to the right.
 
 Spacing is Tailwind's 4px scale; 8px between related controls, 16px around regions, 24px inside dialogs. Results are a plain vertical list with no cards.
 
@@ -188,7 +188,7 @@ Refined and restrained: small, quiet controls that read as part of the page.
 In the side bar with no sources: a centered 32px library icon in faded ink with a thin 1.5 stroke, and below it "You have no sources yet" in faded ink at 0.875rem. 24px above and below. Hidden when the side bar collapses to icons.
 
 ### Search result
-A plain link block: favicon tile with source name in faded ink, the title at 1.125rem, the description in faded ink below. No card, no border. Opens in a new tab.
+A plain link block: favicon tile with source name in faded ink, the title in Library Blue at 1.0625rem, the description in faded ink at 0.8125rem below. No card, no border at rest; hovering a result fills it with Paper Hover (6px radius, 12px padding that bleeds outside the text column so the text stays aligned) and underlines the title. Results sit 4px apart in a column at most 50rem wide, inside a main area padded 32px above and below and 36px at the sides. Opens in a new tab.
 
 ### Health mark
 A single 16px status icon next to the brand: circle while checking (faded), check in Ledger Green, cross in Stamp Red. It carries `role="status"` with a spoken label.

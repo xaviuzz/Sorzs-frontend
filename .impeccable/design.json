@@ -174,9 +174,9 @@
       "name": "Search Result",
       "kind": "custom",
       "refersTo": "body",
-      "description": "A result link: source in faded ink, title, description. No card.",
+      "description": "A result link: source in faded ink, blue title, description. Paper Hover fill on hover. No card.",
       "html": "<a class=\"ds-result\" href=\"#\"><span class=\"ds-result-source\">example.com</span><span class=\"ds-result-title\">Search it on Google</span><span class=\"ds-result-desc\">Google search for \u00abterm\u00bb limited to example.com</span></a>",
-      "css": ".ds-result { display: flex; flex-direction: column; gap: 4px; color: #100f0f; text-decoration: none; } .ds-result-source, .ds-result-desc { color: #6f6e69; font-size: 14px; } .ds-result-title { font-size: 18px; line-height: 28px; }"
+      "css": ".ds-result { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 6px; color: #100f0f; text-decoration: none; } .ds-result:hover { background: #e6e4d9; } .ds-result:hover .ds-result-title { text-decoration: underline; text-underline-offset: 4px; } .ds-result-source { color: #6f6e69; font-size: 14px; } .ds-result-desc { color: #6f6e69; font-size: 13px; line-height: 20px; } .ds-result-title { color: #205ea6; font-size: 17px; line-height: 24px; }"
     },
     {
       "name": "Health Mark",
