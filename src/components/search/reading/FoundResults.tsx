@@ -8,7 +8,7 @@ export class FoundResults implements SearchReading {
 
 	view(): ReactNode {
 		return (
-			<ul className="flex flex-col gap-4">
+			<ul className="flex max-w-results flex-col gap-1">
 				{this.results.map((result) => (
 					<SearchResultItem key={result.url} result={result} />
 				))}

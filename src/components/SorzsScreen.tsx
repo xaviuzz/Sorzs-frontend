@@ -12,7 +12,7 @@ export function SorzsScreen() {
 					<Header />
 					<div className="flex flex-1">
 						<SourceSideBar />
-						<main className="flex-1 p-4">
+						<main className="flex-1 px-9 py-8">
 							<SearchResultList />
 						</main>
 					</div>

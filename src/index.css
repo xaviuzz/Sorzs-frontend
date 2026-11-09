@@ -61,6 +61,11 @@
 @theme inline {
 	--font-script: "Rouge Script", cursive;
 	--text-wordmark: 1.25em;
+	--text-result-title: 1.0625rem;
+	--text-result-title--line-height: 1.5rem;
+	--text-result-description: 0.8125rem;
+	--text-result-description--line-height: 1.25rem;
+	--container-results: 50rem;
 	--field-label-width: 3.5rem;
 	--user-name-width: 10rem;
 	--user-role-width: 5rem;
