@@ -1,7 +1,7 @@
 import type { FormEvent } from "react";
 import type { PageInfo } from "@/api/sources/InspectSource";
+import { SideLabelField } from "@/components/SideLabelField";
 import { InspectedFavicon } from "@/components/sources/add/InspectedFavicon";
-import { SideLabelField } from "@/components/sources/add/SideLabelField";
 import { FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
