@@ -6,7 +6,7 @@ React app on Bun. Keeps a pinned copy of the backend's `openapi.yaml` and genera
 
 - `bun run dev`: `dev.ts`, dev server on port 5173 (`PORT`) proxying the routes listed in `dev.ts` to `API_URL` (default `http://localhost:3000`) and serving `index.html` on any other path
 - `bun run test`: `bun test`, with happy-dom and Testing Library preloaded from `test/setup.ts`
-- `bun run lint`: Biome check (lint and format); `bunx biome check --write .` fixes
+- `bun run lint`: Biome check (lint and format) and the language check (`lint:language`, no word "source" under `src/` and `test/` except files listed in `language-exceptions.txt`); `bunx biome check --write .` fixes
 - `bun run typecheck`: `tsc --noEmit`
 - `bun run build`: `build.ts` runs `Bun.build` on `index.html` into `dist/`; the `bun build` CLI ignores plugins, so Tailwind only works through this script
 - `bun run generate`: `openapi-typescript` writes `src/api/schema.d.ts` from the pinned `openapi.yaml`
