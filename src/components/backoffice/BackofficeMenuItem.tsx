@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { IconTile } from "@/components/IconTile";
-import { HIDDEN_WHEN_COLLAPSED } from "@/components/sources/reading/hiddenWhenCollapsed";
+import { HIDDEN_WHEN_COLLAPSED } from "@/components/sorzs/reading/hiddenWhenCollapsed";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import type { BackofficeSection } from "@/domain/BackofficeSection";
 

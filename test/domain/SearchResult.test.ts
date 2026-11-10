@@ -6,7 +6,7 @@ describe("SearchResult", () => {
 		title: "Search it on Google",
 		url: "https://www.google.com/search?q=bun site:a.com",
 		description: "Google search for «bun» limited to a.com",
-		source: "Alpha",
+		sorz: "Alpha",
 	});
 
 	test("knows its title", () => {
@@ -21,7 +21,7 @@ describe("SearchResult", () => {
 		expect(result.description).toBe("Google search for «bun» limited to a.com");
 	});
 
-	test("knows the source it came from", () => {
-		expect(result.source).toBe("Alpha");
+	test("knows the sorz it came from", () => {
+		expect(result.sorz).toBe("Alpha");
 	});
 });

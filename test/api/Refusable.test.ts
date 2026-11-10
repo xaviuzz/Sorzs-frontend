@@ -10,11 +10,11 @@ describe("Refusable", () => {
 	});
 
 	test("hands over the body of a successful answer", () => {
-		sut.answerBody({ sources: [] });
+		sut.answerBody({ sorzs: [] });
 
 		sut.open();
 
-		expect(sut.opened()).toEqual({ sources: [] });
+		expect(sut.opened()).toEqual({ sorzs: [] });
 	});
 
 	test("a refusal in the body reaches the caller with its code and message", () => {
@@ -41,17 +41,17 @@ describe("Refusable", () => {
 });
 
 type Refusal = { code: "INTERNAL_ERROR" | "INVALID_BODY"; message: string };
-type Sources = { sources: string[] };
+type Sorzs = { sorzs: string[] };
 type Answer =
-	| { data: { body: Sources | Refusal }; error?: undefined }
+	| { data: { body: Sorzs | Refusal }; error?: undefined }
 	| { data?: undefined; error: Refusal };
 
 class SUT {
-	private answer: Answer = { data: { body: { sources: [] } } };
-	private body: Sources | undefined;
+	private answer: Answer = { data: { body: { sorzs: [] } } };
+	private body: Sorzs | undefined;
 	private thrown: unknown;
 
-	answerBody(body: Sources | Refusal) {
+	answerBody(body: Sorzs | Refusal) {
 		this.answer = { data: { body } };
 	}
 

@@ -28,7 +28,7 @@ describe("App", () => {
 		expect(sut.main()).toBeInTheDocument();
 	});
 
-	test("shows the sources side bar", () => {
+	test("shows the sorzs side bar", () => {
 		sut.show(openSession(), "/");
 
 		expect(sut.sideBar()).toBeInTheDocument();
@@ -108,7 +108,7 @@ class SUT {
 	}
 
 	sideBar() {
-		return screen.getByRole("complementary", { name: "Sources" });
+		return screen.getByRole("complementary", { name: "Sorzs" });
 	}
 
 	backoffice() {

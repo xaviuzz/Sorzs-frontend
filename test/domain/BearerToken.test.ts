@@ -4,7 +4,7 @@ import { NoToken } from "@/domain/NoToken";
 
 describe("BearerToken", () => {
 	test("signs a request with the Authorization header", () => {
-		const request = new Request("http://localhost/sources.list");
+		const request = new Request("http://localhost/sorzs.list");
 
 		const signed = new BearerToken("t-1").signed(request);
 
@@ -37,7 +37,7 @@ describe("BearerToken", () => {
 
 describe("NoToken", () => {
 	test("leaves a request as it is", () => {
-		const request = new Request("http://localhost/sources.list");
+		const request = new Request("http://localhost/sorzs.list");
 
 		const signed = new NoToken().signed(request);
 

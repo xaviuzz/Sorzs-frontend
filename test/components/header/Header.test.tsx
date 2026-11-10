@@ -6,7 +6,7 @@ import { Header } from "@/components/header/Header";
 import { NavigationProvider } from "@/components/navigation/NavigationProvider";
 import { SearchProvider } from "@/components/search/SearchProvider";
 import { SessionProvider } from "@/components/session/SessionProvider";
-import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { SorzsProvider } from "@/components/sorzs/SorzsProvider";
 import type { Session } from "@/domain/Session";
 import {
 	adminSession,
@@ -110,11 +110,11 @@ class SUT {
 			>
 				<NavigationProvider navigation={this.navigation}>
 					<SessionProvider session={session}>
-						<SourcesProvider>
+						<SorzsProvider>
 							<SearchProvider>
 								<Header />
 							</SearchProvider>
-						</SourcesProvider>
+						</SorzsProvider>
 					</SessionProvider>
 				</NavigationProvider>
 			</ApiProvider>,

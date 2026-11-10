@@ -38,7 +38,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/sources.add": {
+    "/sorzs.add": {
         parameters: {
             query?: never;
             header?: never;
@@ -47,15 +47,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Adds a source to the user's list */
-        post: operations["sourcesAdd"];
+        /** Adds a sorz to the user's list */
+        post: operations["sorzsAdd"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/sources.inspect": {
+    "/sorzs.inspect": {
         parameters: {
             query?: never;
             header?: never;
@@ -65,14 +65,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Reads the title and favicon a page offers, registering nothing */
-        post: operations["sourcesInspect"];
+        post: operations["sorzsInspect"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/sources.list": {
+    "/sorzs.list": {
         parameters: {
             query?: never;
             header?: never;
@@ -81,15 +81,15 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Lists the user's sources in order of addition */
-        post: operations["sourcesList"];
+        /** Lists the user's sorzs in order of addition */
+        post: operations["sorzsList"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/sources.search": {
+    "/sorzs.search": {
         parameters: {
             query?: never;
             header?: never;
@@ -98,8 +98,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Searches a term across the user's sources */
-        post: operations["sourcesSearch"];
+        /** Searches a term across the user's sorzs */
+        post: operations["sorzsSearch"];
         delete?: never;
         options?: never;
         head?: never;
@@ -157,7 +157,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/sorzs.sources": {
+    "/sorzs.census": {
         parameters: {
             query?: never;
             header?: never;
@@ -166,8 +166,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Lists every source held by at least one user's list, with how many users hold it, for an admin */
-        post: operations["sorzsSources"];
+        /** Lists every sorz held by at least one user's list, with how many users hold it, for an admin */
+        post: operations["sorzsCensus"];
         delete?: never;
         options?: never;
         head?: never;
@@ -192,7 +192,7 @@ export interface components {
         };
         ErrorBody: {
             /** @enum {string} */
-            code: "INVALID_BODY" | "INVALID_CREDENTIALS" | "FORBIDDEN" | "SOURCE_ALREADY_REGISTERED" | "SOURCE_NAME_TAKEN" | "USERNAME_TAKEN" | "LAST_ADMIN" | "INTERNAL_ERROR";
+            code: "INVALID_BODY" | "INVALID_CREDENTIALS" | "FORBIDDEN" | "SORZ_ALREADY_REGISTERED" | "SORZ_NAME_TAKEN" | "USERNAME_TAKEN" | "LAST_ADMIN" | "INTERNAL_ERROR";
             message: string;
         };
         HealthCheckBody: {
@@ -219,25 +219,25 @@ export interface components {
             header: components["schemas"]["ReplyHeader"];
             body: components["schemas"]["AuthLoginBody"] | components["schemas"]["ErrorBody"];
         };
-        SourceEntry: {
-            sourceId: string;
+        SorzEntry: {
+            sorzId: string;
             name: string | null;
             address: string;
             title: string | null;
             favicon: string | null;
         };
-        SourcesAddCall: {
+        SorzsAddCall: {
             header: components["schemas"]["CallHeader"];
             body: {
                 address: string;
                 name?: string;
             };
         };
-        SourcesAddReply: {
+        SorzsAddReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: components["schemas"]["SourceEntry"] | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SorzEntry"] | components["schemas"]["ErrorBody"];
         };
-        SourcesInspectCall: {
+        SorzsInspectCall: {
             header: components["schemas"]["CallHeader"];
             body: {
                 address: string;
@@ -248,23 +248,23 @@ export interface components {
             title: string;
             favicon: string | null;
         };
-        SourcesInspectBody: {
+        SorzsInspectBody: {
             title: string | null;
             favicon: string | null;
             candidates: components["schemas"]["InspectCandidate"][];
         };
-        SourcesInspectReply: {
+        SorzsInspectReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: components["schemas"]["SourcesInspectBody"] | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SorzsInspectBody"] | components["schemas"]["ErrorBody"];
         };
-        SourcesListBody: {
-            sources: components["schemas"]["SourceEntry"][];
+        SorzsListBody: {
+            sorzs: components["schemas"]["SorzEntry"][];
         };
-        SourcesListReply: {
+        SorzsListReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: components["schemas"]["SourcesListBody"] | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SorzsListBody"] | components["schemas"]["ErrorBody"];
         };
-        SourcesSearchCall: {
+        SorzsSearchCall: {
             header: components["schemas"]["CallHeader"];
             body: {
                 query: string;
@@ -274,26 +274,26 @@ export interface components {
             title: string;
             url: string;
             description: string;
-            source: string;
+            sorz: string;
         };
-        SourcesSearchBody: {
+        SorzsSearchBody: {
             results: components["schemas"]["SearchResult"][];
         };
-        SourcesSearchReply: {
+        SorzsSearchReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: components["schemas"]["SourcesSearchBody"] | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SorzsSearchBody"] | components["schemas"]["ErrorBody"];
         };
-        SorzsSourceEntry: {
+        CensusEntry: {
             address: string;
             favicon: string | null;
             users: number;
         };
-        SorzsSourcesBody: {
-            sources: components["schemas"]["SorzsSourceEntry"][];
+        SorzsCensusBody: {
+            sorzs: components["schemas"]["CensusEntry"][];
         };
-        SorzsSourcesReply: {
+        SorzsCensusReply: {
             header: components["schemas"]["ReplyHeader"];
-            body: components["schemas"]["SorzsSourcesBody"] | components["schemas"]["ErrorBody"];
+            body: components["schemas"]["SorzsCensusBody"] | components["schemas"]["ErrorBody"];
         };
         UserEntry: {
             username: string;
@@ -410,7 +410,7 @@ export interface operations {
             400: components["responses"]["TransportError"];
         };
     };
-    sourcesAdd: {
+    sorzsAdd: {
         parameters: {
             query?: never;
             header?: never;
@@ -419,7 +419,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SourcesAddCall"];
+                "application/json": components["schemas"]["SorzsAddCall"];
             };
         };
         responses: {
@@ -429,14 +429,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SourcesAddReply"];
+                    "application/json": components["schemas"]["SorzsAddReply"];
                 };
             };
             400: components["responses"]["TransportError"];
             403: components["responses"]["Forbidden"];
         };
     };
-    sourcesInspect: {
+    sorzsInspect: {
         parameters: {
             query?: never;
             header?: never;
@@ -445,7 +445,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SourcesInspectCall"];
+                "application/json": components["schemas"]["SorzsInspectCall"];
             };
         };
         responses: {
@@ -455,14 +455,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SourcesInspectReply"];
+                    "application/json": components["schemas"]["SorzsInspectReply"];
                 };
             };
             400: components["responses"]["TransportError"];
             403: components["responses"]["Forbidden"];
         };
     };
-    sourcesList: {
+    sorzsList: {
         parameters: {
             query?: never;
             header?: never;
@@ -481,14 +481,14 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SourcesListReply"];
+                    "application/json": components["schemas"]["SorzsListReply"];
                 };
             };
             400: components["responses"]["TransportError"];
             403: components["responses"]["Forbidden"];
         };
     };
-    sourcesSearch: {
+    sorzsSearch: {
         parameters: {
             query?: never;
             header?: never;
@@ -497,17 +497,17 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SourcesSearchCall"];
+                "application/json": components["schemas"]["SorzsSearchCall"];
             };
         };
         responses: {
-            /** @description one result per source in list order, or an error carried in the message */
+            /** @description one result per sorz in list order, or an error carried in the message */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SourcesSearchReply"];
+                    "application/json": components["schemas"]["SorzsSearchReply"];
                 };
             };
             400: components["responses"]["TransportError"];
@@ -592,7 +592,7 @@ export interface operations {
             403: components["responses"]["Forbidden"];
         };
     };
-    sorzsSources: {
+    sorzsCensus: {
         parameters: {
             query?: never;
             header?: never;
@@ -605,13 +605,13 @@ export interface operations {
             };
         };
         responses: {
-            /** @description the sources ordered by address, or an error carried in the message */
+            /** @description the sorzs ordered by address, or an error carried in the message */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SorzsSourcesReply"];
+                    "application/json": components["schemas"]["SorzsCensusReply"];
                 };
             };
             400: components["responses"]["TransportError"];

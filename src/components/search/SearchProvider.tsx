@@ -6,7 +6,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useSearchSources } from "@/api/ApiContext";
+import { useSearchSorzs } from "@/api/ApiContext";
 import { FailedSearch } from "@/components/search/reading/FailedSearch";
 import { FoundResults } from "@/components/search/reading/FoundResults";
 import { NoSearchYet } from "@/components/search/reading/NoSearchYet";
@@ -23,7 +23,7 @@ interface Search {
 const SearchContext = createContext<Search | null>(null);
 
 export function SearchProvider({ children }: { children: ReactNode }) {
-	const searchSources = useSearchSources();
+	const searchSorzs = useSearchSorzs();
 	const [query, setQuery] = useState("");
 	const [reading, setReading] = useState<SearchReading>(new NoSearchYet());
 	const latestSearch = useRef(0);
@@ -33,7 +33,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 			latestSearch.current += 1;
 			const thisSearch = latestSearch.current;
 			setReading(new Searching());
-			const answered = await searchSources
+			const answered = await searchSorzs
 				.run(query)
 				.then((results) => new FoundResults(results))
 				.catch((error) => FailedSearch.from(error));
@@ -42,7 +42,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 			}
 		}
 		return { query, reading, write: setQuery, run };
-	}, [query, reading, searchSources]);
+	}, [query, reading, searchSorzs]);
 
 	return (
 		<SearchContext.Provider value={search}>{children}</SearchContext.Provider>

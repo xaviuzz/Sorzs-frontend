@@ -148,7 +148,7 @@ class SUT {
 	}
 
 	signedHeader() {
-		const request = new Request("http://localhost/sources.list");
+		const request = new Request("http://localhost/sorzs.list");
 		return this.session.signed(request).headers.get("Authorization");
 	}
 

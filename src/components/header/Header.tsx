@@ -4,11 +4,11 @@ import { HealthMark } from "@/components/header/HealthMark";
 import { LogoutButton } from "@/components/header/LogoutButton";
 import { SearchBox } from "@/components/search/SearchBox";
 import { useMayEnterBackoffice } from "@/components/session/SessionProvider";
-import { AddSourceDialog } from "@/components/sources/add/AddSourceDialog";
-import { useAppendSource } from "@/components/sources/SourcesProvider";
+import { AddSorzDialog } from "@/components/sorzs/add/AddSorzDialog";
+import { useAppendSorz } from "@/components/sorzs/SorzsProvider";
 
 export function Header() {
-	const appendSource = useAppendSource();
+	const appendSorz = useAppendSorz();
 	const mayEnterBackoffice = useMayEnterBackoffice();
 	let backofficeButton = <></>;
 	if (mayEnterBackoffice) {
@@ -25,7 +25,7 @@ export function Header() {
 				<SearchBox />
 			</div>
 			<div className="flex items-center gap-2">
-				<AddSourceDialog onAdded={appendSource} />
+				<AddSorzDialog onAdded={appendSorz} />
 				{backofficeButton}
 				<LogoutButton />
 			</div>

@@ -1,15 +1,15 @@
 import type { ChangeEvent, SubmitEvent } from "react";
 import { useSearch } from "@/components/search/SearchProvider";
-import { useSourceReading } from "@/components/sources/SourcesProvider";
+import { useSorzReading } from "@/components/sorzs/SorzsProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export function SearchBox() {
 	const search = useSearch();
-	const reading = useSourceReading();
+	const reading = useSorzReading();
 	const isBlank = search.query.trim() === "";
-	const hasNoSources = !reading.hasSources();
-	const cannotSearch = isBlank || hasNoSources;
+	const hasNoSorzs = !reading.hasSorzs();
+	const cannotSearch = isBlank || hasNoSorzs;
 
 	function writeIt(event: ChangeEvent<HTMLInputElement>) {
 		search.write(event.target.value);

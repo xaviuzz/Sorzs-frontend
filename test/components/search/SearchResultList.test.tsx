@@ -5,11 +5,8 @@ import { ApiProvider } from "@/api/ApiContext";
 import { SearchBox } from "@/components/search/SearchBox";
 import { SearchProvider, useSearch } from "@/components/search/SearchProvider";
 import { SearchResultList } from "@/components/search/SearchResultList";
-import {
-	SourcesProvider,
-	useAppendSource,
-} from "@/components/sources/SourcesProvider";
-import { SourceEntry } from "@/domain/SourceEntry";
+import { SorzsProvider, useAppendSorz } from "@/components/sorzs/SorzsProvider";
+import { SorzEntry } from "@/domain/SorzEntry";
 import { openSession } from "../../support/openSession";
 
 describe("SearchResultList", () => {
@@ -21,15 +18,15 @@ describe("SearchResultList", () => {
 
 	test("shows nothing before the first search", async () => {
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		expect(sut.links()).toEqual([]);
 	});
 
-	test("shows each result with its title, description and source, in order", async () => {
-		sut.hasSources(["Alpha", "Beta"]);
+	test("shows each result with its title, description and sorz, in order", async () => {
+		sut.hasSorzs(["Alpha", "Beta"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.search("bun");
 
@@ -43,9 +40,9 @@ describe("SearchResultList", () => {
 	});
 
 	test("links to the result address in a new tab", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.search("bun");
 
@@ -58,11 +55,11 @@ describe("SearchResultList", () => {
 		expect(link).toHaveAttribute("rel", "noopener noreferrer");
 	});
 
-	test("shows the favicon of the source of each result", async () => {
-		sut.hasSources(["Alpha", "Beta"]);
+	test("shows the favicon of the sorz of each result", async () => {
+		sut.hasSorzs(["Alpha", "Beta"]);
 		sut.hasFavicon("Alpha", "https://alpha.com/i.png");
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.search("bun");
 
@@ -75,10 +72,10 @@ describe("SearchResultList", () => {
 	});
 
 	test("shows that it is searching until the answer arrives", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.neverAnswerSearches();
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.search("bun");
 
@@ -86,21 +83,21 @@ describe("SearchResultList", () => {
 	});
 
 	test("shows why the search failed", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.refuseSearches("query is too long");
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.search("bun");
 
 		expect(await sut.failureNotice()).toHaveTextContent("query is too long");
 	});
 
-	test("shows a result without favicon while the sources are loading", async () => {
-		sut.hasSources(["Alpha"]);
-		sut.neverListSources();
+	test("shows a result without favicon while the sorzs are loading", async () => {
+		sut.hasSorzs(["Alpha"]);
+		sut.neverListSorzs();
 		sut.showSearchingWithoutBox();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.forceSearch();
 
@@ -108,11 +105,11 @@ describe("SearchResultList", () => {
 		expect(sut.missingFavicon()).toBeInTheDocument();
 	});
 
-	test("shows a result without favicon when the sources failed to load", async () => {
-		sut.hasSources(["Alpha"]);
-		sut.refuseSourceList();
+	test("shows a result without favicon when the sorzs failed to load", async () => {
+		sut.hasSorzs(["Alpha"]);
+		sut.refuseSorzList();
 		sut.showSearchingWithoutBox();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.forceSearch();
 
@@ -120,21 +117,21 @@ describe("SearchResultList", () => {
 		expect(sut.missingFavicon()).toBeInTheDocument();
 	});
 
-	test("keeps the results when a source is added afterwards", async () => {
-		sut.hasSources(["Alpha"]);
+	test("keeps the results when a sorz is added afterwards", async () => {
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 		await sut.search("bun");
 		await sut.linksOnceShown(1);
 
-		await sut.addSource("Gamma");
+		await sut.addSorz("Gamma");
 
 		expect(sut.links()).toHaveLength(1);
 	});
 });
 
-function Adder({ entry }: { entry: SourceEntry }) {
-	const append = useAppendSource();
+function Adder({ entry }: { entry: SorzEntry }) {
+	const append = useAppendSorz();
 	function addIt() {
 		append(entry);
 	}
@@ -167,10 +164,10 @@ class SUT {
 	private favicons = new Map<string, string>();
 	private searchAnswer: () => Promise<Response> = async () => this.results();
 	private listed = false;
-	private sourceListAnswer: (() => Promise<Response>) | null = null;
-	private extra = new SourceEntry(entry("Gamma", null));
+	private sorzListAnswer: (() => Promise<Response>) | null = null;
+	private extra = new SorzEntry(entry("Gamma", null));
 
-	hasSources(names: string[]) {
+	hasSorzs(names: string[]) {
 		this.names = names;
 	}
 
@@ -178,13 +175,13 @@ class SUT {
 		this.favicons.set(name, favicon);
 	}
 
-	neverListSources() {
-		this.sourceListAnswer = () => new Promise(() => {});
+	neverListSorzs() {
+		this.sorzListAnswer = () => new Promise(() => {});
 	}
 
-	refuseSourceList() {
-		this.sourceListAnswer = async () =>
-			reply({ code: "INTERNAL_ERROR", message: "sources are down" }, "error");
+	refuseSorzList() {
+		this.sorzListAnswer = async () =>
+			reply({ code: "INTERNAL_ERROR", message: "sorzs are down" }, "error");
 	}
 
 	neverAnswerSearches() {
@@ -203,13 +200,13 @@ class SUT {
 				baseUrl="http://localhost"
 				fetch={this.fetchIt}
 			>
-				<SourcesProvider>
+				<SorzsProvider>
 					<SearchProvider>
 						<SearchBox />
 						<SearchResultList />
 						<Adder entry={this.extra} />
 					</SearchProvider>
-				</SourcesProvider>
+				</SorzsProvider>
 			</ApiProvider>,
 		);
 	}
@@ -221,12 +218,12 @@ class SUT {
 				baseUrl="http://localhost"
 				fetch={this.fetchIt}
 			>
-				<SourcesProvider>
+				<SorzsProvider>
 					<SearchProvider>
 						<SearchResultList />
 						<Forcer />
 					</SearchProvider>
-				</SourcesProvider>
+				</SorzsProvider>
 			</ApiProvider>,
 		);
 	}
@@ -236,7 +233,7 @@ class SUT {
 		await userEvent.click(screen.getByRole("button", { name: "Run" }));
 	}
 
-	async sourcesListed() {
+	async sorzsListed() {
 		await waitFor(() => expect(this.listed).toBe(true));
 		await new Promise((resolve) => setTimeout(resolve, 20));
 	}
@@ -245,8 +242,8 @@ class SUT {
 		await userEvent.type(this.queryBox(), `${query}{Enter}`);
 	}
 
-	async addSource(name: string) {
-		this.extra = new SourceEntry(entry(name, null));
+	async addSorz(name: string) {
+		this.extra = new SorzEntry(entry(name, null));
 		await userEvent.click(screen.getByRole("button", { name: "Add" }));
 	}
 
@@ -284,7 +281,7 @@ class SUT {
 			title: "Search it on Google",
 			url: `https://www.google.com/search?q=bun site:${name}`,
 			description: `Google search for «bun» limited to ${name}`,
-			source: name,
+			sorz: name,
 		}));
 		return reply({ results });
 	}
@@ -292,14 +289,14 @@ class SUT {
 	private fetchIt = async (request: Request) => {
 		const path = new URL(request.url).pathname;
 		let response: Promise<Response> = this.searchAnswer();
-		if (path === "/sources.list") {
+		if (path === "/sorzs.list") {
 			this.listed = true;
-			const sources = this.names.map((name) =>
+			const sorzs = this.names.map((name) =>
 				entry(name, this.favicons.get(name) ?? null),
 			);
-			response = Promise.resolve(reply({ sources }));
-			if (this.sourceListAnswer !== null) {
-				response = this.sourceListAnswer();
+			response = Promise.resolve(reply({ sorzs }));
+			if (this.sorzListAnswer !== null) {
+				response = this.sorzListAnswer();
 			}
 		}
 		return response;
@@ -308,7 +305,7 @@ class SUT {
 
 function entry(name: string, favicon: string | null) {
 	return {
-		sourceId: `s-${name}`,
+		sorzId: `s-${name}`,
 		name,
 		address: `https://${name}.com`,
 		title: null,

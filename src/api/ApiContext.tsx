@@ -45,24 +45,24 @@ export function useLogin() {
 	return api.login;
 }
 
-export function useListSources() {
-	const api = useApi("useListSources");
-	return api.listSources;
+export function useListSorzs() {
+	const api = useApi("useListSorzs");
+	return api.listSorzs;
 }
 
-export function useAddSource() {
-	const api = useApi("useAddSource");
-	return api.addSource;
+export function useAddSorz() {
+	const api = useApi("useAddSorz");
+	return api.addSorz;
 }
 
-export function useSearchSources() {
-	const api = useApi("useSearchSources");
-	return api.searchSources;
+export function useSearchSorzs() {
+	const api = useApi("useSearchSorzs");
+	return api.searchSorzs;
 }
 
-export function useInspectSource() {
-	const api = useApi("useInspectSource");
-	return api.inspectSource;
+export function useInspectSorz() {
+	const api = useApi("useInspectSorz");
+	return api.inspectSorz;
 }
 
 export function useListUsers() {
@@ -70,9 +70,9 @@ export function useListUsers() {
 	return api.listUsers;
 }
 
-export function useListSorzsSources() {
-	const api = useApi("useListSorzsSources");
-	return api.listSorzsSources;
+export function useListCensus() {
+	const api = useApi("useListCensus");
+	return api.listCensus;
 }
 
 export function useAddUser() {

@@ -13,8 +13,8 @@ describe("SorzsSection", () => {
 		sut = new SUT();
 	});
 
-	test("shows a row per source in the order given, with its address in full", async () => {
-		sut.answerSources([
+	test("shows a row per sorz in the order given, with its address in full", async () => {
+		sut.answerSorzs([
 			{ address: "http://a.com", favicon: null, users: 1 },
 			{ address: "https://B.com/Docs", favicon: null, users: 2 },
 		]);
@@ -23,8 +23,8 @@ describe("SorzsSection", () => {
 		expect(await sut.rows()).toEqual(["http://a.com1", "https://B.com/Docs2"]);
 	});
 
-	test("shows the favicon of a source that has one", async () => {
-		sut.answerSources([
+	test("shows the favicon of a sorz that has one", async () => {
+		sut.answerSorzs([
 			{ address: "https://a.com", favicon: "https://a.com/i.png", users: 1 },
 		]);
 		sut.show();
@@ -34,29 +34,29 @@ describe("SorzsSection", () => {
 		expect(favicon).toHaveAttribute("src", "https://a.com/i.png");
 	});
 
-	test("shows the globe when a source has no favicon", async () => {
-		sut.answerSources([{ address: "https://a.com", favicon: null, users: 1 }]);
+	test("shows the globe when a sorz has no favicon", async () => {
+		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 1 }]);
 		sut.show();
 
 		expect(await sut.globeOf("https://a.com")).toBeInTheDocument();
 	});
 
 	test("names the count of users, in the plural", async () => {
-		sut.answerSources([{ address: "https://a.com", favicon: null, users: 2 }]);
+		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 2 }]);
 		sut.show();
 
 		expect(await sut.countOf("https://a.com")).toHaveAccessibleName("2 users");
 	});
 
 	test("names the count of users, in the singular", async () => {
-		sut.answerSources([{ address: "https://a.com", favicon: null, users: 1 }]);
+		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 1 }]);
 		sut.show();
 
 		expect(await sut.countOf("https://a.com")).toHaveAccessibleName("1 user");
 	});
 
 	test("explains the count with a tooltip", async () => {
-		sut.answerSources([{ address: "https://a.com", favicon: null, users: 2 }]);
+		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 2 }]);
 		sut.show();
 
 		await userEvent.hover(await sut.countOf("https://a.com"));
@@ -65,7 +65,7 @@ describe("SorzsSection", () => {
 	});
 
 	test("offers no buttons and no links", async () => {
-		sut.answerSources([{ address: "https://a.com", favicon: null, users: 1 }]);
+		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 1 }]);
 		sut.show();
 		await sut.countOf("https://a.com");
 
@@ -73,8 +73,8 @@ describe("SorzsSection", () => {
 		expect(screen.queryByRole("link")).not.toBeInTheDocument();
 	});
 
-	test("shows an empty list when no list holds a source", async () => {
-		sut.answerSources([]);
+	test("shows an empty list when no list holds a sorz", async () => {
+		sut.answerSorzs([]);
 		sut.show();
 
 		expect(await sut.list()).toBeEmptyDOMElement();
@@ -96,14 +96,14 @@ describe("SorzsSection", () => {
 	});
 });
 
-type SourceData = { address: string; favicon: string | null; users: number };
+type SorzData = { address: string; favicon: string | null; users: number };
 
 class SUT {
-	private answer: () => Response = () => reply("ok", { sources: [] });
+	private answer: () => Response = () => reply("ok", { sorzs: [] });
 	private readonly session: Session = adminSession();
 
-	answerSources(sources: SourceData[]) {
-		this.answer = () => reply("ok", { sources });
+	answerSorzs(sorzs: SorzData[]) {
+		this.answer = () => reply("ok", { sorzs });
 	}
 
 	refuseList(message: string) {

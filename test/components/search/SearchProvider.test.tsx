@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { SearchProvider, useSearch } from "@/components/search/SearchProvider";
-import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { SorzsProvider } from "@/components/sorzs/SorzsProvider";
 import { openSession } from "../../support/openSession";
 
 describe("SearchProvider", () => {
@@ -18,7 +18,7 @@ describe("SearchProvider", () => {
 
 		expect(sut.status()).not.toBeInTheDocument();
 		expect(sut.alert()).not.toBeInTheDocument();
-		expect(sut.resultSources()).toEqual([]);
+		expect(sut.resultSorzs()).toEqual([]);
 	});
 
 	test("shows that it is searching until the answer arrives", async () => {
@@ -35,7 +35,7 @@ describe("SearchProvider", () => {
 
 		await sut.answer("bun", ["Beta", "Alpha"]);
 
-		expect(await sut.resultSourcesOnceShown(2)).toEqual(["Beta", "Alpha"]);
+		expect(await sut.resultSorzsOnceShown(2)).toEqual(["Beta", "Alpha"]);
 		expect(sut.status()).not.toBeInTheDocument();
 	});
 
@@ -63,7 +63,7 @@ describe("SearchProvider", () => {
 
 		await sut.answer("bun", ["Alpha"]);
 
-		await sut.resultSourcesOnceShown(1);
+		await sut.resultSorzsOnceShown(1);
 		expect(sut.queryBox()).toHaveValue("bun");
 	});
 
@@ -71,11 +71,11 @@ describe("SearchProvider", () => {
 		sut.show();
 		await sut.searchFor("bun");
 		await sut.answer("bun", ["Alpha"]);
-		await sut.resultSourcesOnceShown(1);
+		await sut.resultSorzsOnceShown(1);
 
 		await sut.writeQuery("react");
 
-		expect(sut.resultSources()).toEqual(["Alpha"]);
+		expect(sut.resultSorzs()).toEqual(["Alpha"]);
 	});
 
 	test("discards the answer of a search that a newer one superseded", async () => {
@@ -86,9 +86,9 @@ describe("SearchProvider", () => {
 		await sut.answer("react", ["Beta"]);
 		await sut.answer("bun", ["Alpha"]);
 
-		expect(await sut.resultSourcesOnceShown(1)).toEqual(["Beta"]);
+		expect(await sut.resultSorzsOnceShown(1)).toEqual(["Beta"]);
 		await sut.settled();
-		expect(sut.resultSources()).toEqual(["Beta"]);
+		expect(sut.resultSorzs()).toEqual(["Beta"]);
 	});
 
 	test("discards the failure of a search that a newer one superseded", async () => {
@@ -99,7 +99,7 @@ describe("SearchProvider", () => {
 		await sut.answer("react", ["Beta"]);
 		await sut.refuse("bun", "old failure");
 
-		expect(await sut.resultSourcesOnceShown(1)).toEqual(["Beta"]);
+		expect(await sut.resultSorzsOnceShown(1)).toEqual(["Beta"]);
 		await sut.settled();
 		expect(sut.alert()).not.toBeInTheDocument();
 	});
@@ -141,11 +141,11 @@ class SUT {
 				baseUrl="http://localhost"
 				fetch={this.fetchIt}
 			>
-				<SourcesProvider>
+				<SorzsProvider>
 					<SearchProvider>
 						<Reader />
 					</SearchProvider>
-				</SourcesProvider>
+				</SorzsProvider>
 			</ApiProvider>,
 		);
 	}
@@ -170,12 +170,12 @@ class SUT {
 		await userEvent.type(this.queryBox(), query);
 	}
 
-	async answer(query: string, sources: string[]) {
-		const results = sources.map((source) => ({
+	async answer(query: string, sorzs: string[]) {
+		const results = sorzs.map((sorz) => ({
 			title: "Search it on Google",
-			url: `https://www.google.com/search?q=${query} site:${source}`,
+			url: `https://www.google.com/search?q=${query} site:${sorz}`,
 			description: `Google search for «${query}»`,
-			source,
+			sorz,
 		}));
 		await this.reply(query, ok({ results }));
 	}
@@ -213,16 +213,16 @@ class SUT {
 		return screen.findByRole("alert");
 	}
 
-	resultSources() {
+	resultSorzs() {
 		const items = screen.queryAllByRole("listitem");
 		return items.map((item) => item.querySelector("a span")?.textContent);
 	}
 
-	async resultSourcesOnceShown(count: number) {
+	async resultSorzsOnceShown(count: number) {
 		await waitFor(() =>
 			expect(screen.getAllByRole("listitem")).toHaveLength(count),
 		);
-		return this.resultSources();
+		return this.resultSorzs();
 	}
 
 	private fetchIt = (request: Request) => {

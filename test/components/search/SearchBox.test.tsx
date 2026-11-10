@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { SearchBox } from "@/components/search/SearchBox";
 import { SearchProvider } from "@/components/search/SearchProvider";
-import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { SorzsProvider } from "@/components/sorzs/SorzsProvider";
 import { openSession } from "../../support/openSession";
 
 describe("SearchBox", () => {
@@ -15,49 +15,49 @@ describe("SearchBox", () => {
 	});
 
 	test("cannot search while the query is blank", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.write("   ");
 
 		expect(sut.searchButton()).toBeDisabled();
 	});
 
-	test("cannot search when the list has no sources", async () => {
-		sut.hasSources([]);
+	test("cannot search when the list has no sorzs", async () => {
+		sut.hasSorzs([]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.write("bun");
 
 		expect(sut.searchButton()).toBeDisabled();
 	});
 
-	test("cannot search while the sources are loading", async () => {
-		sut.neverListSources();
+	test("cannot search while the sorzs are loading", async () => {
+		sut.neverListSorzs();
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.write("bun");
 
 		expect(sut.searchButton()).toBeDisabled();
 	});
 
-	test("cannot search when the sources failed to load", async () => {
-		sut.refuseSourceList();
+	test("cannot search when the sorzs failed to load", async () => {
+		sut.refuseSorzList();
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.write("bun");
 
 		expect(sut.searchButton()).toBeDisabled();
 	});
 
-	test("can search with a query and sources", async () => {
-		sut.hasSources(["Alpha"]);
+	test("can search with a query and sorzs", async () => {
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.write("bun");
 
@@ -65,9 +65,9 @@ describe("SearchBox", () => {
 	});
 
 	test("searches when the button is pressed", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 		await sut.write("bun");
 
 		await sut.pressSearch();
@@ -76,9 +76,9 @@ describe("SearchBox", () => {
 	});
 
 	test("searches when Enter is pressed", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.writeAndPressEnter("bun");
 
@@ -86,9 +86,9 @@ describe("SearchBox", () => {
 	});
 
 	test("sends nothing when Enter is pressed on a blank query", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 
 		await sut.writeAndPressEnter("   ");
 
@@ -96,9 +96,9 @@ describe("SearchBox", () => {
 	});
 
 	test("keeps the query written after searching", async () => {
-		sut.hasSources(["Alpha"]);
+		sut.hasSorzs(["Alpha"]);
 		sut.show();
-		await sut.sourcesListed();
+		await sut.sorzsListed();
 		await sut.write("bun");
 
 		await sut.pressSearch();
@@ -111,20 +111,20 @@ describe("SearchBox", () => {
 class SUT {
 	private names: string[] = [];
 	private sent: string[] = [];
-	private sourceListAnswer: () => Promise<Response> = async () =>
-		reply({ sources: this.names.map(entry) });
+	private sorzListAnswer: () => Promise<Response> = async () =>
+		reply({ sorzs: this.names.map(entry) });
 
-	hasSources(names: string[]) {
+	hasSorzs(names: string[]) {
 		this.names = names;
 	}
 
-	neverListSources() {
-		this.sourceListAnswer = () => new Promise(() => {});
+	neverListSorzs() {
+		this.sorzListAnswer = () => new Promise(() => {});
 	}
 
-	refuseSourceList() {
-		this.sourceListAnswer = async () =>
-			reply({ code: "INTERNAL_ERROR", message: "sources are down" }, "error");
+	refuseSorzList() {
+		this.sorzListAnswer = async () =>
+			reply({ code: "INTERNAL_ERROR", message: "sorzs are down" }, "error");
 	}
 
 	show() {
@@ -134,16 +134,16 @@ class SUT {
 				baseUrl="http://localhost"
 				fetch={this.fetchIt}
 			>
-				<SourcesProvider>
+				<SorzsProvider>
 					<SearchProvider>
 						<SearchBox />
 					</SearchProvider>
-				</SourcesProvider>
+				</SorzsProvider>
 			</ApiProvider>,
 		);
 	}
 
-	async sourcesListed() {
+	async sorzsListed() {
 		await screen.findByText("Search");
 		await waitFor(() => expect(this.listed).toBe(true));
 		await this.settled();
@@ -188,9 +188,9 @@ class SUT {
 		const path = new URL(request.url).pathname;
 		const call = await request.json();
 		let response: Promise<Response> = Promise.resolve(reply({ results: [] }));
-		if (path === "/sources.list") {
+		if (path === "/sorzs.list") {
 			this.listed = true;
-			response = this.sourceListAnswer();
+			response = this.sorzListAnswer();
 		} else {
 			this.sent.push(call.body.query);
 		}
@@ -200,7 +200,7 @@ class SUT {
 
 function entry(name: string) {
 	return {
-		sourceId: `s-${name}`,
+		sorzId: `s-${name}`,
 		name,
 		address: `https://${name}.com`,
 		title: null,

@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { LogoutButton } from "@/components/header/LogoutButton";
 import { SessionProvider } from "@/components/session/SessionProvider";
-import { SourcesProvider } from "@/components/sources/SourcesProvider";
+import { SorzsProvider } from "@/components/sorzs/SorzsProvider";
 import { Session } from "@/domain/Session";
 import { InMemoryTokenStore } from "../../support/InMemoryTokenStore";
 
@@ -63,9 +63,9 @@ class SUT {
 	show() {
 		const fetch = async (request: Request) => {
 			const path = new URL(request.url).pathname;
-			if (path === "/sources.list") {
+			if (path === "/sorzs.list") {
 				this.reads += 1;
-				return reply({ sources: [] });
+				return reply({ sorzs: [] });
 			}
 			return reply({ token: "t-2" });
 		};
@@ -76,9 +76,9 @@ class SUT {
 				fetch={fetch}
 			>
 				<SessionProvider session={this.session}>
-					<SourcesProvider>
+					<SorzsProvider>
 						<LogoutButton />
-					</SourcesProvider>
+					</SorzsProvider>
 				</SessionProvider>
 			</ApiProvider>,
 		);

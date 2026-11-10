@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test } from "bun:test";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ApiProvider, useListSources } from "@/api/ApiContext";
+import { ApiProvider, useListSorzs } from "@/api/ApiContext";
 import { SessionProvider } from "@/components/session/SessionProvider";
 import { Session } from "@/domain/Session";
 import { InMemoryTokenStore } from "../../support/InMemoryTokenStore";
@@ -55,7 +55,7 @@ describe("SessionProvider", () => {
 		sut.answerForbidden();
 		sut.show();
 
-		await sut.loadSources();
+		await sut.loadSorzs();
 
 		expect(await sut.loginButtonOnceShown()).toBeInTheDocument();
 		expect(sut.app()).not.toBeInTheDocument();
@@ -67,7 +67,7 @@ describe("SessionProvider", () => {
 		sut.answerForbidden();
 		sut.show();
 
-		await sut.loadSources();
+		await sut.loadSorzs();
 
 		await sut.loginButtonOnceShown();
 		expect(sut.storedText()).toBe("");
@@ -75,10 +75,10 @@ describe("SessionProvider", () => {
 });
 
 function Probe() {
-	const listSources = useListSources();
+	const listSorzs = useListSorzs();
 	async function load() {
 		try {
-			await listSources.run();
+			await listSorzs.run();
 		} catch {
 			return;
 		}
@@ -98,7 +98,7 @@ class SUT {
 	private session = new Session(this.store);
 	private answers: Record<string, () => Response> = {
 		"/auth.login": () => reply({ token: "t-0" }),
-		"/sources.list": () => reply({ sources: [] }),
+		"/sorzs.list": () => reply({ sorzs: [] }),
 	};
 
 	startWithStored(text: string) {
@@ -116,7 +116,7 @@ class SUT {
 	}
 
 	answerForbidden() {
-		this.answers["/sources.list"] = () =>
+		this.answers["/sorzs.list"] = () =>
 			json(403, { code: "FORBIDDEN", message: "forbidden" });
 	}
 
@@ -144,7 +144,7 @@ class SUT {
 		await userEvent.click(screen.getByRole("button", { name: "Enter" }));
 	}
 
-	async loadSources() {
+	async loadSorzs() {
 		await userEvent.click(screen.getByRole("button", { name: "Load" }));
 	}
 

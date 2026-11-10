@@ -21,11 +21,11 @@ describe("BackofficeScreen", () => {
 		expect(sut.backButton()).toBeInTheDocument();
 	});
 
-	test("shows the sources under the title of the Sorzs section", () => {
+	test("shows the sorzs under the title of the Sorzs section", () => {
 		sut.showAt("/backoffice/sorzs");
 
 		expect(sut.title()).toHaveTextContent("Sorzs");
-		expect(sut.main()).toHaveTextContent("Loading sources");
+		expect(sut.main()).toHaveTextContent("Loading sorzs");
 	});
 
 	test("shows the users under the title of the Users section", () => {
