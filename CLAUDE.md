@@ -52,6 +52,10 @@ Type a form's `onSubmit` handler with `SubmitEvent` imported from `react`; the g
 
 A text-only element that needs an accessible name (a count, a badge) takes `role="img"` with its `aria-label`; Biome rejects `aria-label` on a bare `span`. Query it by role `img` and a `name` pattern, since a row with a favicon holds another `img`.
 
+A setting that is on or off is a shadcn `Switch` with a `Label`, queried by role `switch` and asserted with `toBeChecked`, never a `Button` with `aria-pressed`. `radix-ui` is already installed, so adding it is no new dependency.
+
+When `shadcn add` fails resolving `@babel/traverse` (bunx and npx alike), write the part in `src/components/ui/` by hand from the shadcn template, importing from `radix-ui`, in the style of its siblings. Do not retry the CLI.
+
 A step that removes a method lists what else that method did (saving, navigating, notifying) and keeps a test for each effect that must survive.
 
 A value a component hard-codes in a Tailwind arbitrary class (`text-[1.25em]`) becomes a token in `@theme` of `src/index.css` (`--text-wordmark`, used as `text-wordmark`), so changing it is one edit. Name the token for what it is. Never use `@apply` for a custom class: the component is the unit of reuse.
