@@ -54,6 +54,7 @@ describe("AddSorzDialog", () => {
 			address: "https://example.com",
 			title: null,
 			favicon: null,
+			provider: "generic",
 		});
 		sut.show();
 		await sut.open();
@@ -67,6 +68,7 @@ describe("AddSorzDialog", () => {
 				address: "https://example.com",
 				title: null,
 				favicon: null,
+				provider: "generic",
 			}),
 		);
 		expect(sut.dialog()).not.toBeInTheDocument();
@@ -79,6 +81,7 @@ describe("AddSorzDialog", () => {
 			address: "https://example.com",
 			title: null,
 			favicon: null,
+			provider: "generic",
 		});
 		sut.show();
 		await sut.open();

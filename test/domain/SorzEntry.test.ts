@@ -33,6 +33,26 @@ describe("SorzEntry", () => {
 	});
 });
 
+describe("SorzEntry provider", () => {
+	test("is searched by a specific provider when the backend names one", () => {
+		const entry = entryWith({ provider: "reddit" });
+
+		expect(entry.provider.isSpecific()).toBe(true);
+	});
+
+	test("says which specific provider searches it", () => {
+		const entry = entryWith({ provider: "reddit" });
+
+		expect(entry.provider.hint()).toBe("Searched by Reddit");
+	});
+
+	test("is searched by the generic provider otherwise", () => {
+		const entry = entryWith({ provider: "generic" });
+
+		expect(entry.provider.isSpecific()).toBe(false);
+	});
+});
+
 function entryWith(parts: Partial<ConstructorParameters<typeof SorzEntry>[0]>) {
 	return new SorzEntry({
 		sorzId: "s-1",
@@ -40,6 +60,7 @@ function entryWith(parts: Partial<ConstructorParameters<typeof SorzEntry>[0]>) {
 		address: "https://a.com",
 		title: null,
 		favicon: null,
+		provider: "generic",
 		...parts,
 	});
 }

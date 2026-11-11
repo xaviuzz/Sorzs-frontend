@@ -18,9 +18,15 @@ describe("ListCensus", () => {
 		const alpha = {
 			address: "https://a.com",
 			favicon: "https://a.com/i.png",
+			provider: "generic",
 			users: 2,
 		};
-		const beta = { address: "https://b.com", favicon: null, users: 1 };
+		const beta = {
+			address: "https://b.com",
+			favicon: null,
+			provider: "generic",
+			users: 1,
+		};
 		sut.answerSorzs([alpha, beta]);
 
 		await sut.list();
@@ -33,7 +39,12 @@ describe("ListCensus", () => {
 
 	test("a favicon is present when the backend sent it", async () => {
 		sut.answerSorzs([
-			{ address: "https://a.com", favicon: "https://a.com/i.png", users: 1 },
+			{
+				address: "https://a.com",
+				favicon: "https://a.com/i.png",
+				provider: "generic",
+				users: 1,
+			},
 		]);
 
 		await sut.list();
@@ -44,7 +55,14 @@ describe("ListCensus", () => {
 	});
 
 	test("a missing favicon is a null object", async () => {
-		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 1 }]);
+		sut.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 1,
+			},
+		]);
 
 		await sut.list();
 

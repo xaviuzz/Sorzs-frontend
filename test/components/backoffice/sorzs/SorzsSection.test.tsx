@@ -15,8 +15,13 @@ describe("SorzsSection", () => {
 
 	test("shows a row per sorz in the order given, with its address in full", async () => {
 		sut.answerSorzs([
-			{ address: "http://a.com", favicon: null, users: 1 },
-			{ address: "https://B.com/Docs", favicon: null, users: 2 },
+			{ address: "http://a.com", favicon: null, provider: "generic", users: 1 },
+			{
+				address: "https://B.com/Docs",
+				favicon: null,
+				provider: "generic",
+				users: 2,
+			},
 		]);
 		sut.show();
 
@@ -25,7 +30,12 @@ describe("SorzsSection", () => {
 
 	test("shows the favicon of a sorz that has one", async () => {
 		sut.answerSorzs([
-			{ address: "https://a.com", favicon: "https://a.com/i.png", users: 1 },
+			{
+				address: "https://a.com",
+				favicon: "https://a.com/i.png",
+				provider: "generic",
+				users: 1,
+			},
 		]);
 		sut.show();
 
@@ -35,28 +45,56 @@ describe("SorzsSection", () => {
 	});
 
 	test("shows the globe when a sorz has no favicon", async () => {
-		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 1 }]);
+		sut.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 1,
+			},
+		]);
 		sut.show();
 
 		expect(await sut.globeOf("https://a.com")).toBeInTheDocument();
 	});
 
 	test("names the count of users, in the plural", async () => {
-		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 2 }]);
+		sut.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 2,
+			},
+		]);
 		sut.show();
 
 		expect(await sut.countOf("https://a.com")).toHaveAccessibleName("2 users");
 	});
 
 	test("names the count of users, in the singular", async () => {
-		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 1 }]);
+		sut.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 1,
+			},
+		]);
 		sut.show();
 
 		expect(await sut.countOf("https://a.com")).toHaveAccessibleName("1 user");
 	});
 
 	test("explains the count with a tooltip", async () => {
-		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 2 }]);
+		sut.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 2,
+			},
+		]);
 		sut.show();
 
 		await userEvent.hover(await sut.countOf("https://a.com"));
@@ -64,13 +102,95 @@ describe("SorzsSection", () => {
 		expect(await screen.findByRole("tooltip")).toHaveTextContent("2 users");
 	});
 
-	test("offers no buttons and no links", async () => {
-		sut.answerSorzs([{ address: "https://a.com", favicon: null, users: 1 }]);
+	test("offers no buttons and no links on the rows", async () => {
+		sut.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 1,
+			},
+		]);
 		sut.show();
-		await sut.countOf("https://a.com");
+		const row = await sut.rowOf("https://a.com");
 
-		expect(screen.queryByRole("button")).not.toBeInTheDocument();
-		expect(screen.queryByRole("link")).not.toBeInTheDocument();
+		expect(within(row).queryByRole("button")).not.toBeInTheDocument();
+		expect(within(row).queryByRole("link")).not.toBeInTheDocument();
+	});
+
+	test("marks a sorz searched by a specific provider", async () => {
+		sut.answerSorzs([
+			{
+				address: "https://reddit.com",
+				favicon: null,
+				provider: "reddit",
+				users: 1,
+			},
+		]);
+		sut.show();
+
+		expect(await sut.markOf("https://reddit.com")).toBeInTheDocument();
+	});
+
+	test("does not mark a sorz searched by the generic provider", async () => {
+		sut.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 1,
+			},
+		]);
+		sut.show();
+
+		await sut.rowOf("https://a.com");
+		expect(
+			screen.queryByRole("img", { name: "Searched by Reddit" }),
+		).toBeNull();
+	});
+
+	test("shows every sorz until the toggle is turned on", async () => {
+		sut.answerBothKinds();
+		sut.show();
+
+		expect(await sut.rows()).toEqual(["https://a.com1", "https://reddit.com1"]);
+		expect(await sut.onlyGenericToggle()).not.toBeChecked();
+	});
+
+	test("shows only the sorzs with the generic provider when the toggle is on", async () => {
+		sut.answerBothKinds();
+		sut.show();
+
+		await sut.turnOnlyGenericOn();
+
+		expect(await sut.rows()).toEqual(["https://a.com1"]);
+		expect(await sut.onlyGenericToggle()).toBeChecked();
+	});
+
+	test("shows every sorz again when the toggle is turned off", async () => {
+		sut.answerBothKinds();
+		sut.show();
+		await sut.turnOnlyGenericOn();
+
+		await userEvent.click(await sut.onlyGenericToggle());
+
+		expect(await sut.rows()).toEqual(["https://a.com1", "https://reddit.com1"]);
+	});
+
+	test("shows an empty list when the toggle is on and no sorz has the generic provider", async () => {
+		sut.answerSorzs([
+			{
+				address: "https://reddit.com",
+				favicon: null,
+				provider: "reddit",
+				users: 1,
+			},
+		]);
+		sut.show();
+
+		await sut.turnOnlyGenericOn();
+
+		expect(await sut.list()).toBeEmptyDOMElement();
 	});
 
 	test("shows an empty list when no list holds a sorz", async () => {
@@ -86,6 +206,7 @@ describe("SorzsSection", () => {
 
 		expect(await sut.failure()).toHaveTextContent("sorzs are down");
 		expect(screen.queryByRole("list")).not.toBeInTheDocument();
+		expect(screen.queryByRole("switch")).not.toBeInTheDocument();
 	});
 
 	test("sends the user to the entry screen on a forbidden answer", async () => {
@@ -96,7 +217,12 @@ describe("SorzsSection", () => {
 	});
 });
 
-type SorzData = { address: string; favicon: string | null; users: number };
+type SorzData = {
+	address: string;
+	favicon: string | null;
+	provider: string;
+	users: number;
+};
 
 class SUT {
 	private answer: () => Response = () => reply("ok", { sorzs: [] });
@@ -104,6 +230,23 @@ class SUT {
 
 	answerSorzs(sorzs: SorzData[]) {
 		this.answer = () => reply("ok", { sorzs });
+	}
+
+	answerBothKinds() {
+		this.answerSorzs([
+			{
+				address: "https://a.com",
+				favicon: null,
+				provider: "generic",
+				users: 1,
+			},
+			{
+				address: "https://reddit.com",
+				favicon: null,
+				provider: "reddit",
+				users: 1,
+			},
+		]);
 	}
 
 	refuseList(message: string) {
@@ -147,6 +290,19 @@ class SUT {
 		return within(row).getByRole("img", { name: /users?$/ });
 	}
 
+	async onlyGenericToggle() {
+		return screen.findByRole("switch", { name: "Only generic provider" });
+	}
+
+	async turnOnlyGenericOn() {
+		await userEvent.click(await this.onlyGenericToggle());
+	}
+
+	async markOf(address: string) {
+		const row = await this.rowOf(address);
+		return within(row).getByRole("img", { name: "Searched by Reddit" });
+	}
+
 	async list() {
 		return screen.findByRole("list");
 	}
@@ -159,7 +315,7 @@ class SUT {
 		return this.session.isOpen();
 	}
 
-	private async rowOf(address: string) {
+	async rowOf(address: string) {
 		const items = await screen.findAllByRole("listitem");
 		const row = items.find((item) => item.textContent?.includes(address));
 		return row as HTMLElement;

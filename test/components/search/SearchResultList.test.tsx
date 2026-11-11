@@ -310,6 +310,7 @@ function entry(name: string, favicon: string | null) {
 		address: `https://${name}.com`,
 		title: null,
 		favicon,
+		provider: "generic",
 	};
 }
 

@@ -19,6 +19,7 @@ describe("ListSorzs", () => {
 			address: "https://b.com",
 			title: null,
 			favicon: null,
+			provider: "generic",
 		};
 		const alpha = {
 			sorzId: "s-1",
@@ -26,6 +27,7 @@ describe("ListSorzs", () => {
 			address: "https://a.com",
 			title: null,
 			favicon: null,
+			provider: "generic",
 		};
 		sut.answerEntries([beta, alpha]);
 
@@ -89,7 +91,7 @@ class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
 		reply(callId, "ok", { sorzs: [] });
 	private received: Posted[] = [];
-	private entries: SorzEntryData[] | undefined;
+	private entries: SorzEntry[] | undefined;
 	private thrown: unknown;
 	private readonly listSorzs: ListSorzs;
 

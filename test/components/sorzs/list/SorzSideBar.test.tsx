@@ -27,6 +27,7 @@ describe("SorzSideBar", () => {
 				address: "https://b.com",
 				title: null,
 				favicon: null,
+				provider: "generic",
 			},
 			{
 				sorzId: "s-1",
@@ -34,6 +35,7 @@ describe("SorzSideBar", () => {
 				address: "https://a.com",
 				title: null,
 				favicon: null,
+				provider: "generic",
 			},
 		]);
 
@@ -50,6 +52,7 @@ describe("SorzSideBar", () => {
 				address: "https://a.com",
 				title: null,
 				favicon: null,
+				provider: "generic",
 			},
 		]);
 
@@ -66,6 +69,7 @@ describe("SorzSideBar", () => {
 				address: "https://a.com",
 				title: "Page of A",
 				favicon: null,
+				provider: "generic",
 			},
 		]);
 
@@ -82,6 +86,7 @@ describe("SorzSideBar", () => {
 				address: "https://a.com",
 				title: null,
 				favicon: "https://a.com/icon.png",
+				provider: "generic",
 			},
 		]);
 
@@ -101,6 +106,7 @@ describe("SorzSideBar", () => {
 				address: "https://a.com",
 				title: null,
 				favicon: null,
+				provider: "generic",
 			},
 		]);
 
@@ -119,6 +125,7 @@ describe("SorzSideBar", () => {
 				address: "https://a.com",
 				title: null,
 				favicon: null,
+				provider: "generic",
 			},
 		]);
 
@@ -128,6 +135,41 @@ describe("SorzSideBar", () => {
 			"title",
 			"https://a.com",
 		);
+	});
+
+	test("marks a sorz searched by a specific provider", async () => {
+		sut.answerEntries([
+			{
+				sorzId: "s-1",
+				name: "Alpha",
+				address: "https://www.reddit.com/r/spain",
+				title: null,
+				favicon: null,
+				provider: "reddit",
+			},
+		]);
+
+		sut.show();
+
+		expect(await sut.markOnceListed()).toBeInTheDocument();
+	});
+
+	test("does not mark a sorz searched by the generic provider", async () => {
+		sut.answerEntries([
+			{
+				sorzId: "s-1",
+				name: "Alpha",
+				address: "https://a.com",
+				title: null,
+				favicon: null,
+				provider: "generic",
+			},
+		]);
+
+		sut.show();
+
+		await sut.namesOnceListed();
+		expect(sut.mark()).not.toBeInTheDocument();
 	});
 
 	test("says the user has no sorzs yet when the list is empty", async () => {
@@ -232,6 +274,14 @@ class SUT {
 
 	favicon() {
 		return screen.queryByRole("img", { name: "Favicon of Alpha" });
+	}
+
+	markOnceListed() {
+		return screen.findByRole("img", { name: "Searched by Reddit" });
+	}
+
+	mark() {
+		return screen.queryByRole("img", { name: "Searched by Reddit" });
 	}
 
 	neutralIcon() {

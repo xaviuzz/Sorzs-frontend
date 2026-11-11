@@ -19,6 +19,7 @@ describe("AddSorz", () => {
 			address: "https://example.com",
 			title: null,
 			favicon: null,
+			provider: "generic",
 		});
 
 		await sut.add("https://example.com", "Example");
@@ -30,6 +31,7 @@ describe("AddSorz", () => {
 				address: "https://example.com",
 				title: null,
 				favicon: null,
+				provider: "generic",
 			}),
 		);
 	});
@@ -94,6 +96,7 @@ class SUT {
 			address: "https://a.com",
 			title: null,
 			favicon: null,
+			provider: "generic",
 		});
 	private received: Posted[] = [];
 	private entry: SorzEntry | undefined;

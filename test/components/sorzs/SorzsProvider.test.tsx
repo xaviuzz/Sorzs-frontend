@@ -82,6 +82,7 @@ function entry(sorzId: string, name: string): Entry {
 		address: `https://${name}.com`,
 		title: null,
 		favicon: null,
+		provider: "generic",
 	};
 }
 
