@@ -187,7 +187,9 @@ class SUT {
 	private fetchIt = async (request: Request) => {
 		const path = new URL(request.url).pathname;
 		const call = await request.json();
-		let response: Promise<Response> = Promise.resolve(reply({ results: [] }));
+		let response: Promise<Response> = Promise.resolve(
+			reply({ results: [], failed: [] }),
+		);
 		if (path === "/sorzs.list") {
 			this.listed = true;
 			response = this.sorzListAnswer();

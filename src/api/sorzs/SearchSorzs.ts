@@ -2,12 +2,13 @@ import type { Client } from "openapi-fetch";
 import { CallId } from "@/api/CallId";
 import { Refusable } from "@/api/Refusable";
 import type { paths } from "@/api/schema";
+import { SearchAnswer } from "@/domain/SearchAnswer";
 import { SearchResult } from "@/domain/SearchResult";
 
 export class SearchSorzs {
 	constructor(private readonly client: Client<paths>) {}
 
-	async run(query: string): Promise<SearchResult[]> {
+	async run(query: string): Promise<SearchAnswer> {
 		const answer = await this.client.POST("/sorzs.search", {
 			body: { header: CallId.next().header(), body: { query } },
 		});
@@ -16,6 +17,6 @@ export class SearchSorzs {
 		for (const data of body.results) {
 			results.push(new SearchResult(data));
 		}
-		return results;
+		return new SearchAnswer(results, [...body.failed]);
 	}
 }

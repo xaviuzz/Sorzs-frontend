@@ -49,7 +49,7 @@ describe("SearchResultList", () => {
 		const [link] = await sut.linksOnceShown(1);
 		expect(link).toHaveAttribute(
 			"href",
-			"https://www.google.com/search?q=bun site:Alpha",
+			"https://www.google.com/search?q=bun site:Alpha&n=1",
 		);
 		expect(link).toHaveAttribute("target", "_blank");
 		expect(link).toHaveAttribute("rel", "noopener noreferrer");
@@ -69,6 +69,47 @@ describe("SearchResultList", () => {
 			"https://alpha.com/i.png",
 		);
 		expect(sut.missingFavicon()).toBeInTheDocument();
+	});
+
+	test("shows several results of one sorz, each with its favicon and name", async () => {
+		sut.hasSorzs(["Alpha"]);
+		sut.hasFavicon("Alpha", "https://alpha.com/i.png");
+		sut.hasResultsPerSorz(3);
+		sut.show();
+		await sut.sorzsListed();
+
+		await sut.search("bun");
+
+		const links = await sut.linksOnceShown(3);
+		for (const link of links) expect(link).toHaveTextContent("Alpha");
+		expect(sut.faviconsOf("Alpha")).toHaveLength(3);
+	});
+
+	test("shows a line for each sorz that did not answer, after the results", async () => {
+		sut.hasSorzs(["Alpha"]);
+		sut.hasFailed(["Beta", "Gamma"]);
+		sut.show();
+		await sut.sorzsListed();
+
+		await sut.search("bun");
+
+		await sut.linksOnceShown(1);
+		expect(sut.lines()).toEqual([
+			"result",
+			"Beta did not answer",
+			"Gamma did not answer",
+		]);
+	});
+
+	test("shows no line about failures when every sorz answered", async () => {
+		sut.hasSorzs(["Alpha"]);
+		sut.show();
+		await sut.sorzsListed();
+
+		await sut.search("bun");
+
+		await sut.linksOnceShown(1);
+		expect(screen.queryByText(/did not answer/)).not.toBeInTheDocument();
 	});
 
 	test("shows that it is searching until the answer arrives", async () => {
@@ -161,6 +202,8 @@ function Forcer() {
 
 class SUT {
 	private names: string[] = [];
+	private failed: string[] = [];
+	private resultsPerSorz = 1;
 	private favicons = new Map<string, string>();
 	private searchAnswer: () => Promise<Response> = async () => this.results();
 	private listed = false;
@@ -169,6 +212,14 @@ class SUT {
 
 	hasSorzs(names: string[]) {
 		this.names = names;
+	}
+
+	hasFailed(names: string[]) {
+		this.failed = names;
+	}
+
+	hasResultsPerSorz(count: number) {
+		this.resultsPerSorz = count;
 	}
 
 	hasFavicon(name: string, favicon: string) {
@@ -259,6 +310,21 @@ class SUT {
 		return screen.findByRole("alert");
 	}
 
+	faviconsOf(name: string) {
+		return screen.getAllByAltText(`Favicon of ${name}`);
+	}
+
+	lines() {
+		const items = screen.getAllByRole("listitem");
+		const lines: string[] = [];
+		for (const item of items) {
+			let line = item.textContent ?? "";
+			if (item.querySelector("a") !== null) line = "result";
+			lines.push(line);
+		}
+		return lines;
+	}
+
 	faviconOf(name: string) {
 		return screen.getByAltText(`Favicon of ${name}`);
 	}
@@ -277,13 +343,18 @@ class SUT {
 	}
 
 	private results() {
-		const results = this.names.map((name) => ({
-			title: "Search it on Google",
-			url: `https://www.google.com/search?q=bun site:${name}`,
-			description: `Google search for «bun» limited to ${name}`,
-			sorz: name,
-		}));
-		return reply({ results });
+		const results = [];
+		for (const name of this.names) {
+			for (let position = 1; position <= this.resultsPerSorz; position++) {
+				results.push({
+					title: "Search it on Google",
+					url: `https://www.google.com/search?q=bun site:${name}&n=${position}`,
+					description: `Google search for «bun» limited to ${name}`,
+					sorz: name,
+				});
+			}
+		}
+		return reply({ results, failed: this.failed });
 	}
 
 	private fetchIt = async (request: Request) => {

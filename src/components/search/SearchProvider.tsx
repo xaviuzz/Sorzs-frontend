@@ -35,7 +35,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
 			setReading(new Searching());
 			const answered = await searchSorzs
 				.run(query)
-				.then((results) => new FoundResults(results))
+				.then((answer) => new FoundResults(answer))
 				.catch((error) => FailedSearch.from(error));
 			if (thisSearch === latestSearch.current) {
 				setReading(answered);

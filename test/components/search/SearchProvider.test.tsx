@@ -177,7 +177,7 @@ class SUT {
 			description: `Google search for «${query}»`,
 			sorz,
 		}));
-		await this.reply(query, ok({ results }));
+		await this.reply(query, ok({ results, failed: [] }));
 	}
 
 	async refuse(query: string, message: string) {

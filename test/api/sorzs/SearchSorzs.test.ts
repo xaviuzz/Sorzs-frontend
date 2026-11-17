@@ -3,6 +3,7 @@ import createClient from "openapi-fetch";
 import { CallRefusedError } from "@/api/CallRefusedError";
 import type { paths } from "@/api/schema";
 import { SearchSorzs } from "@/api/sorzs/SearchSorzs";
+import type { SearchAnswer } from "@/domain/SearchAnswer";
 import { SearchResult, type SearchResultData } from "@/domain/SearchResult";
 
 describe("SearchSorzs", () => {
@@ -33,6 +34,22 @@ describe("SearchSorzs", () => {
 			new SearchResult(beta),
 			new SearchResult(alpha),
 		]);
+	});
+
+	test("answers the names of the sorzs that did not answer", async () => {
+		sut.answerResultsAndFailures([], ["Alpha", "Beta"]);
+
+		await sut.search("bun");
+
+		expect(sut.didNotAnswer()).toEqual(["Alpha", "Beta"]);
+	});
+
+	test("answers no failures when every sorz answered", async () => {
+		sut.answerResults([]);
+
+		await sut.search("bun");
+
+		expect(sut.didNotAnswer()).toEqual([]);
 	});
 
 	test("answers no results when the backend found none", async () => {
@@ -94,9 +111,9 @@ type Posted = {
 
 class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
-		reply(callId, "ok", { results: [] });
+		reply(callId, "ok", { results: [], failed: [] });
 	private received: Posted[] = [];
-	private results: SearchResult[] | undefined;
+	private answered: SearchAnswer | undefined;
 	private thrown: unknown;
 	private readonly searchSorzs: SearchSorzs;
 
@@ -118,7 +135,11 @@ class SUT {
 	}
 
 	answerResults(results: SearchResultData[]) {
-		this.answer = async (callId) => reply(callId, "ok", { results });
+		this.answerResultsAndFailures(results, []);
+	}
+
+	answerResultsAndFailures(results: SearchResultData[], failed: string[]) {
+		this.answer = async (callId) => reply(callId, "ok", { results, failed });
 	}
 
 	answerRefusal(code: string, message: string) {
@@ -137,14 +158,18 @@ class SUT {
 
 	async search(query: string) {
 		try {
-			this.results = await this.searchSorzs.run(query);
+			this.answered = await this.searchSorzs.run(query);
 		} catch (error) {
 			this.thrown = error;
 		}
 	}
 
 	found() {
-		return this.results;
+		return this.answered?.results;
+	}
+
+	didNotAnswer() {
+		return this.answered?.failed;
 	}
 
 	refusal() {
