@@ -154,6 +154,23 @@ describe("SorzSideBar", () => {
 		expect(await sut.markOnceListed()).toBeInTheDocument();
 	});
 
+	test("marks a sorz searched by the Wikipedia provider", async () => {
+		sut.answerEntries([
+			{
+				sorzId: "s-1",
+				name: "Alpha",
+				address: "https://es.wikipedia.org",
+				title: null,
+				favicon: null,
+				provider: "wikipedia",
+			},
+		]);
+
+		sut.show();
+
+		expect(await sut.wikipediaMarkOnceListed()).toBeInTheDocument();
+	});
+
 	test("does not mark a sorz searched by the generic provider", async () => {
 		sut.answerEntries([
 			{
@@ -278,6 +295,10 @@ class SUT {
 
 	markOnceListed() {
 		return screen.findByRole("img", { name: "Searched by Reddit" });
+	}
+
+	wikipediaMarkOnceListed() {
+		return screen.findByRole("img", { name: "Searched by Wikipedia" });
 	}
 
 	mark() {

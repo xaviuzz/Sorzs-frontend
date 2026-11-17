@@ -132,6 +132,22 @@ describe("SorzsSection", () => {
 		expect(await sut.markOf("https://reddit.com")).toBeInTheDocument();
 	});
 
+	test("marks a sorz searched by the Wikipedia provider", async () => {
+		sut.answerSorzs([
+			{
+				address: "https://es.wikipedia.org",
+				favicon: null,
+				provider: "wikipedia",
+				users: 1,
+			},
+		]);
+		sut.show();
+
+		expect(
+			await sut.wikipediaMarkOf("https://es.wikipedia.org"),
+		).toBeInTheDocument();
+	});
+
 	test("does not mark a sorz searched by the generic provider", async () => {
 		sut.answerSorzs([
 			{
@@ -301,6 +317,11 @@ class SUT {
 	async markOf(address: string) {
 		const row = await this.rowOf(address);
 		return within(row).getByRole("img", { name: "Searched by Reddit" });
+	}
+
+	async wikipediaMarkOf(address: string) {
+		const row = await this.rowOf(address);
+		return within(row).getByRole("img", { name: "Searched by Wikipedia" });
 	}
 
 	async list() {
