@@ -220,7 +220,7 @@ export interface components {
             body: components["schemas"]["AuthLoginBody"] | components["schemas"]["ErrorBody"];
         };
         /** @enum {string} */
-        SearchProviderId: "reddit" | "generic";
+        SearchProviderId: "reddit" | "wikipedia" | "generic";
         SorzEntry: {
             sorzId: string;
             name: string | null;
@@ -281,6 +281,7 @@ export interface components {
         };
         SorzsSearchBody: {
             results: components["schemas"]["SearchResult"][];
+            failed: string[];
         };
         SorzsSearchReply: {
             header: components["schemas"]["ReplyHeader"];
