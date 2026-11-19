@@ -39,6 +39,18 @@ describe("SearchResultList", () => {
 		expect(links[1]).toHaveTextContent("Beta");
 	});
 
+	test("shows no description line for a result without a description", async () => {
+		sut.hasSorzs(["Alpha"]);
+		sut.hasNoDescriptions();
+		sut.show();
+		await sut.sorzsListed();
+
+		await sut.search("bun");
+
+		const [link] = await sut.linksOnceShown(1);
+		expect(sut.linesOf(link)).toEqual(["Alpha", "Search it on Google"]);
+	});
+
 	test("links to the result address in a new tab", async () => {
 		sut.hasSorzs(["Alpha"]);
 		sut.show();
@@ -204,6 +216,7 @@ class SUT {
 	private names: string[] = [];
 	private failed: string[] = [];
 	private resultsPerSorz = 1;
+	private describes = true;
 	private favicons = new Map<string, string>();
 	private searchAnswer: () => Promise<Response> = async () => this.results();
 	private listed = false;
@@ -220,6 +233,14 @@ class SUT {
 
 	hasResultsPerSorz(count: number) {
 		this.resultsPerSorz = count;
+	}
+
+	hasNoDescriptions() {
+		this.describes = false;
+	}
+
+	linesOf(link: HTMLElement) {
+		return Array.from(link.children).map((part) => part.textContent ?? "");
 	}
 
 	hasFavicon(name: string, favicon: string) {
@@ -349,7 +370,9 @@ class SUT {
 				results.push({
 					title: "Search it on Google",
 					url: `https://www.google.com/search?q=bun site:${name}&n=${position}`,
-					description: `Google search for «bun» limited to ${name}`,
+					description: this.describes
+						? `Google search for «bun» limited to ${name}`
+						: "",
 					sorz: name,
 				});
 			}

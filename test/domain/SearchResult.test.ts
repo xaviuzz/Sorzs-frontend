@@ -21,6 +21,21 @@ describe("SearchResult", () => {
 		expect(result.description).toBe("Google search for «bun» limited to a.com");
 	});
 
+	test("has a description when it is not empty", () => {
+		expect(result.hasDescription()).toBe(true);
+	});
+
+	test("has no description when it is empty", () => {
+		const bare = new SearchResult({
+			title: "AdaCamp",
+			url: "https://geekfeminism.fandom.com/wiki/AdaCamp",
+			description: "",
+			sorz: "Alpha",
+		});
+
+		expect(bare.hasDescription()).toBe(false);
+	});
+
 	test("knows the sorz it came from", () => {
 		expect(result.sorz).toBe("Alpha");
 	});

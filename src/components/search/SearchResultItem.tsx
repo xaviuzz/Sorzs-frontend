@@ -21,9 +21,11 @@ export function SearchResultItem({ result }: { result: SearchResult }) {
 				<span className="text-primary text-result-title group-hover:underline group-hover:underline-offset-4">
 					{result.title}
 				</span>
-				<span className="text-muted-foreground text-result-description">
-					{result.description}
-				</span>
+				{result.hasDescription() && (
+					<span className="text-muted-foreground text-result-description">
+						{result.description}
+					</span>
+				)}
 			</a>
 		</li>
 	);

@@ -17,4 +17,8 @@ export class SearchResult {
 		this.description = data.description;
 		this.sorz = data.sorz;
 	}
+
+	hasDescription(): boolean {
+		return this.description !== "";
+	}
 }
