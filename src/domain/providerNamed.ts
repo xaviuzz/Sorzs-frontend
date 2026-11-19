@@ -1,3 +1,4 @@
+import { GeekFeminismProvider } from "@/domain/GeekFeminismProvider";
 import { GenericProvider } from "@/domain/GenericProvider";
 import { RedditProvider } from "@/domain/RedditProvider";
 import type { SearchProvider } from "@/domain/SearchProvider";
@@ -10,6 +11,9 @@ export function providerNamed(text: string): SearchProvider {
 	}
 	if (text === "wikipedia") {
 		provider = new WikipediaProvider();
+	}
+	if (text === "geekfeminism") {
+		provider = new GeekFeminismProvider();
 	}
 	return provider;
 }

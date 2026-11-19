@@ -148,6 +148,22 @@ describe("SorzsSection", () => {
 		).toBeInTheDocument();
 	});
 
+	test("marks a sorz searched by the Geek Feminism provider", async () => {
+		sut.answerSorzs([
+			{
+				address: "https://geekfeminism.fandom.com",
+				favicon: null,
+				provider: "geekfeminism",
+				users: 1,
+			},
+		]);
+		sut.show();
+
+		expect(
+			await sut.geekFeminismMarkOf("https://geekfeminism.fandom.com"),
+		).toBeInTheDocument();
+	});
+
 	test("does not mark a sorz searched by the generic provider", async () => {
 		sut.answerSorzs([
 			{
@@ -317,6 +333,11 @@ class SUT {
 	async markOf(address: string) {
 		const row = await this.rowOf(address);
 		return within(row).getByRole("img", { name: "Searched by Reddit" });
+	}
+
+	async geekFeminismMarkOf(address: string) {
+		const row = await this.rowOf(address);
+		return within(row).getByRole("img", { name: "Searched by Geek Feminism" });
 	}
 
 	async wikipediaMarkOf(address: string) {

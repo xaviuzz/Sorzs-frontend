@@ -171,6 +171,23 @@ describe("SorzSideBar", () => {
 		expect(await sut.wikipediaMarkOnceListed()).toBeInTheDocument();
 	});
 
+	test("marks a sorz searched by the Geek Feminism provider", async () => {
+		sut.answerEntries([
+			{
+				sorzId: "s-1",
+				name: "Alpha",
+				address: "https://geekfeminism.fandom.com",
+				title: null,
+				favicon: null,
+				provider: "geekfeminism",
+			},
+		]);
+
+		sut.show();
+
+		expect(await sut.geekFeminismMarkOnceListed()).toBeInTheDocument();
+	});
+
 	test("does not mark a sorz searched by the generic provider", async () => {
 		sut.answerEntries([
 			{
@@ -295,6 +312,10 @@ class SUT {
 
 	markOnceListed() {
 		return screen.findByRole("img", { name: "Searched by Reddit" });
+	}
+
+	geekFeminismMarkOnceListed() {
+		return screen.findByRole("img", { name: "Searched by Geek Feminism" });
 	}
 
 	wikipediaMarkOnceListed() {

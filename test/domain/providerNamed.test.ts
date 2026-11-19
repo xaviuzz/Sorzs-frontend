@@ -22,6 +22,13 @@ test("the wikipedia provider is specific", () => {
 	expect(provider.hint()).toBe("Searched by Wikipedia");
 });
 
+test("the geekfeminism provider is specific", () => {
+	const provider = providerNamed("geekfeminism");
+
+	expect(provider.isSpecific()).toBe(true);
+	expect(provider.hint()).toBe("Searched by Geek Feminism");
+});
+
 test("a provider it does not know is generic", () => {
 	const provider = providerNamed("duckduckgo");
 
