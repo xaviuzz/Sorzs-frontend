@@ -219,8 +219,7 @@ export interface components {
             header: components["schemas"]["ReplyHeader"];
             body: components["schemas"]["AuthLoginBody"] | components["schemas"]["ErrorBody"];
         };
-        /** @enum {string} */
-        SearchProviderId: "reddit" | "wikipedia" | "geekfeminism" | "generic";
+        SearchProviderId: string;
         SorzEntry: {
             sorzId: string;
             name: string | null;
@@ -228,6 +227,7 @@ export interface components {
             title: string | null;
             favicon: string | null;
             provider: components["schemas"]["SearchProviderId"];
+            providerName: string;
         };
         SorzsAddCall: {
             header: components["schemas"]["CallHeader"];
@@ -291,6 +291,7 @@ export interface components {
             address: string;
             favicon: string | null;
             provider: components["schemas"]["SearchProviderId"];
+            providerName: string;
             users: number;
         };
         SorzsCensusBody: {
