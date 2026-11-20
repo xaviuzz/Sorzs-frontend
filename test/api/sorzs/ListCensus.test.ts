@@ -6,6 +6,7 @@ import { ListCensus } from "@/api/sorzs/ListCensus";
 import { CensusEntry, type CensusEntryData } from "@/domain/CensusEntry";
 import { FaviconAt } from "@/domain/FaviconAt";
 import { NoFavicon } from "@/domain/NoFavicon";
+import { censusEntryData } from "../../support/entryData";
 
 describe("ListCensus", () => {
 	let sut: SUT;
@@ -15,18 +16,12 @@ describe("ListCensus", () => {
 	});
 
 	test("answers the sorzs in the order the backend sent them", async () => {
-		const alpha = {
+		const alpha = censusEntryData({
 			address: "https://a.com",
 			favicon: "https://a.com/i.png",
-			provider: "generic",
 			users: 2,
-		};
-		const beta = {
-			address: "https://b.com",
-			favicon: null,
-			provider: "generic",
-			users: 1,
-		};
+		});
+		const beta = censusEntryData({ address: "https://b.com" });
 		sut.answerSorzs([alpha, beta]);
 
 		await sut.list();
@@ -39,12 +34,10 @@ describe("ListCensus", () => {
 
 	test("a favicon is present when the backend sent it", async () => {
 		sut.answerSorzs([
-			{
+			censusEntryData({
 				address: "https://a.com",
 				favicon: "https://a.com/i.png",
-				provider: "generic",
-				users: 1,
-			},
+			}),
 		]);
 
 		await sut.list();
@@ -55,14 +48,7 @@ describe("ListCensus", () => {
 	});
 
 	test("a missing favicon is a null object", async () => {
-		sut.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 1,
-			},
-		]);
+		sut.answerSorzs([censusEntryData({ address: "https://a.com" })]);
 
 		await sut.list();
 

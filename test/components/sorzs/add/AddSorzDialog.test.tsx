@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { AddSorzDialog } from "@/components/sorzs/add/AddSorzDialog";
 import { SorzEntry, type SorzEntryData } from "@/domain/SorzEntry";
+import { sorzEntryData } from "../../../support/entryData";
 import { openSession } from "../../../support/openSession";
 
 describe("AddSorzDialog", () => {
@@ -48,41 +49,38 @@ describe("AddSorzDialog", () => {
 	});
 
 	test("hands the created entry to its owner and closes", async () => {
-		sut.answerCreated({
-			sorzId: "s-1",
-			name: "Example",
-			address: "https://example.com",
-			title: null,
-			favicon: null,
-			provider: "generic",
-		});
+		sut.answerCreated(
+			sorzEntryData({
+				sorzId: "s-1",
+				name: "Example",
+				address: "https://example.com",
+			}),
+		);
 		sut.show();
 		await sut.open();
 
 		await sut.fillAndSubmit("https://example.com", "Example");
 
 		expect(await sut.entryOnceAdded()).toEqual(
-			new SorzEntry({
-				sorzId: "s-1",
-				name: "Example",
-				address: "https://example.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			}),
+			new SorzEntry(
+				sorzEntryData({
+					sorzId: "s-1",
+					name: "Example",
+					address: "https://example.com",
+				}),
+			),
 		);
 		expect(sut.dialog()).not.toBeInTheDocument();
 	});
 
 	test("opens empty again after an addition", async () => {
-		sut.answerCreated({
-			sorzId: "s-1",
-			name: "Example",
-			address: "https://example.com",
-			title: null,
-			favicon: null,
-			provider: "generic",
-		});
+		sut.answerCreated(
+			sorzEntryData({
+				sorzId: "s-1",
+				name: "Example",
+				address: "https://example.com",
+			}),
+		);
 		sut.show();
 		await sut.open();
 		await sut.fillAndSubmit("https://example.com", "Example");

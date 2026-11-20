@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ApiProvider } from "@/api/ApiContext";
 import { SorzsSection } from "@/components/backoffice/sorzs/SorzsSection";
 import type { Session } from "@/domain/Session";
+import { censusEntryData } from "../../../support/entryData";
 import { adminSession } from "../../../support/openSession";
 
 describe("SorzsSection", () => {
@@ -15,13 +16,8 @@ describe("SorzsSection", () => {
 
 	test("shows a row per sorz in the order given, with its address in full", async () => {
 		sut.answerSorzs([
-			{ address: "http://a.com", favicon: null, provider: "generic", users: 1 },
-			{
-				address: "https://B.com/Docs",
-				favicon: null,
-				provider: "generic",
-				users: 2,
-			},
+			censusEntryData({ address: "http://a.com" }),
+			censusEntryData({ address: "https://B.com/Docs", users: 2 }),
 		]);
 		sut.show();
 
@@ -30,12 +26,10 @@ describe("SorzsSection", () => {
 
 	test("shows the favicon of a sorz that has one", async () => {
 		sut.answerSorzs([
-			{
+			censusEntryData({
 				address: "https://a.com",
 				favicon: "https://a.com/i.png",
-				provider: "generic",
-				users: 1,
-			},
+			}),
 		]);
 		sut.show();
 
@@ -45,56 +39,28 @@ describe("SorzsSection", () => {
 	});
 
 	test("shows the globe when a sorz has no favicon", async () => {
-		sut.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 1,
-			},
-		]);
+		sut.answerSorzs([censusEntryData({ address: "https://a.com" })]);
 		sut.show();
 
 		expect(await sut.globeOf("https://a.com")).toBeInTheDocument();
 	});
 
 	test("names the count of users, in the plural", async () => {
-		sut.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 2,
-			},
-		]);
+		sut.answerSorzs([censusEntryData({ address: "https://a.com", users: 2 })]);
 		sut.show();
 
 		expect(await sut.countOf("https://a.com")).toHaveAccessibleName("2 users");
 	});
 
 	test("names the count of users, in the singular", async () => {
-		sut.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 1,
-			},
-		]);
+		sut.answerSorzs([censusEntryData({ address: "https://a.com" })]);
 		sut.show();
 
 		expect(await sut.countOf("https://a.com")).toHaveAccessibleName("1 user");
 	});
 
 	test("explains the count with a tooltip", async () => {
-		sut.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 2,
-			},
-		]);
+		sut.answerSorzs([censusEntryData({ address: "https://a.com", users: 2 })]);
 		sut.show();
 
 		await userEvent.hover(await sut.countOf("https://a.com"));
@@ -103,14 +69,7 @@ describe("SorzsSection", () => {
 	});
 
 	test("offers no buttons and no links on the rows", async () => {
-		sut.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 1,
-			},
-		]);
+		sut.answerSorzs([censusEntryData({ address: "https://a.com" })]);
 		sut.show();
 		const row = await sut.rowOf("https://a.com");
 
@@ -120,12 +79,7 @@ describe("SorzsSection", () => {
 
 	test("marks a sorz searched by a specific provider", async () => {
 		sut.answerSorzs([
-			{
-				address: "https://reddit.com",
-				favicon: null,
-				provider: "reddit",
-				users: 1,
-			},
+			censusEntryData({ address: "https://reddit.com", provider: "reddit" }),
 		]);
 		sut.show();
 
@@ -134,12 +88,10 @@ describe("SorzsSection", () => {
 
 	test("marks a sorz searched by the Wikipedia provider", async () => {
 		sut.answerSorzs([
-			{
+			censusEntryData({
 				address: "https://es.wikipedia.org",
-				favicon: null,
 				provider: "wikipedia",
-				users: 1,
-			},
+			}),
 		]);
 		sut.show();
 
@@ -148,14 +100,26 @@ describe("SorzsSection", () => {
 		).toBeInTheDocument();
 	});
 
+	test("marks a sorz searched by the Appropedia provider", async () => {
+		sut.answerSorzs([
+			censusEntryData({
+				address: "https://www.appropedia.org",
+				provider: "appropedia",
+			}),
+		]);
+		sut.show();
+
+		expect(
+			await sut.appropediaMarkOf("https://www.appropedia.org"),
+		).toBeInTheDocument();
+	});
+
 	test("marks a sorz searched by the Geek Feminism provider", async () => {
 		sut.answerSorzs([
-			{
+			censusEntryData({
 				address: "https://geekfeminism.fandom.com",
-				favicon: null,
 				provider: "geekfeminism",
-				users: 1,
-			},
+			}),
 		]);
 		sut.show();
 
@@ -165,14 +129,7 @@ describe("SorzsSection", () => {
 	});
 
 	test("does not mark a sorz searched by the generic provider", async () => {
-		sut.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 1,
-			},
-		]);
+		sut.answerSorzs([censusEntryData({ address: "https://a.com" })]);
 		sut.show();
 
 		await sut.rowOf("https://a.com");
@@ -211,12 +168,7 @@ describe("SorzsSection", () => {
 
 	test("shows an empty list when the toggle is on and no sorz has the generic provider", async () => {
 		sut.answerSorzs([
-			{
-				address: "https://reddit.com",
-				favicon: null,
-				provider: "reddit",
-				users: 1,
-			},
+			censusEntryData({ address: "https://reddit.com", provider: "reddit" }),
 		]);
 		sut.show();
 
@@ -266,18 +218,8 @@ class SUT {
 
 	answerBothKinds() {
 		this.answerSorzs([
-			{
-				address: "https://a.com",
-				favicon: null,
-				provider: "generic",
-				users: 1,
-			},
-			{
-				address: "https://reddit.com",
-				favicon: null,
-				provider: "reddit",
-				users: 1,
-			},
+			censusEntryData({ address: "https://a.com" }),
+			censusEntryData({ address: "https://reddit.com", provider: "reddit" }),
 		]);
 	}
 
@@ -343,6 +285,11 @@ class SUT {
 	async wikipediaMarkOf(address: string) {
 		const row = await this.rowOf(address);
 		return within(row).getByRole("img", { name: "Searched by Wikipedia" });
+	}
+
+	async appropediaMarkOf(address: string) {
+		const row = await this.rowOf(address);
+		return within(row).getByRole("img", { name: "Searched by Appropedia" });
 	}
 
 	async list() {

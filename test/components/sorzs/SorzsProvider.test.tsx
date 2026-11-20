@@ -9,6 +9,7 @@ import {
 } from "@/components/sorzs/SorzsProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { SorzEntry, type SorzEntryData } from "@/domain/SorzEntry";
+import { sorzEntryData } from "../../support/entryData";
 import { openSession } from "../../support/openSession";
 
 describe("SorzsProvider", () => {
@@ -76,14 +77,7 @@ describe("SorzsProvider", () => {
 type Entry = SorzEntryData;
 
 function entry(sorzId: string, name: string): Entry {
-	return {
-		sorzId,
-		name,
-		address: `https://${name}.com`,
-		title: null,
-		favicon: null,
-		provider: "generic",
-	};
+	return sorzEntryData({ sorzId, name, address: `https://${name}.com` });
 }
 
 function Reader() {

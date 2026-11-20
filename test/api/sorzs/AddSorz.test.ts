@@ -4,6 +4,7 @@ import { CallRefusedError } from "@/api/CallRefusedError";
 import type { paths } from "@/api/schema";
 import { AddSorz } from "@/api/sorzs/AddSorz";
 import { SorzEntry, type SorzEntryData } from "@/domain/SorzEntry";
+import { sorzEntryData } from "../../support/entryData";
 
 describe("AddSorz", () => {
 	let sut: SUT;
@@ -13,26 +14,24 @@ describe("AddSorz", () => {
 	});
 
 	test("answers the entry the backend created", async () => {
-		sut.answerCreated({
-			sorzId: "s-1",
-			name: "Example",
-			address: "https://example.com",
-			title: null,
-			favicon: null,
-			provider: "generic",
-		});
+		sut.answerCreated(
+			sorzEntryData({
+				sorzId: "s-1",
+				name: "Example",
+				address: "https://example.com",
+			}),
+		);
 
 		await sut.add("https://example.com", "Example");
 
 		expect(sut.created()).toEqual(
-			new SorzEntry({
-				sorzId: "s-1",
-				name: "Example",
-				address: "https://example.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			}),
+			new SorzEntry(
+				sorzEntryData({
+					sorzId: "s-1",
+					name: "Example",
+					address: "https://example.com",
+				}),
+			),
 		);
 	});
 
@@ -90,14 +89,11 @@ type Posted = {
 
 class SUT {
 	private answer: (callId: string) => Promise<Response> = async (callId) =>
-		reply(callId, "ok", {
-			sorzId: "s-0",
-			name: "n",
-			address: "https://a.com",
-			title: null,
-			favicon: null,
-			provider: "generic",
-		});
+		reply(
+			callId,
+			"ok",
+			sorzEntryData({ sorzId: "s-0", name: "n", address: "https://a.com" }),
+		);
 	private received: Posted[] = [];
 	private entry: SorzEntry | undefined;
 	private thrown: unknown;

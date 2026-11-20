@@ -4,6 +4,7 @@ import { CallRefusedError } from "@/api/CallRefusedError";
 import type { paths } from "@/api/schema";
 import { ListSorzs } from "@/api/sorzs/ListSorzs";
 import { SorzEntry, type SorzEntryData } from "@/domain/SorzEntry";
+import { sorzEntryData } from "../../support/entryData";
 
 describe("ListSorzs", () => {
 	let sut: SUT;
@@ -13,22 +14,16 @@ describe("ListSorzs", () => {
 	});
 
 	test("answers the entries in the order the backend sent them", async () => {
-		const beta = {
+		const beta = sorzEntryData({
 			sorzId: "s-2",
 			name: "Beta",
 			address: "https://b.com",
-			title: null,
-			favicon: null,
-			provider: "generic",
-		};
-		const alpha = {
+		});
+		const alpha = sorzEntryData({
 			sorzId: "s-1",
 			name: "Alpha",
 			address: "https://a.com",
-			title: null,
-			favicon: null,
-			provider: "generic",
-		};
+		});
 		sut.answerEntries([beta, alpha]);
 
 		await sut.list();

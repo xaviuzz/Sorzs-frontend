@@ -7,6 +7,7 @@ import { SearchProvider, useSearch } from "@/components/search/SearchProvider";
 import { SearchResultList } from "@/components/search/SearchResultList";
 import { SorzsProvider, useAppendSorz } from "@/components/sorzs/SorzsProvider";
 import { SorzEntry } from "@/domain/SorzEntry";
+import { sorzEntryData } from "../../support/entryData";
 import { openSession } from "../../support/openSession";
 
 describe("SearchResultList", () => {
@@ -398,14 +399,12 @@ class SUT {
 }
 
 function entry(name: string, favicon: string | null) {
-	return {
+	return sorzEntryData({
 		sorzId: `s-${name}`,
 		name,
 		address: `https://${name}.com`,
-		title: null,
 		favicon,
-		provider: "generic",
-	};
+	});
 }
 
 function reply(body: unknown, status = "ok") {

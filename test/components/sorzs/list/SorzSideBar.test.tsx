@@ -4,6 +4,7 @@ import { ApiProvider } from "@/api/ApiContext";
 import { SorzSideBar } from "@/components/sorzs/list/SorzSideBar";
 import { SorzsProvider } from "@/components/sorzs/SorzsProvider";
 import type { SorzEntryData } from "@/domain/SorzEntry";
+import { sorzEntryData } from "../../../support/entryData";
 import { openSession } from "../../../support/openSession";
 
 describe("SorzSideBar", () => {
@@ -21,22 +22,8 @@ describe("SorzSideBar", () => {
 
 	test("shows the names in the order of addition", async () => {
 		sut.answerEntries([
-			{
-				sorzId: "s-2",
-				name: "Beta",
-				address: "https://b.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			},
-			{
-				sorzId: "s-1",
-				name: "Alpha",
-				address: "https://a.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			},
+			sorzEntryData({ sorzId: "s-2", name: "Beta", address: "https://b.com" }),
+			sorzEntryData({ sorzId: "s-1", name: "Alpha", address: "https://a.com" }),
 		]);
 
 		sut.show();
@@ -46,14 +33,7 @@ describe("SorzSideBar", () => {
 
 	test("shows the address of a sorz that has no name", async () => {
 		sut.answerEntries([
-			{
-				sorzId: "s-1",
-				name: null,
-				address: "https://a.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			},
+			sorzEntryData({ sorzId: "s-1", name: null, address: "https://a.com" }),
 		]);
 
 		sut.show();
@@ -63,14 +43,12 @@ describe("SorzSideBar", () => {
 
 	test("shows the title of the page of a sorz that has no name", async () => {
 		sut.answerEntries([
-			{
+			sorzEntryData({
 				sorzId: "s-1",
 				name: null,
 				address: "https://a.com",
 				title: "Page of A",
-				favicon: null,
-				provider: "generic",
-			},
+			}),
 		]);
 
 		sut.show();
@@ -80,14 +58,12 @@ describe("SorzSideBar", () => {
 
 	test("shows the favicon of a sorz on the left of its text", async () => {
 		sut.answerEntries([
-			{
+			sorzEntryData({
 				sorzId: "s-1",
 				name: "Alpha",
 				address: "https://a.com",
-				title: null,
 				favicon: "https://a.com/icon.png",
-				provider: "generic",
-			},
+			}),
 		]);
 
 		sut.show();
@@ -100,14 +76,7 @@ describe("SorzSideBar", () => {
 
 	test("shows a neutral icon for a sorz that has no favicon", async () => {
 		sut.answerEntries([
-			{
-				sorzId: "s-1",
-				name: "Alpha",
-				address: "https://a.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			},
+			sorzEntryData({ sorzId: "s-1", name: "Alpha", address: "https://a.com" }),
 		]);
 
 		sut.show();
@@ -119,14 +88,7 @@ describe("SorzSideBar", () => {
 
 	test("shows the address of each sorz as its title", async () => {
 		sut.answerEntries([
-			{
-				sorzId: "s-1",
-				name: "Alpha",
-				address: "https://a.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			},
+			sorzEntryData({ sorzId: "s-1", name: "Alpha", address: "https://a.com" }),
 		]);
 
 		sut.show();
@@ -139,14 +101,12 @@ describe("SorzSideBar", () => {
 
 	test("marks a sorz searched by a specific provider", async () => {
 		sut.answerEntries([
-			{
+			sorzEntryData({
 				sorzId: "s-1",
 				name: "Alpha",
 				address: "https://www.reddit.com/r/spain",
-				title: null,
-				favicon: null,
 				provider: "reddit",
-			},
+			}),
 		]);
 
 		sut.show();
@@ -156,14 +116,12 @@ describe("SorzSideBar", () => {
 
 	test("marks a sorz searched by the Wikipedia provider", async () => {
 		sut.answerEntries([
-			{
+			sorzEntryData({
 				sorzId: "s-1",
 				name: "Alpha",
 				address: "https://es.wikipedia.org",
-				title: null,
-				favicon: null,
 				provider: "wikipedia",
-			},
+			}),
 		]);
 
 		sut.show();
@@ -173,14 +131,12 @@ describe("SorzSideBar", () => {
 
 	test("marks a sorz searched by the Geek Feminism provider", async () => {
 		sut.answerEntries([
-			{
+			sorzEntryData({
 				sorzId: "s-1",
 				name: "Alpha",
 				address: "https://geekfeminism.fandom.com",
-				title: null,
-				favicon: null,
 				provider: "geekfeminism",
-			},
+			}),
 		]);
 
 		sut.show();
@@ -188,16 +144,22 @@ describe("SorzSideBar", () => {
 		expect(await sut.geekFeminismMarkOnceListed()).toBeInTheDocument();
 	});
 
+	test("marks a sorz searched by the Appropedia provider", async () => {
+		sut.answerEntries([
+			sorzEntryData({
+				address: "https://www.appropedia.org",
+				provider: "appropedia",
+			}),
+		]);
+
+		sut.show();
+
+		expect(await sut.appropediaMarkOnceListed()).toBeInTheDocument();
+	});
+
 	test("does not mark a sorz searched by the generic provider", async () => {
 		sut.answerEntries([
-			{
-				sorzId: "s-1",
-				name: "Alpha",
-				address: "https://a.com",
-				title: null,
-				favicon: null,
-				provider: "generic",
-			},
+			sorzEntryData({ sorzId: "s-1", name: "Alpha", address: "https://a.com" }),
 		]);
 
 		sut.show();
@@ -320,6 +282,10 @@ class SUT {
 
 	wikipediaMarkOnceListed() {
 		return screen.findByRole("img", { name: "Searched by Wikipedia" });
+	}
+
+	appropediaMarkOnceListed() {
+		return screen.findByRole("img", { name: "Searched by Appropedia" });
 	}
 
 	mark() {

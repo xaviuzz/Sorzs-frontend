@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { SorzEntry } from "@/domain/SorzEntry";
+import { sorzEntryData } from "../support/entryData";
 
 describe("SorzEntry", () => {
 	test("is shown by its name when it has one", () => {
@@ -54,13 +55,5 @@ describe("SorzEntry provider", () => {
 });
 
 function entryWith(parts: Partial<ConstructorParameters<typeof SorzEntry>[0]>) {
-	return new SorzEntry({
-		sorzId: "s-1",
-		name: "Alpha",
-		address: "https://a.com",
-		title: null,
-		favicon: null,
-		provider: "generic",
-		...parts,
-	});
+	return new SorzEntry(sorzEntryData(parts));
 }
