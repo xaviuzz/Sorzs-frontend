@@ -1,13 +1,13 @@
 import type { Favicon } from "@/domain/Favicon";
 import { FaviconAt } from "@/domain/FaviconAt";
 import { NoFavicon } from "@/domain/NoFavicon";
-import { providerNamed } from "@/domain/providerNamed";
-import type { SearchProvider } from "@/domain/SearchProvider";
+import { SearchProvider } from "@/domain/SearchProvider";
 
 export type CensusEntryData = {
 	address: string;
 	favicon: string | null;
 	provider: string;
+	providerName: string;
 	users: number;
 };
 
@@ -20,7 +20,7 @@ export class CensusEntry {
 	constructor(data: CensusEntryData) {
 		this.address = data.address;
 		this.favicon = this.faviconFrom(data.favicon);
-		this.provider = providerNamed(data.provider);
+		this.provider = new SearchProvider(data.provider, data.providerName);
 		this.users = data.users;
 	}
 

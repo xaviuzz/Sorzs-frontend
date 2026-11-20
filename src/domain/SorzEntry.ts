@@ -1,5 +1,4 @@
-import { providerNamed } from "@/domain/providerNamed";
-import type { SearchProvider } from "@/domain/SearchProvider";
+import { SearchProvider } from "@/domain/SearchProvider";
 
 export type SorzEntryData = {
 	sorzId: string;
@@ -8,6 +7,7 @@ export type SorzEntryData = {
 	title: string | null;
 	favicon: string | null;
 	provider: string;
+	providerName: string;
 };
 
 export class SorzEntry {
@@ -24,7 +24,7 @@ export class SorzEntry {
 		this.address = data.address;
 		this.title = data.title;
 		this.favicon = data.favicon;
-		this.provider = providerNamed(data.provider);
+		this.provider = new SearchProvider(data.provider, data.providerName);
 	}
 
 	shownText(): string {
