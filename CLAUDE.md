@@ -75,3 +75,7 @@ A value a component hard-codes in a Tailwind arbitrary class (`text-[1.25em]`) b
 ## Skills
 
 Before writing or changing a component, read `.claude/skills/shadcn/SKILL.md` and `.claude/skills/vercel-react-best-practices/SKILL.md` with the Read tool; from a session started outside `frontend/` the Skill tool cannot load them. Check `src/components/ui/` and run `bunx --bun shadcn@latest add <component>` before styling markup by hand.
+
+The `modern-web-guidance@googlechrome` plugin is enabled for this repo in `.claude/settings.local.json`. Before choosing a web platform API or a CSS or HTML feature, read `SKILL.md` of its `modern-web-guidance` skill, found with `ls ~/.claude/plugins/cache/googlechrome/modern-web-guidance/*/skills/`; a session started outside `frontend/` does not load it as a skill.
+
+Query the guidance with local semantic search: run `npx -y modern-web-guidance@latest search "<query>" --skill-version <version>`, with the version `SKILL.md` names. It matches the query to the best guide offline, with an embedding model and BM25 and no dependencies, so it needs no search API calls or API keys. Phrase the query as the need in 2-5 words ("animate element entering viewport"), then fetch the guides it lists with `retrieve "<id>"` as `SKILL.md` describes, and apply them.
